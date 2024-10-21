@@ -1,8 +1,8 @@
 /// <reference types="vitest" />
 
+import { defineConfig } from 'vite'
 import legacy from '@vitejs/plugin-legacy'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -14,5 +14,9 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
+  },
+  server: {
+    host: "192.168.1.12",
+    port: 8100
   }
 })
