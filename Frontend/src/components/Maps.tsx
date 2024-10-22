@@ -11,7 +11,9 @@ import VectorSource from "ol/source/Vector";
 import View from "ol/View";
 import { createStringXY } from "ol/coordinate.js";
 import { defaults as defaultControls } from "ol/control.js";
-import { fromLonLat } from "ol/proj";
+import { fromLonLat, toLonLat } from "ol/proj";
+
+const debug = true; // Set this to false to disable logging
 
 const mousePositionControl = new MousePosition({
   coordinateFormat: createStringXY(4),
@@ -67,6 +69,19 @@ function Map() {
       view: view,
     });
     getBrowserLocation(map, view);
+
+    let lastLogTime = 0;
+
+    // Add pointermove event listener to log mouse position
+    map.on('pointermove', (event) => {
+      if (!debug) return; // Check if debug is true
+      const currentTime = Date.now();
+      if (currentTime - lastLogTime >= 1000) {
+        lastLogTime = currentTime;
+        const coordinates = toLonLat(event.coordinate);
+        console.log(`Longitude: ${coordinates[0]}, Latitude: ${coordinates[1]}`);
+      }
+    });
   }, []);
 
   return <div id="map" style={{ width: "100%", height: "100%" }}></div>;
