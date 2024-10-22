@@ -16,6 +16,7 @@ import '@ionic/react/css/display.css';
 import '@ionic/react/css/palettes/dark.system.css';
 /* Theme variables */
 import './theme/variables.scss';
+import './App.scss';
 
 import {
   IonApp,
@@ -34,6 +35,10 @@ import GlobalMap from './pages/GlobalMap';
 import { IonReactRouter } from '@ionic/react-router';
 import OwnMap from './pages/OwnMap';
 import Settings from './pages/Settings';
+
+/* App */
+
+
 
 /**
  * Ionic Dark Mode
