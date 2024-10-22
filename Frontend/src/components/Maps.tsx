@@ -1,15 +1,10 @@
 import "ol/ol.css";
-
-import { useEffect, useState } from "react";
-
+import { useEffect } from "react";
 import Feature from "ol/Feature";
-import Geometry from "ol/geom/Geometry";
 import MousePosition from "ol/control/MousePosition.js";
 import OSM from "ol/source/OSM";
 import { default as OlMap } from "ol/Map";
 import Point from "ol/geom/Point";
-import { Size } from "ol/size";
-import { Source } from "ol/source";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
@@ -31,24 +26,21 @@ const points: Point[] = [];
 points.push(new Point(fromLonLat([37.41, 8.82])));
 
 function Map() {
-  const [currentLocation, setCurrentLocation] = useState([0, 0]);
-
-  const getBrowserLocation = (map: OlMap, view: View, source: any) => {
+  const getBrowserLocation = (map: OlMap, view: View) => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        console.log(latitude, longitude);
-        const feature = source.getFeatures()[1];
-        const point: Point = feature.getGeometry() as Point;
-        const size: Size = map.getSize() as Size;
-        view.centerOn(point.getCoordinates(), size, [570, 500]);
+        const coordinates = fromLonLat([longitude, latitude]);
+        view.setCenter(coordinates);
+        view.setZoom(12);
       },
       (error) => {
         console.log(error);
       }
     );
   };
+
   useEffect(() => {
     const view = new View({
       center: [0, 0],
@@ -69,12 +61,12 @@ function Map() {
           source: new OSM(),
         }),
         new VectorLayer({
-          source: vectorSource
+          source: vectorSource,
         }),
       ],
       view: view,
     });
-    getBrowserLocation(map, view, vectorSource);
+    getBrowserLocation(map, view);
   }, []);
 
   return <div id="map" style={{ width: "100%", height: "100%" }}></div>;
