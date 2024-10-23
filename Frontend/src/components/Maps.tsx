@@ -1,5 +1,7 @@
 import "ol/ol.css";
-import { useEffect } from "react";
+
+import { fromLonLat, toLonLat } from "ol/proj";
+
 import Feature from "ol/Feature";
 import MousePosition from "ol/control/MousePosition.js";
 import OSM from "ol/source/OSM";
@@ -11,7 +13,7 @@ import VectorSource from "ol/source/Vector";
 import View from "ol/View";
 import { createStringXY } from "ol/coordinate.js";
 import { defaults as defaultControls } from "ol/control.js";
-import { fromLonLat, toLonLat } from "ol/proj";
+import { useEffect } from "react";
 
 const debug = true; // Set this to false to disable logging
 
@@ -25,7 +27,8 @@ const mousePositionControl = new MousePosition({
 });
 
 const points: Point[] = [];
-points.push(new Point(fromLonLat([37.41, 8.82])));
+points.push(new Point(fromLonLat([10.873469253297491, 56.40895786787172])));
+points.push(new Point(fromLonLat([10.873463253297491, 56.40995786787172])));
 
 function Map() {
   const getBrowserLocation = (map: OlMap, view: View) => {

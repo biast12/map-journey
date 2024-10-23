@@ -40,6 +40,9 @@ app.use(
 // HEROKU
 //app.set('trust proxy', 1); // trust first proxy
 
+const formData = require('express-form-data');
+app.use(formData.parse());
+
 // ROUTES ----------------------------------------------------------
 
 //  INDEX
@@ -51,6 +54,7 @@ app.get("/", async (req, res) => {
 app.use("/globalmap", require("./routes/globalmap.routes.js"));
 app.use("/ownmap", require("./routes/ownmap.routes.js"));
 app.use("/users", require("./routes/users.routes.js"));
+app.use("/profile", require("./routes/makeprofile.routes.js"));
 
 // LISTEN --------------------------------------------------------------------------------------------------
 app.listen(PORT, () =>
