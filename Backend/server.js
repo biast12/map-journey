@@ -3,7 +3,7 @@ require("dotenv").config();
 const cors = require("cors");
 
 const app = express();
-const HOST = process.env.HOST || localhost;
+const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 8101;
 
 // Supabase Client Initialization
@@ -54,7 +54,6 @@ app.get("/", async (req, res) => {
 app.use("/globalmap", require("./routes/globalmap.routes.js"));
 app.use("/ownmap", require("./routes/ownmap.routes.js"));
 app.use("/users", require("./routes/users.routes.js"));
-app.use("/profile", require("./routes/makeprofile.routes.js"));
 
 // LISTEN --------------------------------------------------------------------------------------------------
 app.listen(PORT, () =>
