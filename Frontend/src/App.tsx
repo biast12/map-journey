@@ -50,7 +50,7 @@ import Admin from "./pages/admin/Page";
 import GlobalMap from "./pages/GlobalMap";
 import OwnMap from "./pages/OwnMap";
 import Settings from "./pages/Settings";
-import Notifications from "./pages/Notifications";
+import Notification from "./pages/Notification";
 
 /* App */
 
@@ -110,7 +110,7 @@ const App: React.FC = () => (
             <Route
               exact={true}
               path="/notifications"
-              render={() => <Notifications />}
+              render={() => <Notification />}
             />
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
