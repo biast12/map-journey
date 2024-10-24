@@ -19,4 +19,12 @@ ion-toolbar {
 .IonButtonContainer {
     display: flex;
     float: right;
+    ion-button {
+        position: relative;
+        ion-badge {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+        }
+    }
 }

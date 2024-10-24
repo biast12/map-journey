@@ -32,16 +32,25 @@ import {
   IonTabs,
   IonToolbar,
   setupIonicReact,
+  IonBadge,
 } from "@ionic/react";
 import { Redirect, Route } from "react-router-dom";
 import { IonReactRouter } from "@ionic/react-router";
-import { camera, earth, map, settings, shieldHalf } from "ionicons/icons";
+import {
+  camera,
+  earth,
+  map,
+  notifications,
+  settings,
+  shieldHalf,
+} from "ionicons/icons";
 
 /* Pages */
 import Admin from "./pages/admin/Page";
 import GlobalMap from "./pages/GlobalMap";
 import OwnMap from "./pages/OwnMap";
 import Settings from "./pages/Settings";
+import Notifications from "./pages/Notifications";
 
 /* App */
 
@@ -54,23 +63,24 @@ import Settings from "./pages/Settings";
 
 setupIonicReact();
 
-const userstatus = "admin";
+const userstatus: string = "admin";
+const NotificationNum: number = 1;
 
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
       <IonHeader>
         <IonToolbar>
-          <IonButton
-            routerLink="/"
-            fill="clear"
-          >
-            <IonImg
-              src="/icons/webp/logo1.webp"
-              alt="Logo"
-            />
+          <IonButton routerLink="/" fill="clear">
+            <IonImg src="/icons/webp/logo1.webp" alt="Logo" />
           </IonButton>
           <div className="IonButtonContainer">
+            {NotificationNum >= 1 && (
+              <IonButton routerLink="/notifications" fill="clear">
+                <IonIcon aria-hidden="true" icon={notifications} />
+                <IonBadge color="danger">{NotificationNum}</IonBadge>
+              </IonButton>
+            )}
             {userstatus === "admin" && (
               <IonButton routerLink="/admin" fill="clear">
                 <IonIcon aria-hidden="true" icon={shieldHalf} />
@@ -88,11 +98,20 @@ const App: React.FC = () => (
             <Route exact={true} path="/">
               <Redirect to="/globalmap" />
             </Route>
-            <Route exact={true} path="/globalmap" render={() => <GlobalMap />} />
+            <Route
+              exact={true}
+              path="/globalmap"
+              render={() => <GlobalMap />}
+            />
             <Route exact={true} path="/takepicture"></Route>
             <Route exact={true} path="/ownmap" render={() => <OwnMap />} />
             <Route exact={true} path="/admin" render={() => <Admin />} />
             <Route exact={true} path="/settings" render={() => <Settings />} />
+            <Route
+              exact={true}
+              path="/notifications"
+              render={() => <Notifications />}
+            />
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
             <IonTabButton tab="globalmap" href="/globalmap">
