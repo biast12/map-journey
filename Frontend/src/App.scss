@@ -1,7 +1,22 @@
-ion-tab-bar, ion-header {
-
+ion-toolbar {
+    ion-icon {
+        color: var(--ion-tab-bar-color, var(--ion-color-step-650, var(--ion-text-color-step-350, #595959)));
+        font-size: 33px;
+    }
+    ion-button {
+        padding: 0;
+        margin: 0;
+        height: 50px;
+        display: flex;
+        float: left;
+        ion-img {
+            height: 50px;
+        }
+        
+    }
 }
 
-ion-header {
-
+.IonButtonContainer {
+    display: flex;
+    float: right;
 }

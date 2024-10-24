@@ -34,12 +34,12 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { Redirect, Route } from "react-router-dom";
+import { IonReactRouter } from "@ionic/react-router";
 import { camera, earth, map, settings, shieldHalf } from "ionicons/icons";
 
-import Admin from "./pages/admin/Page";
 /* Pages */
+import Admin from "./pages/admin/Page";
 import GlobalMap from "./pages/GlobalMap";
-import { IonReactRouter } from "@ionic/react-router";
 import OwnMap from "./pages/OwnMap";
 import Settings from "./pages/Settings";
 
@@ -59,65 +59,57 @@ const userstatus = "admin";
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact={true} path="/">
-            <Redirect to="/globalmap" />
-          </Route>
-          <Route exact={true} path="/globalmap" render={() => <GlobalMap />} />
-          <Route exact={true} path="/takepicture"></Route>
-          <Route exact={true} path="/ownmap" render={() => <OwnMap />} />
-          <Route exact={true} path="/admin" render={() => <Admin />} />
-          <Route exact={true} path="/settings" render={() => <Settings />} />
-        </IonRouterOutlet>
-        <IonHeader>
-          <IonToolbar>
-            <IonButton
-              routerLink="/"
-              fill="clear"
-              style={{
-                padding: 0,
-                margin: 0,
-                height: "50px",
-                display: "flex",
-                float: "left",
-              }}
-            >
-              <IonImg
-                src="../public/icons/webp/logo1.webp"
-                alt="Logo"
-                style={{ height: "50px" }}
-              />
+      <IonHeader>
+        <IonToolbar>
+          <IonButton
+            routerLink="/"
+            fill="clear"
+          >
+            <IonImg
+              src="/icons/webp/logo1.webp"
+              alt="Logo"
+            />
+          </IonButton>
+          <div className="IonButtonContainer">
+            {userstatus === "admin" && (
+              <IonButton routerLink="/admin" fill="clear">
+                <IonIcon aria-hidden="true" icon={shieldHalf} />
+              </IonButton>
+            )}
+            <IonButton routerLink="/settings" fill="clear">
+              <IonIcon aria-hidden="true" icon={settings} />
             </IonButton>
-            <div style={{ display: "flex", float: "right" }}>
-              {userstatus === "admin" && (
-                <IonTabButton tab="admin" href="/admin">
-                  <IonIcon aria-hidden="true" icon={shieldHalf} />
-                  <IonLabel>Admin</IonLabel>
-                </IonTabButton>
-              )}
-              <IonTabButton tab="settings" href="/settings">
-                <IonIcon aria-hidden="true" icon={settings} />
-                <IonLabel>Settings</IonLabel>
-              </IonTabButton>
-            </div>
-          </IonToolbar>
-        </IonHeader>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="globalmap" href="/globalmap">
-            <IonIcon aria-hidden="true" icon={earth} />
-            <IonLabel>Global Map</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="takepicture" href="/takepicture">
-            <IonIcon aria-hidden="true" icon={camera} />
-            <IonLabel>Take Picture</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="ownmap" href="/ownmap">
-            <IonIcon aria-hidden="true" icon={map} />
-            <IonLabel>Own Map</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
+          </div>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent>
+        <IonTabs>
+          <IonRouterOutlet>
+            <Route exact={true} path="/">
+              <Redirect to="/globalmap" />
+            </Route>
+            <Route exact={true} path="/globalmap" render={() => <GlobalMap />} />
+            <Route exact={true} path="/takepicture"></Route>
+            <Route exact={true} path="/ownmap" render={() => <OwnMap />} />
+            <Route exact={true} path="/admin" render={() => <Admin />} />
+            <Route exact={true} path="/settings" render={() => <Settings />} />
+          </IonRouterOutlet>
+          <IonTabBar slot="bottom">
+            <IonTabButton tab="globalmap" href="/globalmap">
+              <IonIcon aria-hidden="true" icon={earth} />
+              <IonLabel>Global Map</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="takepicture" href="/takepicture">
+              <IonIcon aria-hidden="true" icon={camera} />
+              <IonLabel>Take Picture</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="ownmap" href="/ownmap">
+              <IonIcon aria-hidden="true" icon={map} />
+              <IonLabel>Own Map</IonLabel>
+            </IonTabButton>
+          </IonTabBar>
+        </IonTabs>
+      </IonContent>
     </IonReactRouter>
   </IonApp>
 );

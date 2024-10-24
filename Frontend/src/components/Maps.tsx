@@ -1,7 +1,7 @@
 import "ol/ol.css";
+import "./Maps.scss"; // Import the SCSS file
 
 import { fromLonLat, toLonLat } from "ol/proj";
-
 import Feature from "ol/Feature";
 import MousePosition from "ol/control/MousePosition.js";
 import OSM from "ol/source/OSM";
@@ -87,7 +87,7 @@ function Map() {
     });
   }, []);
 
-  return <div id="map" style={{ width: "100%", height: "100%" }}></div>;
+  return <div id="map"></div>;
 }
 
 export default Map;
