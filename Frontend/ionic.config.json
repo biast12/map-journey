@@ -1,5 +1,7 @@
 {
   "name": "Map Journey",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "react-vite"
 }
