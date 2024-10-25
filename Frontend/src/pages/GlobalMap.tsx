@@ -3,7 +3,7 @@ import Map from "../components/Maps";
 function GlobalMap() {
   return (
     <>
-      <Map />
+      <Map APIurl="all"/>
     </>
   );
 }

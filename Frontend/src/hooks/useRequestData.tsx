@@ -27,7 +27,7 @@ function useRequestData(): RequestData {
     }
 
     const options: AxiosRequestConfig = {
-      url: url,
+      url: `http://localhost:8101/${url}`,
       method: method,
       headers: headers,
       data: data,

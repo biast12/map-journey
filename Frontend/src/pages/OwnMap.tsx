@@ -1,9 +1,13 @@
 import Map from "../components/Maps";
 
-function OwnMap() {
+interface OwnMapProps {
+  userID: string;
+}
+
+function OwnMap({ userID }: OwnMapProps) {
   return (
     <>
-      <Map />
+      <Map APIurl={userID} />
     </>
   );
 }

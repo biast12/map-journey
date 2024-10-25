@@ -14,8 +14,15 @@ import View from "ol/View";
 import { createStringXY } from "ol/coordinate.js";
 import { defaults as defaultControls } from "ol/control.js";
 import { useEffect } from "react";
+import useRequestData from "../hooks/useRequestData";
 
-const debug = true; // Set this to false to disable logging
+interface MapProps {
+  APIurl: string;
+}
+
+const debug = false; // Set this to false to disable logging
+
+const points: Point[] = [];
 
 const mousePositionControl = new MousePosition({
   coordinateFormat: createStringXY(4),
@@ -26,27 +33,21 @@ const mousePositionControl = new MousePosition({
   target: document.getElementById("mouse-position") as HTMLElement,
 });
 
-const points: Point[] = [];
-points.push(new Point(fromLonLat([10.873469253297491, 56.40895786787172])));
-points.push(new Point(fromLonLat([10.873463253297491, 56.40995786787172])));
-
-function Map() {
-  const getBrowserLocation = (map: OlMap, view: View) => {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const coordinates = fromLonLat([longitude, latitude]);
-        view.setCenter(coordinates);
-        view.setZoom(12);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  };
+function Map({ APIurl }: MapProps) {
+  const { makeRequest, data, error, isLoading } = useRequestData();
 
   useEffect(() => {
+    makeRequest(`pins/${APIurl}`);
+  }, [APIurl]);
+
+  useEffect(() => {
+    if (Array.isArray(data)) {
+      data.forEach((pin: any) => {
+        points.push(new Point(fromLonLat([pin.longitude, pin.latitude])));
+        console.log(`Pin: Longitude: ${pin.longitude}, Latitude: ${pin.latitude}`);
+      });
+    }
+
     const view = new View({
       center: [0, 0],
       zoom: 2,
@@ -85,7 +86,22 @@ function Map() {
         console.log(`Longitude: ${coordinates[0]}, Latitude: ${coordinates[1]}`);
       }
     });
-  }, []);
+  }, [data]);
+
+  const getBrowserLocation = (map: OlMap, view: View) => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const coordinates = fromLonLat([longitude, latitude]);
+        view.setCenter(coordinates);
+        view.setZoom(12);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
 
   return <div id="map"></div>;
 }

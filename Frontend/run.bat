@@ -1,1 +1,1 @@
-Ionic serve --host=192.168.1.12 --port=8100 --livereload --no-open
+Ionic serve --port=8100 --livereload --no-open
