@@ -1,0 +1,45 @@
+ion-card-title {
+  margin-bottom: 2rem;
+}
+#confirmButton {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  ion-button {
+    width: 30%;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+.addimagebutton {
+  display: "flex";
+  align-items: center;
+  position: relative;
+  margin-left: 0.9rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  ion-button {
+    border-radius: 50%;
+    ion-button {
+      position: absolute;
+    }
+    &-1 {
+      left: 150px;
+    }
+    &-2 {
+      left: 300px;
+    }
+  }
+}

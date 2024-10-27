@@ -1,6 +1,14 @@
 import { useState } from "react";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
+/* Examples of hooks */
+/*
+makeRequest(`users`);
+makeRequest(`users`, "POST", { "Content-Type": "application/json" }, { name: "John Doe" });
+makeRequest(`users/${id}`, "PUT", { "Content-Type": "application/json" }, { name: "Jane Doe" });
+makeRequest(`users/${id}`, "DELETE");
+*/
+
 interface RequestData {
   makeRequest: (url: string, method?: string, headers?: Record<string, string> | undefined, data?: any) => Promise<void>;
   isLoading: boolean;

@@ -1,0 +1,30 @@
+#loginModal {
+  --border-radius: 6px;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+  background-color: transparent;
+  h1 {
+    margin: 10px 10px 15px 0px;
+  }
+  ion-icon {
+    margin-right: 6px;
+    width: 48px;
+    height: 48px;
+    padding: 4px 0;
+    color: #aaaaaa;
+  }
+  .loginWrapper {
+    margin-bottom: 20px;
+    margin-top: 10px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+#loginButton {
+  margin-top: 10px;
+}
+#loginFailed {
+  color: red;
+  margin: 0;
+  margin-top: 5px;
+  font-size: 0.9rem;
+}

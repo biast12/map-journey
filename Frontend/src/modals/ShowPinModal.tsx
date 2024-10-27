@@ -7,18 +7,12 @@ import {
   IonCardContent,
   IonButton,
 } from "@ionic/react";
-import "./ShowPin.scss";
+import "./ShowPinModal.scss";
 
 const ShowPin = () => {
-  const [isVisible, setIsVisible] = useState(true);
-
-  const showButton = () => {
-    setIsVisible(!isVisible); // Toggle the visibility state
-  };
 
   return (
     <>
-      {isVisible && (
         <IonCard id="showPinCard">
           <IonCardHeader>
             <IonCardTitle>My First Pin!</IonCardTitle>
@@ -47,17 +41,14 @@ const ShowPin = () => {
                 alt="Silhouette of mountains"
                 src="https://ionicframework.com/docs/img/demos/card-media.png"
               />
-              <p>Krisz123</p>
+              <p>(USERNAME)</p>
               <IonButton>Add</IonButton>
             </div>
           </IonCardContent>
           <div id="showPinCardButtons">
-            <IonButton onClick={showButton}>Back</IonButton>
             <IonButton>Report</IonButton>
           </div>
         </IonCard>
-      )}
-      <IonButton onClick={showButton}>Show</IonButton>
     </>
   );
 };

@@ -22,8 +22,6 @@ interface MapProps {
 
 const debug = false; // Set this to false to disable logging
 
-const points: Point[] = [];
-
 const mousePositionControl = new MousePosition({
   coordinateFormat: createStringXY(4),
   projection: "EPSG:4326",
@@ -34,6 +32,7 @@ const mousePositionControl = new MousePosition({
 });
 
 function Map({ APIurl }: MapProps) {
+  const points: Point[] = [];
   const { makeRequest, data, error, isLoading } = useRequestData();
 
   useEffect(() => {
@@ -103,7 +102,7 @@ function Map({ APIurl }: MapProps) {
     );
   };
 
-  return <div id="map"></div>;
+  return data && <div id="map"></div>;
 }
 
 export default Map;

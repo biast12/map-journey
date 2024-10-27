@@ -59,5 +59,5 @@ app.use("/pins", require("./routes/pins.routes.js"));
 
 // LISTEN --------------------------------------------------------------------------------------------------
 app.listen(PORT, () =>
-  console.log(`listenng on port ${HOST}:${PORT}`)
+  console.log(`Listening on: http://${HOST}:${PORT}`)
 );
