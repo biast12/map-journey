@@ -67,7 +67,7 @@ import NotificationModal from "./modals/NotificationModal";
 setupIonicReact();
 
 const userstatus: string = "admin";
-const userID: number | null = null;
+const userID: number | null = 2;
 const NotificationNum: number = 1;
 
 const App: React.FC = () => {
