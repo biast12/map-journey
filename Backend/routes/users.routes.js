@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const supabase = require("../supabaseClient"); // Import the Supabase client
+const bcrypt = require("bcrypt");
+const supabase = require("../supabaseClient");
 
 router.get("/", (req, res) => {
   res.send("User Route");
@@ -11,7 +12,6 @@ router.get("/all", (req, res) => {
   res.send("Get all users");
 });
 
-// Get a user by ID
 router.get("/:id", async (req, res) => {
   const { id } = req.params; // Get the user ID from the request parameters
 
@@ -54,7 +54,10 @@ router.post("/create", async (req, res) => {
   }
 
   try {
-    // Step 1: Create default settings
+    const saltRounds = 10; // Recommended bcrypt salt rounds
+    const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
+
+    // Step 2: Create default settings
     const { data: settingsData, error: settingsError } = await supabase
       .from("settings")
       .insert([
@@ -63,7 +66,7 @@ router.post("/create", async (req, res) => {
           language: "en",
           notification: true,
         },
-      ]) // Default values
+      ])
       .select("id") // Request the ID of the newly created settings
       .single(); // Get the created settings entry
 
@@ -73,13 +76,13 @@ router.post("/create", async (req, res) => {
       return res.status(500).json({ error: "Error creating settings" });
     }
 
-    // Step 2: Create the user profile
+    // Step 3: Create the user profile with the hashed password
     if (settingsData) {
       const { error: profileError } = await supabase.from("profile").insert([
         {
           name,
           email,
-          password,
+          password: hashedPassword, // Save the hashed password
           settings_id: settingsData.id, // Use the settings ID
         },
       ]);
@@ -88,7 +91,7 @@ router.post("/create", async (req, res) => {
       if (profileError) {
         console.error("Error creating profile:", profileError);
         // Optional: Rollback the settings creation if necessary
-        await supabase.from("settings").delete().eq("id", settingsData.i); // Delete the created settings if profile creation fails
+        await supabase.from("settings").delete().eq("id", settingsData.id); // Delete the created settings if profile creation fails
         return res.status(500).json({ error: "Error creating profile" });
       }
     }
@@ -120,6 +123,48 @@ router.get("/settings/:id", (req, res) => {
 router.put("/settings/:id", (req, res) => {
   const userId = req.params.id; // Extract user ID from the request parameters
   res.send(`You updated the settings for user with ID: ${userId}`);
+});
+
+// Login route
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body; // Get email and password from the request
+
+  // Check if email and password are provided
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
+  try {
+    // Query the 'profile' table to find the user by email
+    const { data: users, error } = await supabase
+      .from("profile")
+      .select("*")
+      .eq("email", email)
+      .single(); // Use .single() to fetch only one record
+
+    // If user not found or any error occurs
+    if (error || !users) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    const { password: hashedPassword } = users; // Get the hashed password from the user record
+
+    // Compare the hashed password with the provided password
+    const isPasswordValid = await bcrypt.compare(password, hashedPassword);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    // Successful login response
+    res.status(200).json({
+      message: "Login successful",
+      user: users, // Optionally, only send non-sensitive user info
+    });
+  } catch (err) {
+    // Handle unexpected server errors
+    res.status(500).json({ error: "Server error, please try again later." });
+  }
 });
 
 module.exports = router;
