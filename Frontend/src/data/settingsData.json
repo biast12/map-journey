@@ -1,0 +1,33 @@
+[
+    {
+      "name": "Notifications",
+      "icon": "notificationsOutline",
+      "isToggle": true
+    },
+    {
+      "name": "Account",
+      "icon": "personOutline",
+      "isToggle": false
+    },
+    {
+      "name": "Privacy",
+      "icon": "lockClosedOutline",
+      "isToggle": false
+    },
+    {
+      "name": "General",
+      "icon": "settingsOutline",
+      "isToggle": false
+    },
+    {
+      "name": "Language",
+      "icon": "settingsOutline",
+      "isToggle": false
+    },
+    {
+      "name": "Security",
+      "icon": "lockClosedOutline",
+      "isToggle": false
+    }
+  ]
+  

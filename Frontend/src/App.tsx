@@ -68,7 +68,7 @@ setupIonicReact();
 
 const userstatus: string = "admin";
 const userID: number | null = 2;
-const NotificationNum: number = 1;
+const NotificationNum: number = 2;
 
 const App: React.FC = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);

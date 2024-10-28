@@ -1,0 +1,53 @@
+#showPinCard {
+  width: 100%;
+  height: 90%;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+ion-card-title {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+#showPinImage {
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+ion-card-subtitle {
+  margin-bottom: 1rem;
+}
+
+ion-card-content {
+  & div {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center; 
+    justify-content: space-between;
+    & img {
+    width: 40px;
+    border-radius: 50%;
+  }
+    & p{
+        flex-grow: 1;
+        text-align: center;
+    }
+  }
+  
+}
+
+#showPinCardButtons{
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    border-top: 2px solid black;
+    & ion-button{
+        margin: 1.5rem;
+        margin-bottom: 2rem;
+    }
+}
