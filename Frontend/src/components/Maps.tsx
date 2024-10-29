@@ -13,8 +13,11 @@ import VectorSource from "ol/source/Vector";
 import View from "ol/View";
 import { createStringXY } from "ol/coordinate.js";
 import { defaults as defaultControls } from "ol/control.js";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { IonButton, IonIcon, IonModal } from "@ionic/react";
+import { close } from "ionicons/icons";
 import useRequestData from "../hooks/useRequestData";
+import ShowPinModal from "../modals/ShowPinModal";
 
 interface MapProps {
   APIurl: string;
@@ -34,6 +37,11 @@ const mousePositionControl = new MousePosition({
 function Map({ APIurl }: MapProps) {
   const points: Point[] = [];
   const { makeRequest, data, error, isLoading } = useRequestData();
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [selectedPin, setSelectedPin] = useState<any>(null);
+
+  const openShowPinModal = () => setShowPinModal(true);
+  const closeShowPinModal = () => setShowPinModal(false);
 
   useEffect(() => {
     makeRequest(`pins/${APIurl}`);
@@ -43,7 +51,6 @@ function Map({ APIurl }: MapProps) {
     if (Array.isArray(data)) {
       data.forEach((pin: any) => {
         points.push(new Point(fromLonLat([pin.longitude, pin.latitude])));
-        console.log(`Pin: Longitude: ${pin.longitude}, Latitude: ${pin.latitude}`);
       });
     }
 
@@ -52,10 +59,12 @@ function Map({ APIurl }: MapProps) {
       zoom: 2,
     }) as View;
     const vectorSource = new VectorSource({
-      features: points.map((point) => {
-        return new Feature({
+      features: points.map((point, index) => {
+        const feature = new Feature({
           geometry: point,
         });
+        feature.setId(index);
+        return feature;
       }),
     });
     const map = new OlMap({
@@ -76,14 +85,28 @@ function Map({ APIurl }: MapProps) {
     let lastLogTime = 0;
 
     // Add pointermove event listener to log mouse position
-    map.on('pointermove', (event) => {
+    map.on("pointermove", (event) => {
       if (!debug) return; // Check if debug is true
       const currentTime = Date.now();
       if (currentTime - lastLogTime >= 1000) {
         lastLogTime = currentTime;
         const coordinates = toLonLat(event.coordinate);
-        console.log(`Longitude: ${coordinates[0]}, Latitude: ${coordinates[1]}`);
+        console.log(
+          `Longitude: ${coordinates[0]}, Latitude: ${coordinates[1]}`
+        );
       }
+    });
+
+    // Add click event listener to open ShowPinModal
+    map.on("click", (event) => {
+      map.forEachFeatureAtPixel(event.pixel, (feature) => {
+        const pinIndex = feature.getId();
+        if (pinIndex !== undefined && data[pinIndex] !== undefined) {
+          const pinData = data[pinIndex];
+          setSelectedPin(pinData);
+          openShowPinModal();
+        }
+      });
     });
   }, [data]);
 
@@ -102,7 +125,23 @@ function Map({ APIurl }: MapProps) {
     );
   };
 
-  return data && <div id="map"></div>;
+  return (
+    <>
+      {data && <div id="map"></div>}
+      <IonModal isOpen={showPinModal} onDidDismiss={closeShowPinModal}>
+        <div className="modal-content">
+          <IonButton
+            className="close-button"
+            onClick={closeShowPinModal}
+            fill="clear"
+          >
+            <IonIcon icon={close} />
+          </IonButton>
+          <ShowPinModal pinData={selectedPin} />
+        </div>
+      </IonModal>
+    </>
+  );
 }
 
 export default Map;
