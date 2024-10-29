@@ -6,16 +6,12 @@ import "./LoginModal.scss";
 
 const LoginModal = () => {
   const [loginSuccess, setLoginSuccess] = useState<boolean | null>(null);
-  const [canDismiss, setCanDismiss] = useState<boolean>(true);
   const toast = useRef<HTMLIonToastElement>(null);
   const { makeRequest, isLoading, data, error } = useRequestData();
   const { storeToken } = useAuth();
 
   async function handleLogin(formEvent: FormEvent) {
     formEvent.preventDefault();
-
-    // Disable backdropDismiss while handling request
-    setCanDismiss(false);
 
     const formData = new FormData(formEvent.target as HTMLFormElement);
     const email = formData.get("email");
@@ -30,10 +26,6 @@ const LoginModal = () => {
     } else {
       setLoginSuccess(false);
     }
-
-    setTimeout(() => {
-      setCanDismiss(true);
-    }, 1500);
   }
 
   return (

@@ -9,8 +9,8 @@ makeRequest(`users/${id}`, "PUT", { "Content-Type": "application/json" }, { name
 makeRequest(`users/${id}`, "DELETE");
 */
 // https://mapapi.biast12.info
-// https://localhost:8101
-const domain = "https://localhost:8101";
+// http://localhost:8101
+const domain = "http://localhost:8101";
 
 interface RequestData {
   makeRequest: (

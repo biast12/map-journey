@@ -55,6 +55,9 @@ router.post("/", async (req, res) => {
   }
 
   try {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
+
     // Step 1: Create default settings
     const { data: settingsData, error: settingsError } = await supabase
       .from("settings")
@@ -64,7 +67,7 @@ router.post("/", async (req, res) => {
           language: "en",
           notification: true,
         },
-      ]) // Default values
+      ])
       .select("id") // Request the ID of the newly created settings
       .single(); // Get the created settings entry
 
@@ -111,6 +114,48 @@ router.put("/:id", (req, res) => {
 router.delete("/:id", (req, res) => {
   const userID = req.params.id;
   res.send(`Deletes user with ID: ${userID}`);
+});
+
+// Login route
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body; // Get email and password from the request
+
+  // Check if email and password are provided
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
+  try {
+    // Query the 'profile' table to find the user by email
+    const { data: users, error } = await supabase
+      .from("profile")
+      .select("*")
+      .eq("email", email)
+      .single(); // Use .single() to fetch only one record
+
+    // If user not found or any error occurs
+    if (error || !users) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    const { password: hashedPassword } = users; // Get the hashed password from the user record
+
+    // Compare the hashed password with the provided password
+    const isPasswordValid = await bcrypt.compare(password, hashedPassword);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    // Successful login response
+    res.status(200).json({
+      message: "Login successful",
+      user: users, // Optionally, only send non-sensitive user info
+    });
+  } catch (err) {
+    // Handle unexpected server errors
+    res.status(500).json({ error: "Server error, please try again later." });
+  }
 });
 
 module.exports = router;
