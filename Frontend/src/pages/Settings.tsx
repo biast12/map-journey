@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  IonPage,
   IonHeader,
   IonToolbar,
   IonTitle,
@@ -26,9 +25,8 @@ const Settings: React.FC = () => {
     { name: "Privacy", icon: lockClosedOutline },
     { name: "Language", icon: flagOutline },
   ];
-  // CURRENTLY CANNOT CLOSE SETTINGS, NEED TO REFRESH MANUALLY
   return (
-    <IonPage>
+    <>
       <IonHeader>
         <IonToolbar>
           <IonTitle>Settings</IonTitle>
@@ -37,14 +35,18 @@ const Settings: React.FC = () => {
       <IonContent>
         <IonList>
           {settingsData.map((setting, index) => (
-            <IonItem key={index} button>
+            <IonItem
+              key={index}
+              button
+              href={"/settings/" + setting.name.toLowerCase()}
+            >
               <IonIcon icon={setting.icon} slot="start" />
               <IonLabel>{setting.name}</IonLabel>
             </IonItem>
           ))}
         </IonList>
       </IonContent>
-    </IonPage>
+    </>
   );
 };
 

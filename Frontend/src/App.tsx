@@ -35,6 +35,7 @@ import {
   setupIonicReact,
   IonBadge,
   IonModal,
+  IonPage,
 } from "@ionic/react";
 import { Redirect, Route } from "react-router-dom";
 import { IonReactRouter } from "@ionic/react-router";
@@ -126,6 +127,7 @@ const App: React.FC = () => {
         <IonContent>
           <IonTabs>
             <IonRouterOutlet>
+            <IonPage>
               <Route exact={true} path="/">
                 <Redirect to="/globalmap" />
               </Route>
@@ -137,6 +139,7 @@ const App: React.FC = () => {
               <Route exact={true} path="/ownmap" render={() => userID && <OwnMap userID={userID.toString()} />} />
               <Route exact={true} path="/admin" render={() => userstatus == "admin" && <Admin />} />
               <Route exact={true} path="/settings" render={() => userID && <Settings />} />
+              </IonPage>
             </IonRouterOutlet>
             <IonTabBar slot="bottom">
               <IonTabButton tab="globalmap" href="/globalmap">
