@@ -51,11 +51,10 @@ app.get("/", async (req, res) => {
 });
 
 //  ROUTES -------------------------------------------
-app.use("/globalmap", require("./routes/globalmap.routes.js"));
-app.use("/ownmap", require("./routes/ownmap.routes.js"));
-app.use("/users", require("./routes/users.routes.js"));
 app.use("/notification", require("./routes/notification.routes.js"));
 app.use("/pins", require("./routes/pins.routes.js"));
+app.use("/settings", require("./routes/settings.routes.js"));
+app.use("/users", require("./routes/users.routes.js"));
 
 // LISTEN --------------------------------------------------------------------------------------------------
 app.listen(PORT, () =>

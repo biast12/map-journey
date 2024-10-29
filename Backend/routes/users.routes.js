@@ -1,28 +1,28 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcrypt");
-const supabase = require("../supabaseClient"); // Import the Supabase client
+const supabase = require("../supabaseClient");
 
+// Root route
 router.get("/", (req, res) => {
   res.send("User Route");
 });
 
-// Get all users
+// Get all users (Add security)
 router.get("/all", (req, res) => {
   res.send("Get all users");
 });
 
 // Get a user by ID
 router.get("/:id", async (req, res) => {
-  const { id } = req.params; // Get the user ID from the request parameters
+  const userID = req.params.id;
 
   try {
     // Query the 'profile' table for the user with the given ID
     const { data: user, error } = await supabase
       .from("profile")
       .select("*")
-      .eq("id", id)
-      .single(); // Get a single user by ID
+      .eq("id", userID)
+      .single();
 
     // Handle any errors during the query
     if (error) {
@@ -44,8 +44,8 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new user and default settings
-router.post("/create", async (req, res) => {
-  const { name, email, password } = req.body; // Destructure request body
+router.post("/", async (req, res) => {
+  const { name, email, password } = req.body;
 
   // Validate input
   if (!name || !email || !password) {
@@ -83,16 +83,16 @@ router.post("/create", async (req, res) => {
         {
           name,
           email,
-          password: hashedPassword, // Save the hashed password
-          settings_id: settingsData.id, // Use the settings ID
+          password,
+          settings_id: settingsData.id,
         },
       ]);
 
       // Handle profile creation error
       if (profileError) {
         console.error("Error creating profile:", profileError);
-        // Optional: Rollback the settings creation if necessary
-        await supabase.from("settings").delete().eq("id", settingsData.id); // Delete the created settings if profile creation fails
+        // Delete the created settings if profile creation fails
+        await supabase.from("settings").delete().eq("id", settingsData.i);
         return res.status(500).json({ error: "Error creating profile" });
       }
     }
@@ -104,26 +104,16 @@ router.post("/create", async (req, res) => {
   }
 });
 
-// Update a user by ID
+// Update a user by User ID (Add security)
 router.put("/:id", (req, res) => {
-  res.send("Updates user by ID");
+  const userID = req.params.id;
+  res.send(`Updates user with ID: ${userID}`);
 });
 
-// Delete a user by ID
+// Delete a user by User ID (Add security)
 router.delete("/:id", (req, res) => {
-  res.send("Deletes user by ID");
-});
-
-// Get a user's settings by ID
-router.get("/settings/:id", (req, res) => {
-  const userId = req.params.id; // Extract user ID from the request parameters
-  res.send(`You got the settings for user with ID: ${userId}`);
-});
-
-// Update a user's settings by ID
-router.put("/settings/:id", (req, res) => {
-  const userId = req.params.id; // Extract user ID from the request parameters
-  res.send(`You updated the settings for user with ID: ${userId}`);
+  const userID = req.params.id;
+  res.send(`Deletes user with ID: ${userID}`);
 });
 
 // Login route

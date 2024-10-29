@@ -51,6 +51,7 @@ import {
 
 /* Hooks */
 import useRequestData from "./hooks/useRequestData";
+import useAuth from "./hooks/useAuth";
 
 /* Pages */
 import Admin from "./pages/admin/Page";
@@ -66,14 +67,14 @@ import NotificationModal from "./modals/NotificationModal";
 /* App */
 setupIonicReact();
 
-const userstatus: string = "admin";
-const userID: number | null = 2;
-const NotificationNum: number = 1;
-
 const App: React.FC = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [makePinModal, setMakePinModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [notificationNum, setNotificationNum] = useState<number>(1);
+
+  const { userID, userStatus, storeToken, clearToken } = useAuth();
+  const { makeRequest, data, error, isLoading } = useRequestData();
 
   const openLoginModal = () => setShowLoginModal(true);
   const closeLoginModal = () => setShowLoginModal(false);
@@ -84,10 +85,11 @@ const App: React.FC = () => {
   const openNotificationModal = () => setShowNotificationModal(true);
   const closeNotificationModal = () => setShowNotificationModal(false);
 
-  const { makeRequest, data, error, isLoading } = useRequestData();
   useEffect(() => {
     if (userID) {
       makeRequest(`users/${userID}`);
+    } else {
+      openLoginModal();
     }
   }, [userID]);
 
@@ -100,13 +102,13 @@ const App: React.FC = () => {
               <IonImg src="/icons/webp/logo1.webp" alt="Logo" />
             </IonButton>
             <div className="IonButtonContainer">
-              {NotificationNum >= 1 && (
+              {notificationNum >= 1 && (
                 <IonButton fill="clear" onClick={openNotificationModal}>
                   <IonIcon aria-hidden="true" icon={notifications} />
-                  <IonBadge color="danger">{NotificationNum}</IonBadge>
+                  <IonBadge color="danger">{notificationNum}</IonBadge>
                 </IonButton>
               )}
-              {userstatus === "admin" && (
+              {userStatus === "admin" && (
                 <IonButton routerLink="/admin" fill="clear">
                   <IonIcon aria-hidden="true" icon={shieldHalf} />
                 </IonButton>
@@ -126,26 +128,22 @@ const App: React.FC = () => {
         <IonContent>
           <IonTabs>
             <IonRouterOutlet>
-              <Route exact={true} path="/">
+              <Route exact path="/">
                 <Redirect to="/globalmap" />
               </Route>
+              <Route exact path="/globalmap" render={() => <GlobalMap />} />
               <Route
-                exact={true}
-                path="/globalmap"
-                render={() => <GlobalMap />}
-              />
-              <Route
-                exact={true}
+                exact
                 path="/ownmap"
                 render={() => userID && <OwnMap userID={userID.toString()} />}
               />
               <Route
-                exact={true}
+                exact
                 path="/admin"
-                render={() => userstatus == "admin" && <Admin />}
+                render={() => userStatus === "admin" && <Admin />}
               />
               <Route
-                exact={true}
+                exact
                 path="/settings"
                 render={() => userID && <Settings />}
               />
@@ -156,18 +154,14 @@ const App: React.FC = () => {
                 <IonLabel>Global Map</IonLabel>
               </IonTabButton>
               <IonTabButton
-                disabled={userID ? false : true}
+                disabled={!userID}
                 tab="makePinModal"
                 onClick={openMakePinModal}
               >
                 <IonIcon aria-hidden="true" icon={pin} />
-                <IonLabel>Add pin</IonLabel>
+                <IonLabel>Add Pin</IonLabel>
               </IonTabButton>
-              <IonTabButton
-                disabled={userID ? false : true}
-                tab="ownmap"
-                href="/ownmap"
-              >
+              <IonTabButton disabled={!userID} tab="ownmap" href="/ownmap">
                 <IonIcon aria-hidden="true" icon={map} />
                 <IonLabel>Own Map</IonLabel>
               </IonTabButton>

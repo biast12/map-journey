@@ -1,19 +1,28 @@
 const express = require("express");
 const router = express.Router();
-const supabase = require("../supabaseClient"); // Import the Supabase client
+const supabase = require("../supabaseClient");
 
-// Define your routes here
+// Root route
 router.get("/", (req, res) => {
   res.send("Pins Route");
 });
 
-// Get all pins
+// Get all pins with associated profile data
 router.get("/all", async (req, res) => {
   try {
-    // Query the 'pins' table, filtering for status 'public'
+    // Query the 'pins' table, joining the 'profile' table on profile_id
     const { data: pins, error } = await supabase
       .from("pins")
-      .select("*")
+      .select(
+        `
+        *,
+        profile:profile_id (
+          id,
+          name,
+          avatar
+        )
+      `
+      )
       .eq("status", "public");
 
     // Handle any potential errors from the query
@@ -22,7 +31,7 @@ router.get("/all", async (req, res) => {
       return res.status(500).json({ error: "Error fetching public pins" });
     }
 
-    // Return the list of public pins
+    // Return the list of public pins with profile data
     res.status(200).json(pins);
   } catch (error) {
     console.error("Error during fetch:", error);
@@ -31,15 +40,41 @@ router.get("/all", async (req, res) => {
 });
 
 // Get pins by user ID
-router.get("/:id", (req, res) => {
-  res.send("Get pin from ID");
+router.get("/:id", async (req, res) => {
+  const userID = req.params.id;
+
+  try {
+    // Query the 'pins' table, joining the 'profile' table on profile_id
+    const { data: pins, error } = await supabase
+      .from("pins")
+      .select(
+        `
+        *,
+        profile:profile_id (
+          id,
+          name,
+          avatar
+        )
+      `
+      )
+      .eq("profile_id", userID); // Filter pins by the specified user ID
+
+    // Handle any potential errors from the query
+    if (error) {
+      console.error("Error fetching pins for user ID:", error);
+      return res.status(500).json({ error: "Error fetching pins for user" });
+    }
+
+    // Return the list of pins for the specified user
+    res.status(200).json(pins);
+  } catch (error) {
+    console.error("Error during fetch:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
-router.get("/user/:id", (req, res) => {
-  res.send("Get pins from users ID");
-});
-
-router.post("/create", async (req, res) => {
+// Create a new pin
+router.post("/", async (req, res) => {
   const {
     profile_id,
     title,
@@ -101,26 +136,18 @@ router.post("/create", async (req, res) => {
   }
 });
 
-// Update a user by ID
-router.put("/:id", (req, res) => {
-  res.send("Updates user by ID");
+// Update a pin by User ID and Pin ID (Add security)
+router.put("/:id/:pinid", (req, res) => {
+  const userID = req.params.id;
+  const pinID = req.params.pinid;
+  res.send(`Updates user with ID: ${userID} and ${pinID}`);
 });
 
-// Delete a user by ID
-router.delete("/:id", (req, res) => {
-  res.send("Deletes user by ID");
-});
-
-// Get a user's settings by ID
-router.get("/settings/:id", (req, res) => {
-  const userId = req.params.id;
-  res.send(`You got the settings for user with ID: ${userId}`);
-});
-
-// Update a user's settings by ID
-router.put("/settings/:id", (req, res) => {
-  const userId = req.params.id;
-  res.send(`You updated the settings for user with ID: ${userId}`);
+// Delete a pin by User ID and Pin ID (Add security)
+router.delete("/:id/:pinid", (req, res) => {
+  const userID = req.params.id;
+  const pinID = req.params.pinid;
+  res.send(`Deletes user with ID and Pin ID: ${userID} and ${pinID}`);
 });
 
 module.exports = router;

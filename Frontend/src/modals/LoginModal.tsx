@@ -1,13 +1,14 @@
-"use client"
 import { IonButton, IonInput, IonInputPasswordToggle, IonToast } from "@ionic/react";
 import { FormEvent, useRef, useState } from "react";
 import useRequestData from "../hooks/useRequestData";
+import useAuth from "../hooks/useAuth";
 import "./LoginModal.scss";
 
 const LoginModal = () => {
   const [loginSuccess, setLoginSuccess] = useState<boolean | null>(null);
   const toast = useRef<HTMLIonToastElement>(null);
   const { makeRequest, isLoading, data, error } = useRequestData();
+  const { storeToken } = useAuth();
 
   async function handleLogin(formEvent: FormEvent) {
     formEvent.preventDefault();
@@ -21,6 +22,7 @@ const LoginModal = () => {
     if (!error && data) {
       setLoginSuccess(true);
       toast.current?.present();
+      storeToken(data.token); // Store the token on successful login
     } else {
       setLoginSuccess(false);
     }

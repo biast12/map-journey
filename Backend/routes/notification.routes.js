@@ -1,6 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const supabase = require("../supabaseClient"); // Import the Supabase client
+const supabase = require("../supabaseClient");
+
+// Root route
+router.get("/", (req, res) => {
+  res.send("Notification Route");
+});
 
 // Get all news articles
 router.get("/all", async (req, res) => {
@@ -11,29 +16,29 @@ router.get("/all", async (req, res) => {
       .order("date", { ascending: false }); // Order by date, newest first
 
     if (error) {
-      throw error; // Handle the error if one occurred
+      throw error;
     }
 
     res.json(newsArticles); // Send the news articles as a JSON response
   } catch (error) {
-    console.error(error); // Log the error
+    console.error(error);
     res.status(500).send("Error fetching news articles"); // Send a 500 error response
   }
 });
 
 // Get a specific news article by ID
 router.get("/:id", async (req, res) => {
-  const { id } = req.params; // Get the ID from the request parameters
+  const articleID = req.params.id;
 
   try {
     const { data: newsArticle, error } = await supabase
       .from("news")
       .select("*")
-      .eq("id", id) // Filter by the ID
-      .single(); // Get a single article
+      .eq("id", articleID)
+      .single();
 
     if (error) {
-      throw error; // Handle the error if one occurred
+      throw error;
     }
 
     if (!newsArticle) {
@@ -42,9 +47,26 @@ router.get("/:id", async (req, res) => {
 
     res.json(newsArticle); // Send the news article as a JSON response
   } catch (error) {
-    console.error(error); // Log the error
-    res.status(500).send("Error fetching news article"); // Send a 500 error response
+    console.error(error);
+    res.status(500).send("Error fetching news article");
   }
+});
+
+// Create a new news article (Add security)
+router.post("/", async (req, res) => {
+  res.send("Create a new news article");
+});
+
+// Update a news article by ID (Add security)
+router.put("/:id", (req, res) => {
+  const articleID = req.params.id;
+  res.send(`Updated the article with ID: ${articleID}`);
+});
+
+// Delete a pin by User ID and Pin ID (Add security)
+router.delete("/:id/:pinid", (req, res) => {
+  const articleID = req.params.id;
+  res.send(`Deletes the article with ID: ${articleID}`);
 });
 
 module.exports = router;
