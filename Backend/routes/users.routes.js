@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const supabase = require("../supabaseClient");
+const supabase = require("../supabaseClient"); // Import the Supabase client
 
 router.get("/", (req, res) => {
   res.send("User Route");
@@ -12,6 +12,7 @@ router.get("/all", (req, res) => {
   res.send("Get all users");
 });
 
+// Get a user by ID
 router.get("/:id", async (req, res) => {
   const { id } = req.params; // Get the user ID from the request parameters
 
@@ -54,10 +55,10 @@ router.post("/create", async (req, res) => {
   }
 
   try {
-    const saltRounds = 10; // Recommended bcrypt salt rounds
+    const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
 
-    // Step 2: Create default settings
+    // Step 1: Create default settings
     const { data: settingsData, error: settingsError } = await supabase
       .from("settings")
       .insert([
@@ -76,7 +77,7 @@ router.post("/create", async (req, res) => {
       return res.status(500).json({ error: "Error creating settings" });
     }
 
-    // Step 3: Create the user profile with the hashed password
+    // Step 2: Create the user profile
     if (settingsData) {
       const { error: profileError } = await supabase.from("profile").insert([
         {
@@ -113,13 +114,13 @@ router.delete("/:id", (req, res) => {
   res.send("Deletes user by ID");
 });
 
-// Get a user's settings by ID (Fixed)
+// Get a user's settings by ID
 router.get("/settings/:id", (req, res) => {
   const userId = req.params.id; // Extract user ID from the request parameters
   res.send(`You got the settings for user with ID: ${userId}`);
 });
 
-// Update a user's settings by ID (Fixed)
+// Update a user's settings by ID
 router.put("/settings/:id", (req, res) => {
   const userId = req.params.id; // Extract user ID from the request parameters
   res.send(`You updated the settings for user with ID: ${userId}`);
