@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcrypt");
 const supabase = require("../supabaseClient"); // Import the Supabase client
 
 router.get("/", (req, res) => {
@@ -54,6 +55,9 @@ router.post("/create", async (req, res) => {
   }
 
   try {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
+
     // Step 1: Create default settings
     const { data: settingsData, error: settingsError } = await supabase
       .from("settings")
@@ -63,7 +67,7 @@ router.post("/create", async (req, res) => {
           language: "en",
           notification: true,
         },
-      ]) // Default values
+      ])
       .select("id") // Request the ID of the newly created settings
       .single(); // Get the created settings entry
 
@@ -79,7 +83,7 @@ router.post("/create", async (req, res) => {
         {
           name,
           email,
-          password,
+          password: hashedPassword, // Save the hashed password
           settings_id: settingsData.id, // Use the settings ID
         },
       ]);
@@ -88,7 +92,7 @@ router.post("/create", async (req, res) => {
       if (profileError) {
         console.error("Error creating profile:", profileError);
         // Optional: Rollback the settings creation if necessary
-        await supabase.from("settings").delete().eq("id", settingsData.i); // Delete the created settings if profile creation fails
+        await supabase.from("settings").delete().eq("id", settingsData.id); // Delete the created settings if profile creation fails
         return res.status(500).json({ error: "Error creating profile" });
       }
     }
@@ -110,16 +114,58 @@ router.delete("/:id", (req, res) => {
   res.send("Deletes user by ID");
 });
 
-// Get a user's settings by ID (Fixed)
+// Get a user's settings by ID
 router.get("/settings/:id", (req, res) => {
   const userId = req.params.id; // Extract user ID from the request parameters
   res.send(`You got the settings for user with ID: ${userId}`);
 });
 
-// Update a user's settings by ID (Fixed)
+// Update a user's settings by ID
 router.put("/settings/:id", (req, res) => {
   const userId = req.params.id; // Extract user ID from the request parameters
   res.send(`You updated the settings for user with ID: ${userId}`);
+});
+
+// Login route
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body; // Get email and password from the request
+
+  // Check if email and password are provided
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
+  try {
+    // Query the 'profile' table to find the user by email
+    const { data: users, error } = await supabase
+      .from("profile")
+      .select("*")
+      .eq("email", email)
+      .single(); // Use .single() to fetch only one record
+
+    // If user not found or any error occurs
+    if (error || !users) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    const { password: hashedPassword } = users; // Get the hashed password from the user record
+
+    // Compare the hashed password with the provided password
+    const isPasswordValid = await bcrypt.compare(password, hashedPassword);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    // Successful login response
+    res.status(200).json({
+      message: "Login successful",
+      user: users, // Optionally, only send non-sensitive user info
+    });
+  } catch (err) {
+    // Handle unexpected server errors
+    res.status(500).json({ error: "Server error, please try again later." });
+  }
 });
 
 module.exports = router;
