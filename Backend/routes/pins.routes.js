@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const supabase = require("../supabaseClient"); // Import the Supabase client
+const supabase = require("../supabaseClient");
 
-// Define your routes here
+// Root route
 router.get("/", (req, res) => {
   res.send("Pins Route");
 });
@@ -39,9 +39,9 @@ router.get("/all", async (req, res) => {
   }
 });
 
-// Get pins by user ID with associated profile data
+// Get pins by user ID
 router.get("/:id", async (req, res) => {
-  const userId = req.params.id; // Extract user ID from the request parameters
+  const userID = req.params.id;
 
   try {
     // Query the 'pins' table, joining the 'profile' table on profile_id
@@ -57,7 +57,7 @@ router.get("/:id", async (req, res) => {
         )
       `
       )
-      .eq("profile_id", userId); // Filter pins by the specified user ID
+      .eq("profile_id", userID); // Filter pins by the specified user ID
 
     // Handle any potential errors from the query
     if (error) {
@@ -73,11 +73,8 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.get("/user/:id", (req, res) => {
-  res.send("Get pins from users ID");
-});
-
-router.post("/create", async (req, res) => {
+// Create a new pin
+router.post("/", async (req, res) => {
   const {
     profile_id,
     title,
@@ -139,26 +136,18 @@ router.post("/create", async (req, res) => {
   }
 });
 
-// Update a user by ID
-router.put("/:id", (req, res) => {
-  res.send("Updates user by ID");
+// Update a pin by User ID and Pin ID (Add security)
+router.put("/:id/:pinid", (req, res) => {
+  const userID = req.params.id;
+  const pinID = req.params.pinid;
+  res.send(`Updates user with ID: ${userID} and ${pinID}`);
 });
 
-// Delete a user by ID
-router.delete("/:id", (req, res) => {
-  res.send("Deletes user by ID");
-});
-
-// Get a user's settings by ID
-router.get("/settings/:id", (req, res) => {
-  const userId = req.params.id;
-  res.send(`You got the settings for user with ID: ${userId}`);
-});
-
-// Update a user's settings by ID
-router.put("/settings/:id", (req, res) => {
-  const userId = req.params.id;
-  res.send(`You updated the settings for user with ID: ${userId}`);
+// Delete a pin by User ID and Pin ID (Add security)
+router.delete("/:id/:pinid", (req, res) => {
+  const userID = req.params.id;
+  const pinID = req.params.pinid;
+  res.send(`Deletes user with ID and Pin ID: ${userID} and ${pinID}`);
 });
 
 module.exports = router;
