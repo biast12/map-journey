@@ -7,13 +7,22 @@ router.get("/", (req, res) => {
   res.send("Pins Route");
 });
 
-// Get all pins
+// Get all pins with associated profile data
 router.get("/all", async (req, res) => {
   try {
-    // Query the 'pins' table, filtering for status 'public'
+    // Query the 'pins' table, joining the 'profile' table on profile_id
     const { data: pins, error } = await supabase
       .from("pins")
-      .select("*")
+      .select(
+        `
+        *,
+        profile:profile_id (
+          id,
+          name,
+          avatar
+        )
+      `
+      )
       .eq("status", "public");
 
     // Handle any potential errors from the query
@@ -22,7 +31,7 @@ router.get("/all", async (req, res) => {
       return res.status(500).json({ error: "Error fetching public pins" });
     }
 
-    // Return the list of public pins
+    // Return the list of public pins with profile data
     res.status(200).json(pins);
   } catch (error) {
     console.error("Error during fetch:", error);
@@ -30,9 +39,38 @@ router.get("/all", async (req, res) => {
   }
 });
 
-// Get pins by user ID
-router.get("/:id", (req, res) => {
-  res.send("Get pin from ID");
+// Get pins by user ID with associated profile data
+router.get("/:id", async (req, res) => {
+  const userId = req.params.id; // Extract user ID from the request parameters
+
+  try {
+    // Query the 'pins' table, joining the 'profile' table on profile_id
+    const { data: pins, error } = await supabase
+      .from("pins")
+      .select(
+        `
+        *,
+        profile:profile_id (
+          id,
+          name,
+          avatar
+        )
+      `
+      )
+      .eq("profile_id", userId); // Filter pins by the specified user ID
+
+    // Handle any potential errors from the query
+    if (error) {
+      console.error("Error fetching pins for user ID:", error);
+      return res.status(500).json({ error: "Error fetching pins for user" });
+    }
+
+    // Return the list of pins for the specified user
+    res.status(200).json(pins);
+  } catch (error) {
+    console.error("Error during fetch:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 router.get("/user/:id", (req, res) => {

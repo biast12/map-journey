@@ -48,6 +48,7 @@ import {
   logIn,
   close,
 } from "ionicons/icons";
+import { Preferences } from "@capacitor/preferences";
 
 /* Hooks */
 import useRequestData from "./hooks/useRequestData";
@@ -66,14 +67,14 @@ import NotificationModal from "./modals/NotificationModal";
 /* App */
 setupIonicReact();
 
-const userstatus: string = "admin";
-const userID: number | null = 2;
-const NotificationNum: number = 1;
-
 const App: React.FC = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [makePinModal, setMakePinModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+
+  const [userID, setUserID] = useState<number | null>(null);
+  const [userStatus, setUserStatus] = useState<string>("");
+  const [notificationNum, setNotificationNum] = useState<number>(1);
 
   const openLoginModal = () => setShowLoginModal(true);
   const closeLoginModal = () => setShowLoginModal(false);
@@ -85,11 +86,43 @@ const App: React.FC = () => {
   const closeNotificationModal = () => setShowNotificationModal(false);
 
   const { makeRequest, data, error, isLoading } = useRequestData();
+
+  // Function to store the token and user status
+  const storeToken = async (token: string) => {
+    await Preferences.set({ key: "authToken", value: token });
+    const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decode JWT token
+    setUserID(parseInt(decodedToken.sub)); // Extract user ID from token
+    setUserStatus(decodedToken.role || "user"); // Set user role from token or default to "user"
+  };
+
+  // Function to get token from storage
+  const getToken = async () => {
+    const { value } = await Preferences.get({ key: "authToken" });
+    return value;
+  };
+
+  // Function to clear token on logout
+  const clearToken = async () => {
+    await Preferences.remove({ key: "authToken" });
+    setUserID(null);
+    setUserStatus("");
+  };
+
+  // Check if user is logged in on app load
   useEffect(() => {
-    if (userID) {
-      makeRequest(`users/${userID}`);
+    async function checkAuthStatus() {
+      const token = await getToken();
+      if (token) {
+        const decodedToken = JSON.parse(atob(token.split(".")[1]));
+        setUserID(parseInt(decodedToken.sub));
+        setUserStatus(decodedToken.role || "user");
+        makeRequest(`users/${userID}`);
+      } else {
+        openLoginModal();
+      }
     }
-  }, [userID]);
+    checkAuthStatus();
+  }, []);
 
   return (
     <IonApp>
@@ -100,13 +133,13 @@ const App: React.FC = () => {
               <IonImg src="/icons/webp/logo1.webp" alt="Logo" />
             </IonButton>
             <div className="IonButtonContainer">
-              {NotificationNum >= 1 && (
+              {notificationNum >= 1 && (
                 <IonButton fill="clear" onClick={openNotificationModal}>
                   <IonIcon aria-hidden="true" icon={notifications} />
-                  <IonBadge color="danger">{NotificationNum}</IonBadge>
+                  <IonBadge color="danger">{notificationNum}</IonBadge>
                 </IonButton>
               )}
-              {userstatus === "admin" && (
+              {userStatus === "admin" && (
                 <IonButton routerLink="/admin" fill="clear">
                   <IonIcon aria-hidden="true" icon={shieldHalf} />
                 </IonButton>
@@ -126,26 +159,22 @@ const App: React.FC = () => {
         <IonContent>
           <IonTabs>
             <IonRouterOutlet>
-              <Route exact={true} path="/">
+              <Route exact path="/">
                 <Redirect to="/globalmap" />
               </Route>
+              <Route exact path="/globalmap" render={() => <GlobalMap />} />
               <Route
-                exact={true}
-                path="/globalmap"
-                render={() => <GlobalMap />}
-              />
-              <Route
-                exact={true}
+                exact
                 path="/ownmap"
                 render={() => userID && <OwnMap userID={userID.toString()} />}
               />
               <Route
-                exact={true}
+                exact
                 path="/admin"
-                render={() => userstatus == "admin" && <Admin />}
+                render={() => userStatus === "admin" && <Admin />}
               />
               <Route
-                exact={true}
+                exact
                 path="/settings"
                 render={() => userID && <Settings />}
               />
@@ -156,18 +185,14 @@ const App: React.FC = () => {
                 <IonLabel>Global Map</IonLabel>
               </IonTabButton>
               <IonTabButton
-                disabled={userID ? false : true}
+                disabled={!userID}
                 tab="makePinModal"
                 onClick={openMakePinModal}
               >
                 <IonIcon aria-hidden="true" icon={pin} />
-                <IonLabel>Add pin</IonLabel>
+                <IonLabel>Add Pin</IonLabel>
               </IonTabButton>
-              <IonTabButton
-                disabled={userID ? false : true}
-                tab="ownmap"
-                href="/ownmap"
-              >
+              <IonTabButton disabled={!userID} tab="ownmap" href="/ownmap">
                 <IonIcon aria-hidden="true" icon={map} />
                 <IonLabel>Own Map</IonLabel>
               </IonTabButton>
@@ -183,7 +208,7 @@ const App: React.FC = () => {
             >
               <IonIcon icon={close} />
             </IonButton>
-            <LoginModal />
+            <LoginModal onLogin={storeToken} />
           </div>
         </IonModal>
         <IonModal isOpen={makePinModal} onDidDismiss={closeMakePinModal}>
