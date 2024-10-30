@@ -1,41 +1,64 @@
 const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
+
+// Helper function to generate a unique 10-character alphanumeric ID
+const generateUniqueId = () => {
+  return crypto.randomBytes(5).toString("hex");
+};
+
+// Function to check if an ID already exists in the "profile" table
+const idExists = async (id) => {
+  const { data, error } = await supabase
+    .from("profile")
+    .select("id")
+    .eq("id", id)
+    .single();
+  return !!data; // Returns true if ID exists, false otherwise
+};
 
 // Root route
 router.get("/", (req, res) => {
   res.send("User Route");
 });
 
-// Get all users (Add security)
-router.get("/all", (req, res) => {
-  res.send("Get all users");
+// Get all users
+router.get("/all", async (req, res) => {
+  try {
+    const { data: users, error } = await supabase
+      .from("profile")
+      .select("*");
+
+    if (error) throw error;
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Error fetching users" });
+  }
 });
 
 // Get a user by ID
 router.get("/:id", async (req, res) => {
-  const userID = req.params.id;
+  const userID = req.params.id; // This is expected to be a UUID
 
   try {
-    // Query the 'profile' table for the user with the given ID
     const { data: user, error } = await supabase
       .from("profile")
       .select("*")
       .eq("id", userID)
       .single();
 
-    // Handle any errors during the query
     if (error) {
       console.error("Error fetching user:", error);
       return res.status(500).json({ error: "Error fetching user" });
     }
 
-    // Check if user was found
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Return the found user data
     res.status(200).json(user);
   } catch (error) {
     console.error("Error during user fetch:", error);
@@ -44,57 +67,46 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new user and default settings
-router.post("/", async (req, res) => {
+router.post("/create", async (req, res) => {
   const { name, email, password } = req.body;
 
-  // Validate input
+  // Validate required fields
   if (!name || !email || !password) {
-    return res
-      .status(400)
-      .json({ error: "Name, email, and password are required" });
+    return res.status(400).json({ error: "Name, email, and password are required" });
   }
 
   try {
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     // Step 1: Create default settings
     const { data: settingsData, error: settingsError } = await supabase
       .from("settings")
-      .insert([
-        {
-          maptheme: "default",
-          language: "en",
-          notification: true,
-        },
-      ])
-      .select("id") // Request the ID of the newly created settings
-      .single(); // Get the created settings entry
+      .insert([{ maptheme: "default", language: "en", notification: true }])
+      .select("id")
+      .single();
 
-    // Check for errors during settings creation
     if (settingsError) {
       console.error("Error creating settings:", settingsError);
       return res.status(500).json({ error: "Error creating settings" });
     }
 
-    // Step 2: Create the user profile
-    if (settingsData) {
-      const { error: profileError } = await supabase.from("profile").insert([
-        {
-          name,
-          email,
-          password,
-          settings_id: settingsData.id,
-        },
-      ]);
+    // Step 2: Generate a UUID for the user
+    const uniqueId = crypto.randomUUID();
 
-      // Handle profile creation error
-      if (profileError) {
-        console.error("Error creating profile:", profileError);
-        // Delete the created settings if profile creation fails
-        await supabase.from("settings").delete().eq("id", settingsData.i);
-        return res.status(500).json({ error: "Error creating profile" });
-      }
+    // Step 3: Create the user profile
+    const { error: profileError } = await supabase.from("profile").insert([{
+      id: uniqueId,
+      name,
+      email,
+      password: hashedPassword,
+      settings_id: settingsData.id,
+    }]);
+
+    if (profileError) {
+      console.error("Error creating profile:", profileError);
+      await supabase.from("settings").delete().eq("id", settingsData.id);
+      return res.status(500).json({ error: "Error creating profile" });
     }
 
     res.status(201).json({ message: "Profile created successfully" });
@@ -104,56 +116,103 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Update a user by User ID (Add security)
-router.put("/:id", (req, res) => {
+// Update a user by User ID
+router.put("/:id", async (req, res) => {
   const userID = req.params.id;
-  res.send(`Updates user with ID: ${userID}`);
+  const { name, email, password } = req.body;
+
+  // Create an object to hold the fields to update
+  const updatedFields = {};
+  if (name) updatedFields.name = name;
+  if (email) updatedFields.email = email;
+  if (password) updatedFields.password = await bcrypt.hash(password, 10);
+
+  try {
+    const { data, error } = await supabase
+      .from("profile")
+      .update(updatedFields)
+      .eq("id", userID)
+      .single();
+
+    if (error) {
+      console.error("Error updating user:", error);
+      return res.status(500).json({ error: "Error updating user" });
+    }
+
+    if (!data) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({ message: "User updated successfully", user: data });
+  } catch (error) {
+    console.error("Error during user update:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
-// Delete a user by User ID (Add security)
-router.delete("/:id", (req, res) => {
+// Delete a user by User ID
+router.delete("/:id", async (req, res) => {
   const userID = req.params.id;
-  res.send(`Deletes user with ID: ${userID}`);
+
+  try {
+    const { data, error } = await supabase
+      .from("profile")
+      .delete()
+      .eq("id", userID)
+      .single();
+
+    if (error) {
+      console.error("Error deleting user:", error);
+      return res.status(500).json({ error: "Error deleting user" });
+    }
+
+    if (!data) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(204).send(); // Successfully deleted with no content
+  } catch (error) {
+    console.error("Error during user deletion:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 // Login route
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body; // Get email and password from the request
+  const { email, password } = req.body;
 
-  // Check if email and password are provided
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required" });
   }
 
   try {
-    // Query the 'profile' table to find the user by email
-    const { data: users, error } = await supabase
+    const { data: user, error } = await supabase
       .from("profile")
       .select("*")
       .eq("email", email)
-      .single(); // Use .single() to fetch only one record
+      .single();
 
-    // If user not found or any error occurs
-    if (error || !users) {
+    if (error || !user) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    const { password: hashedPassword } = users; // Get the hashed password from the user record
-
-    // Compare the hashed password with the provided password
+    const { password: hashedPassword } = user;
     const isPasswordValid = await bcrypt.compare(password, hashedPassword);
 
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    // Successful login response
     res.status(200).json({
       message: "Login successful",
-      user: users, // Optionally, only send non-sensitive user info
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
     });
-  } catch (err) {
-    // Handle unexpected server errors
+  } catch (error) {
+    console.error("Error during login:", error);
     res.status(500).json({ error: "Server error, please try again later." });
   }
 });

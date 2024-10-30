@@ -14,8 +14,8 @@ router.get("/all", async (req, res) => {
     const { data: pins, error } = await supabase
       .from("pins")
       .select(
-        `
-        *,
+        `*
+        ,
         profile:profile_id (
           id,
           name,
@@ -41,15 +41,15 @@ router.get("/all", async (req, res) => {
 
 // Get pins by user ID
 router.get("/:id", async (req, res) => {
-  const userID = req.params.id;
+  const userID = req.params.id; // This is expected to be a UUID
 
   try {
     // Query the 'pins' table, joining the 'profile' table on profile_id
     const { data: pins, error } = await supabase
       .from("pins")
       .select(
-        `
-        *,
+        `*
+        ,
         profile:profile_id (
           id,
           name,
@@ -74,9 +74,9 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new pin
-router.post("/", async (req, res) => {
+router.post("/create", async (req, res) => {
   const {
-    profile_id,
+    profile_id, // This should be a UUID now
     title,
     description,
     location,
@@ -104,7 +104,7 @@ router.post("/", async (req, res) => {
 
   // Prepare the data to insert
   const pinData = {
-    profile_id,
+    profile_id, // Ensure this is a UUID
     title,
     description,
     location,
@@ -136,18 +136,105 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Update a pin by User ID and Pin ID (Add security)
-router.put("/:id/:pinid", (req, res) => {
-  const userID = req.params.id;
-  const pinID = req.params.pinid;
-  res.send(`Updates user with ID: ${userID} and ${pinID}`);
+// Update a pin by User ID and Pin ID
+router.put("/:id/:pinid", async (req, res) => {
+  const userID = req.params.id; // User ID from the request
+  const pinID = req.params.pinid; // Pin ID from the request
+
+  // Fields to update
+  const {
+    title,
+    description,
+    location,
+    longitude,
+    latitude,
+    imgurls,
+    groups, // Optional field
+    status, // Optional field
+  } = req.body;
+
+  // Create an object to hold the updated fields
+  const updatedFields = {};
+  if (title) updatedFields.title = title;
+  if (description) updatedFields.description = description;
+  if (location) updatedFields.location = location;
+  if (longitude) updatedFields.longitude = longitude;
+  if (latitude) updatedFields.latitude = latitude;
+  if (imgurls) updatedFields.imgurls = imgurls;
+  if (groups) updatedFields.groups = groups;
+  if (status) updatedFields.status = status === true ? "public" : "private"; // Ensure status is set correctly
+
+  try {
+    // Check if the pin belongs to the user
+    const { data: pin, error: pinCheckError } = await supabase
+      .from("pins")
+      .select("profile_id")
+      .eq("id", pinID)
+      .single();
+
+    if (pinCheckError || !pin) {
+      return res.status(404).json({ error: "Pin not found" });
+    }
+
+    if (pin.profile_id !== userID) {
+      return res.status(403).json({ error: "Unauthorized to update this pin" });
+    }
+
+    // Update the pin in the database
+    const { error: updateError } = await supabase
+      .from("pins")
+      .update(updatedFields)
+      .eq("id", pinID);
+
+    if (updateError) {
+      console.error("Error updating pin:", updateError);
+      return res.status(500).json({ error: "Error updating pin" });
+    }
+
+    res.status(200).json({ message: "Pin updated successfully" });
+  } catch (error) {
+    console.error("Error during pin update:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
-// Delete a pin by User ID and Pin ID (Add security)
-router.delete("/:id/:pinid", (req, res) => {
-  const userID = req.params.id;
-  const pinID = req.params.pinid;
-  res.send(`Deletes user with ID and Pin ID: ${userID} and ${pinID}`);
+// Delete a pin by User ID and Pin ID
+router.delete("/:id/:pinid", async (req, res) => {
+  const userID = req.params.id; // User ID from the request
+  const pinID = req.params.pinid; // Pin ID from the request
+
+  try {
+    // Check if the pin belongs to the user
+    const { data: pin, error: pinCheckError } = await supabase
+      .from("pins")
+      .select("profile_id")
+      .eq("id", pinID)
+      .single();
+
+    if (pinCheckError || !pin) {
+      return res.status(404).json({ error: "Pin not found" });
+    }
+
+    if (pin.profile_id !== userID) {
+      return res.status(403).json({ error: "Unauthorized to delete this pin" });
+    }
+
+    // Delete the pin from the database
+    const { error: deleteError } = await supabase
+      .from("pins")
+      .delete()
+      .eq("id", pinID);
+
+    if (deleteError) {
+      console.error("Error deleting pin:", deleteError);
+      return res.status(500).json({ error: "Error deleting pin" });
+    }
+
+    res.status(204).send(); // Successfully deleted with no content
+  } catch (error) {
+    console.error("Error during pin deletion:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 module.exports = router;
