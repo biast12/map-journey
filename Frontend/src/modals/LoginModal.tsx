@@ -1,11 +1,16 @@
-import { IonButton, IonInput, IonInputPasswordToggle, IonToast } from "@ionic/react";
+import { IonButton, IonInput, IonInputPasswordToggle, IonToast, IonModal, IonIcon } from "@ionic/react";
+import { close } from "ionicons/icons";
 import { FormEvent, useRef, useState } from "react";
 import useRequestData from "../hooks/useRequestData";
 import useAuth from "../hooks/useAuth";
 import "./LoginModal.scss";
 
+/* Modal */
+// import CreateUserModal from "../modals/CreateUserModal";
+
 const LoginModal = () => {
   const [loginSuccess, setLoginSuccess] = useState<boolean | null>(null);
+  const [createUserModal, setCreateUserModal] = useState(false);
   const toast = useRef<HTMLIonToastElement>(null);
   const { makeRequest, isLoading, data, error } = useRequestData();
   const { storeToken } = useAuth();
@@ -22,11 +27,14 @@ const LoginModal = () => {
     if (!error && data) {
       setLoginSuccess(true);
       toast.current?.present();
-      storeToken(data.token); // Store the token on successful login
+      storeToken(data.token);
     } else {
       setLoginSuccess(false);
     }
   }
+
+  const openCreateUserModal = () => setCreateUserModal(true);
+  const closeCreateUserModal = () => setCreateUserModal(false);
 
   return (
     <div className="loginWrapper">
@@ -41,7 +49,22 @@ const LoginModal = () => {
           Login
         </IonButton>
       </form>
+      <IonButton id="createUserButton" expand="block" onClick={openCreateUserModal}>
+        Create User
+      </IonButton>
       <IonToast ref={toast} message="Login successful" position="bottom" duration={1500}></IonToast>
+      <IonModal isOpen={createUserModal} onDidDismiss={closeCreateUserModal}>
+        <div className="modal-content">
+          <IonButton
+          className="close-button"
+          onClick={closeCreateUserModal}
+          fill="clear"
+          >
+            <IonIcon icon={close} />
+            </IonButton>
+          {/* <CreateUserModal /> */}
+        </div>
+      </IonModal>
     </div>
   );
 };
