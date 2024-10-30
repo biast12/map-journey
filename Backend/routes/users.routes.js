@@ -91,8 +91,24 @@ router.post("/create", async (req, res) => {
       return res.status(500).json({ error: "Error creating settings" });
     }
 
-    // Step 2: Generate a UUID for the user
-    const uniqueId = crypto.randomUUID();
+    // Step 2: Function to generate unique UUID
+    const generateUniqueId = async () => {
+      let uniqueId;
+      let exists = true;
+      while (exists) {
+        uniqueId = crypto.randomUUID(); // Generate a new UUID
+        const { data, error } = await supabase
+          .from("profile")
+          .select("id")
+          .eq("id", uniqueId)
+          .single(); // Check if the ID already exists
+        exists = data !== null; // If data is not null, UUID already exists
+      }
+      return uniqueId;
+    };
+
+    // Generate a unique UUID
+    const uniqueId = await generateUniqueId();
 
     // Step 3: Create the user profile
     const { error: profileError } = await supabase.from("profile").insert([{
@@ -116,8 +132,9 @@ router.post("/create", async (req, res) => {
   }
 });
 
+
 // Update a user by User ID
-router.put("/:id", async (req, res) => {
+router.put("/edit/:id", async (req, res) => {
   const userID = req.params.id;
   const { name, email, password } = req.body;
 
@@ -151,7 +168,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete a user by User ID
-router.delete("/:id", async (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   const userID = req.params.id;
 
   try {

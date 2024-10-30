@@ -83,7 +83,7 @@ router.post("/create", async (req, res) => {
 });
 
 // Update a news article by ID
-router.put("/:id", async (req, res) => {
+router.put("/edit/:id", async (req, res) => {
   const articleID = req.params.id;
   const { title, text } = req.body; // Removed date as it's handled by the DB
 
@@ -120,7 +120,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete a news article by ID
-router.delete("/:id", async (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   const articleID = req.params.id;
 
   try {
