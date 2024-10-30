@@ -28,3 +28,14 @@
   margin-top: 5px;
   font-size: 0.9rem;
 }
+
+.modal-content {
+  overflow-y: auto;
+  .close-button {
+    color: white;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+  }
+}
