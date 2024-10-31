@@ -23,7 +23,7 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
           <img
             id="showPinImage"
             alt={pinData.description}
-            src={pinData.imgurls[0]}
+            src={pinData.imgurls}
           />
         </div>
         <IonCardSubtitle>{pinData.location}</IonCardSubtitle>
