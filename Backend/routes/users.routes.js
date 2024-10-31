@@ -4,10 +4,12 @@ const supabase = require("../supabaseClient");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
+
 // Helper function to generate a unique 10-character alphanumeric ID
 const generateUniqueId = () => {
   return crypto.randomBytes(5).toString("hex");
 };
+
 
 // Function to check if an ID already exists in the "profile" table
 const idExists = async (id) => {
@@ -19,10 +21,22 @@ const idExists = async (id) => {
   return !!data; // Returns true if ID exists, false otherwise
 };
 
+
 // Root route
 router.get("/", (req, res) => {
-  res.send("User Route");
+  res.json({
+    message: "User Route",
+    routes: {
+      "/all": "Get all users and their data",
+      "/:id": "Get a user by ID",
+      "/create": "Create a new user and default settings",
+      "/edit/:id": "Update a user by User ID",
+      "/delete/:id": "Delete a user by User ID",
+      "/login": "Login route"
+    }
+  });
 });
+
 
 // Get all users
 router.get("/all", async (req, res) => {
@@ -38,6 +52,7 @@ router.get("/all", async (req, res) => {
     res.status(500).json({ error: "Error fetching users" });
   }
 });
+
 
 // Get a user by ID
 router.get("/:id", async (req, res) => {
@@ -65,6 +80,7 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 // Create a new user and default settings
 router.post("/create", async (req, res) => {
@@ -167,6 +183,7 @@ router.put("/edit/:id", async (req, res) => {
   }
 });
 
+
 // Delete a user by User ID
 router.delete("/delete/:id", async (req, res) => {
   const userID = req.params.id;
@@ -193,6 +210,7 @@ router.delete("/delete/:id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 // Login route
 router.post("/login", async (req, res) => {

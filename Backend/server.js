@@ -55,6 +55,7 @@ app.use("/notification", require("./routes/notification.routes.js"));
 app.use("/pins", require("./routes/pins.routes.js"));
 app.use("/settings", require("./routes/settings.routes.js"));
 app.use("/users", require("./routes/users.routes.js"));
+app.use("/reports", require("./routes/reports.routes.js"));
 
 // LISTEN --------------------------------------------------------------------------------------------------
 app.listen(PORT, () =>

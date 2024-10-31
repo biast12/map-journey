@@ -2,10 +2,21 @@ const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
 
+
 // Root route
 router.get("/", (req, res) => {
-  res.send("Pins Route");
+  res.json({
+    message: "Pins Route",
+    routes: {
+      "/all": "Get all pins with associated profile data",
+      "/:id": "Get pins by user ID",
+      "/create": "Create a new pin",
+      "/edit/:id/:pinid": "Update a pin by User ID and Pin ID",
+      "/delete/:id/:pinid": "Delete a pin by User ID and Pin ID"
+    }
+  });
 });
+
 
 // Get all pins with associated profile data
 router.get("/all", async (req, res) => {
@@ -38,6 +49,7 @@ router.get("/all", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 // Get pins by user ID
 router.get("/:id", async (req, res) => {
@@ -72,6 +84,7 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 // Create a new pin
 router.post("/create", async (req, res) => {
@@ -136,8 +149,9 @@ router.post("/create", async (req, res) => {
   }
 });
 
+
 // Update a pin by User ID and Pin ID
-router.put("/:id/:pinid", async (req, res) => {
+router.put("/edit/:id/:pinid", async (req, res) => {
   const userID = req.params.id; // User ID from the request
   const pinID = req.params.pinid; // Pin ID from the request
 
@@ -198,8 +212,9 @@ router.put("/:id/:pinid", async (req, res) => {
   }
 });
 
+
 // Delete a pin by User ID and Pin ID
-router.delete("/:id/:pinid", async (req, res) => {
+router.delete("/delete/:id/:pinid", async (req, res) => {
   const userID = req.params.id; // User ID from the request
   const pinID = req.params.pinid; // Pin ID from the request
 

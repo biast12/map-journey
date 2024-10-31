@@ -2,10 +2,21 @@ const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
 
+
 // Root route
 router.get("/", (req, res) => {
-  res.send("Notification Route");
+  res.json({
+    message: "Notification Route",
+    routes: {
+      "/all": "Get all news articles",
+      "/:id": "Get a specific news article by ID",
+      "/create": "Create a new news article",
+      "/edit/:id": "Update a news article by ID",
+      "/delete/:id": "Delete a news article by ID"
+    }
+  });
 });
+
 
 // Get all news articles
 router.get("/all", async (req, res) => {
@@ -25,6 +36,7 @@ router.get("/all", async (req, res) => {
     res.status(500).send("Error fetching news articles");
   }
 });
+
 
 // Get a specific news article by ID
 router.get("/:id", async (req, res) => {
@@ -51,6 +63,7 @@ router.get("/:id", async (req, res) => {
     res.status(500).send("Error fetching news article");
   }
 });
+
 
 // Create a new news article
 router.post("/create", async (req, res) => {
@@ -81,6 +94,7 @@ router.post("/create", async (req, res) => {
     res.status(500).send("Error creating news article");
   }
 });
+
 
 // Update a news article by ID
 router.put("/edit/:id", async (req, res) => {
@@ -118,6 +132,7 @@ router.put("/edit/:id", async (req, res) => {
     res.status(500).send("Error updating news article");
   }
 });
+
 
 // Delete a news article by ID
 router.delete("/delete/:id", async (req, res) => {

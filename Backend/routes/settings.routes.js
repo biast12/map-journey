@@ -2,10 +2,18 @@ const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
 
+
 // Root route
 router.get("/", (req, res) => {
-  res.send("Settings Route");
+  res.json({
+    message: "Settings Route",
+    routes: {
+      "/:id": "Get a user's settings by User ID",
+      "/edit/:id": "Update a user's settings by User ID"
+    }
+  });
 });
+
 
 // Get a user's settings by User ID
 router.get("/:id", async (req, res) => {
@@ -37,6 +45,7 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 // Update a user's settings by User ID
 router.put("/edit/:id", async (req, res) => {
