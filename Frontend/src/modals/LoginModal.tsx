@@ -57,13 +57,6 @@ const LoginModal = () => {
       <IonToast ref={toast} message="Login successful" position="bottom" duration={1500}></IonToast>
       <IonModal isOpen={createUserModal} onDidDismiss={closeCreateUserModal}>
         <div className="modal-content">
-          <IonButton
-          className="close-button"
-          onClick={closeCreateUserModal}
-          fill="clear"
-          >
-            <IonIcon icon={close} />
-            </IonButton>
           <CreateUserModal onDidDismiss={closeCreateUserModal}/>
         </div>
       </IonModal>

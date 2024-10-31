@@ -87,6 +87,14 @@ const CreateUserModal = ({ onDidDismiss }: { onDidDismiss: () => void }) => {
           Create User
         </IonButton>
       </form>
+      <IonButton
+        id="closeButton"
+        expand="block"
+        color="medium"
+        onClick={onDidDismiss}
+      >
+        Close
+      </IonButton>
       <IonToast
         ref={toast}
         message="User created successfully"
