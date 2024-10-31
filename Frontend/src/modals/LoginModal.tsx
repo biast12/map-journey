@@ -1,5 +1,4 @@
-import { IonCard, IonCardHeader, IonCardTitle, IonInput, IonInputPasswordToggle, IonButton, IonToast, IonModal, IonIcon } from "@ionic/react";
-import { close } from "ionicons/icons";
+import { IonCard, IonCardHeader, IonCardTitle, IonInput, IonInputPasswordToggle, IonButton, IonToast, IonModal } from "@ionic/react";
 import { FormEvent, useRef, useState } from "react";
 import useRequestData from "../hooks/useRequestData";
 import useAuth from "../hooks/useAuth";
@@ -37,7 +36,7 @@ const LoginModal = () => {
   const closeCreateUserModal = () => setCreateUserModal(false);
 
   return (
-    <IonCard className="loginWrapper">
+    <IonCard>
       <IonCardHeader>
         <IonCardTitle>Login</IonCardTitle>
       </IonCardHeader>
@@ -47,23 +46,16 @@ const LoginModal = () => {
           <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
         </IonInput>
         {loginSuccess == false && <p id="loginFailed">Login failed! Check email or password</p>}
-        <IonButton type="submit" id="loginButton" expand="block" disabled={isLoading}>
+        <IonButton type="submit" expand="block" disabled={isLoading}>
           Login
         </IonButton>
       </form>
-      <IonButton id="createUserButton" expand="block" onClick={openCreateUserModal}>
+      <IonButton expand="block" onClick={openCreateUserModal}>
         Create User
       </IonButton>
       <IonToast ref={toast} message="Login successful" position="bottom" duration={1500}></IonToast>
       <IonModal isOpen={createUserModal} onDidDismiss={closeCreateUserModal}>
         <div className="modal-content">
-          <IonButton
-          className="close-button"
-          onClick={closeCreateUserModal}
-          fill="clear"
-          >
-            <IonIcon icon={close} />
-            </IonButton>
           <CreateUserModal onDidDismiss={closeCreateUserModal}/>
         </div>
       </IonModal>
