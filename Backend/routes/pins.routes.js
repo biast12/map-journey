@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
     routes: {
       "/all": "Get all pins with associated profile data",
       "/:id": "Get pins by user ID",
-      "/create": "Create a new pin",
+      "/create/:id": "Create a new pin",
       "/edit/:id/:pinid": "Update a pin by User ID and Pin ID",
       "/delete/:id/:pinid": "Delete a pin by User ID and Pin ID"
     }
@@ -87,9 +87,9 @@ router.get("/:id", async (req, res) => {
 
 
 // Create a new pin
-router.post("/create", async (req, res) => {
+router.post("/create/:id", async (req, res) => {
+  const profile_id = req.params.id; // Get profile_id from URL params
   const {
-    profile_id, // This should be a UUID now
     title,
     description,
     location,
@@ -102,7 +102,7 @@ router.post("/create", async (req, res) => {
 
   // Validate required input fields
   if (
-    !profile_id ||
+    !profile_id || // profile_id is now obtained from params, no need to check it here
     !title ||
     !description ||
     !location ||
@@ -110,14 +110,12 @@ router.post("/create", async (req, res) => {
     !latitude ||
     !imgurls
   ) {
-    return res
-      .status(400)
-      .json({ error: "All required fields must be provided" });
+    return res.status(400).json({ error: "All required fields must be provided" });
   }
 
   // Prepare the data to insert
   const pinData = {
-    profile_id, // Ensure this is a UUID
+    profile_id, // Ensure this is a UUID from the URL
     title,
     description,
     location,

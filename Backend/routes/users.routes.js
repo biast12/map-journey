@@ -189,21 +189,61 @@ router.delete("/delete/:id", async (req, res) => {
   const userID = req.params.id;
 
   try {
-    const { data, error } = await supabase
+    // Step 1: Fetch the user's profile to check if it exists
+    const { data: profile, error: fetchError } = await supabase
+      .from("profile")
+      .select("settings_id") // Fetch the settings_id to delete settings later
+      .eq("id", userID)
+      .single();
+
+    if (fetchError) {
+      console.error("Error fetching user profile:", fetchError);
+      return res.status(500).json({ error: "Error checking user profile" });
+    }
+
+    if (!profile) {
+      return res.status(404).json({ error: "User not found" }); // Profile does not exist
+    }
+
+    const { settings_id } = profile; // Get the settings ID from the profile
+
+    // Step 2: Delete all pins associated with the user
+    const { error: deletePinsError } = await supabase
+      .from("pins") // Assuming you have a "pins" table
+      .delete()
+      .eq("profile_id", userID); // Delete based on profile_id
+
+    if (deletePinsError) {
+      console.error("Error deleting user pins:", deletePinsError);
+      return res.status(500).json({ error: "Error deleting user pins" });
+    }
+
+    // Step 3: Delete user settings using settings_id
+    if (settings_id) {
+      const { error: deleteSettingsError } = await supabase
+        .from("settings") // Assuming you have a "settings" table
+        .delete()
+        .eq("id", settings_id); // Delete based on settings_id
+
+      if (deleteSettingsError) {
+        console.error("Error deleting user settings:", deleteSettingsError);
+        return res.status(500).json({ error: "Error deleting user settings" });
+      }
+    }
+
+    // Step 4: Delete the user profile
+    const { error: deleteProfileError } = await supabase
       .from("profile")
       .delete()
       .eq("id", userID)
       .single();
 
-    if (error) {
-      console.error("Error deleting user:", error);
-      return res.status(500).json({ error: "Error deleting user" });
+    if (deleteProfileError) {
+      console.error("Error deleting user profile:", deleteProfileError);
+      return res.status(500).json({ error: "Error deleting user profile" });
     }
 
-    if (!data) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
+    // Send a success response
     res.status(204).send(); // Successfully deleted with no content
   } catch (error) {
     console.error("Error during user deletion:", error);
