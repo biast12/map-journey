@@ -1,4 +1,4 @@
-import { IonButton, IonInput, IonInputPasswordToggle, IonToast, IonModal, IonIcon } from "@ionic/react";
+import { IonCard, IonCardHeader, IonCardTitle, IonInput, IonInputPasswordToggle, IonButton, IonToast, IonModal, IonIcon } from "@ionic/react";
 import { close } from "ionicons/icons";
 import { FormEvent, useRef, useState } from "react";
 import useRequestData from "../hooks/useRequestData";
@@ -37,8 +37,10 @@ const LoginModal = () => {
   const closeCreateUserModal = () => setCreateUserModal(false);
 
   return (
-    <div className="loginWrapper">
-      <h1>Login</h1>
+    <IonCard className="loginWrapper">
+      <IonCardHeader>
+        <IonCardTitle>Login</IonCardTitle>
+      </IonCardHeader>
       <form action="" onSubmit={handleLogin}>
         <IonInput id="emailInput" name="email" type="email" label="Email" labelPlacement="fixed" placeholder="Enter email here"></IonInput>
         <IonInput id="passwordInput" name="password" type="password" labelPlacement="fixed" label="Password" placeholder="Enter password here">
@@ -65,7 +67,7 @@ const LoginModal = () => {
           <CreateUserModal onDidDismiss={closeCreateUserModal}/>
         </div>
       </IonModal>
-    </div>
+    </IonCard>
   );
 };
 
