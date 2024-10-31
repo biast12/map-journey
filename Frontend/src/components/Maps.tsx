@@ -38,7 +38,7 @@ interface PinData {
   [key: string]: any; // Add other properties as needed
 }
 
-const debug = true; // Set this to false to disable logging
+const debug = false; // Set this to false to disable logging
 
 const iconSrc: string = "http://localhost:8100/icons/webp/ping1.webp"; // Replace with the correct URL to the pin icon
 
