@@ -6,7 +6,7 @@ import useAuth from "../hooks/useAuth";
 import "./LoginModal.scss";
 
 /* Modal */
-// import CreateUserModal from "../modals/CreateUserModal";
+import CreateUserModal from "../modals/CreateUserModal";
 
 const LoginModal = () => {
   const [loginSuccess, setLoginSuccess] = useState<boolean | null>(null);
@@ -62,7 +62,7 @@ const LoginModal = () => {
           >
             <IonIcon icon={close} />
             </IonButton>
-          {/* <CreateUserModal /> */}
+          <CreateUserModal onDidDismiss={closeCreateUserModal}/>
         </div>
       </IonModal>
     </div>
