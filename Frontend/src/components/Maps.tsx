@@ -93,7 +93,7 @@ function createClusterStyle(feature: Feature) {
 }
 
 function Map({ APIurl }: MapProps) {
-  const points: Point[] = [];
+  const points: Feature[] = [];
   const { makeRequest, data, error, isLoading } = useRequestData();
   const [showPinModal, setShowPinModal] = useState(false);
   const [selectedPin, setSelectedPin] = useState<any>(null);
@@ -108,12 +108,13 @@ function Map({ APIurl }: MapProps) {
   useEffect(() => {
     if (Array.isArray(data)) {
       data.forEach((pin: any) => {
-        points.push(new Point(fromLonLat([pin.longitude, pin.latitude])));
+        let point = new Point(fromLonLat([pin.longitude, pin.latitude]))
+        let feature = new Feature({
+            geometry: point,
+        });
+        feature.setId(pin.id);
+        points.push(feature);
       });
-      points.push(new Point(fromLonLat([10.887347709725966, 56.40611350358486]))); // Add a point to test clustering
-      points.push(new Point(fromLonLat([10.887347709725966, 5.40611350358486])));
-      points.push(new Point(fromLonLat([10.887347709725966, 5.40611650358486])));
-      points.push(new Point(fromLonLat([10.887347709725966, 5.40611450358486])));
     }
 
     const view = new View({
@@ -121,11 +122,8 @@ function Map({ APIurl }: MapProps) {
       zoom: 2,
     }) as View;
     const vectorSource = new VectorSource({
-      features: points.map((point, index) => {
-        const feature = new Feature({
-          geometry: point,
-        });
-        feature.setId(index);
+      features: points.map((point) => {
+        const feature = point;
         return feature;
       }),
     });
@@ -157,11 +155,13 @@ function Map({ APIurl }: MapProps) {
 
     // Add pointermove event listener to log mouse position
     map.on("pointermove", (event) => {
+
       if (!debug) return; // Check if debug is true
       const currentTime = Date.now();
       if (currentTime - lastLogTime >= 1000) {
         lastLogTime = currentTime;
         const coordinates = toLonLat(event.coordinate);
+        console.log(view.getZoom());
         console.log(
           `Longitude: ${coordinates[0]}, Latitude: ${coordinates[1]}`
         );
@@ -172,6 +172,22 @@ function Map({ APIurl }: MapProps) {
     map.on("click", (event) => {
       map.forEachFeatureAtPixel(event.pixel, (feature) => {
         const features = feature.get('features');
+        // Open ShowPinModal if only one pin is clicked and zoom in on cluster if multiple pins are clicked
+        if (features.length === 1) {
+          const pinIndex = features[0].getId();
+          if (pinIndex !== undefined && data !== undefined) {
+            data.forEach((pin: any) => {
+              if (pin.id === pinIndex) {
+                setSelectedPin(pin)
+                view.animate({ center: fromLonLat([pin.longitude, pin.latitude]) }, {zoom: 19}, {duration: 10000});
+                /* view.setCenter(fromLonLat([pin.longitude, pin.latitude]));
+                view.setZoom(19); */
+                console.log(view.getZoom());
+                openShowPinModal();
+              }
+            });
+          }
+        }
         if (features.length > 1) {
           // Zoom in on cluster
           const extent = createEmpty();
@@ -179,31 +195,10 @@ function Map({ APIurl }: MapProps) {
             extend(extent, feature.getGeometry()?.getExtent() as Extent);
           });
           map.getView().fit(extent, { duration: 1000 });
-        } else {
-          // Open ShowPinModal
-          const pinIndex = feature.getId();
-          if (pinIndex !== undefined && data[pinIndex] !== undefined) {
-            const pinData = data[pinIndex];
-            setSelectedPin(pinData);
-            openShowPinModal();
-          }
         }
       });
     });
   }, [data]);
-
-    /* // Add click event listener to open ShowPinModal
-    map.on("click", (event) => {
-      map.forEachFeatureAtPixel(event.pixel, (feature) => {
-        const pinIndex = feature.getId();
-        if (pinIndex !== undefined && data[pinIndex] !== undefined) {
-          const pinData = data[pinIndex];
-          setSelectedPin(pinData);
-          openShowPinModal();
-        }
-      });
-    });
-  }, [data]); */
 
   const getBrowserLocation = (map: OlMap, view: View) => {
     if (!navigator.geolocation) return;
