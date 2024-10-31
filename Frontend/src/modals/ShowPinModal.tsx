@@ -16,11 +16,12 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
   if (!pinData) return null;
 
   return (
-    <IonCard>
+    <IonCard id="showPinCard">
       <IonCardHeader>
         <IonCardTitle>{pinData.title}</IonCardTitle>
-        <div>
+        <div id="showPinLightbox">
           <img
+            id="showPinImage"
             alt={pinData.description}
             src={pinData.imgurls}
           />

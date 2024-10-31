@@ -1,6 +1,5 @@
 import { IonModal, IonButton, IonIcon } from "@ionic/react";
 import { close } from "ionicons/icons";
-import "./Modals.scss";
 
 /* Modals */
 import LoginModal from "../modals/LoginModal";
