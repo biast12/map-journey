@@ -35,7 +35,9 @@ router.get("/:id", async (req, res) => {
     }
 
     if (!profile || !profile.settings_id) {
-      return res.status(404).json({ error: "Profile not found or settings_id missing" });
+      return res
+        .status(404)
+        .json({ error: "Profile not found or settings_id missing" });
     }
 
     const settingsID = profile.settings_id;
@@ -85,14 +87,16 @@ router.put("/:id", async (req, res) => {
       .select("settings_id")
       .eq("id", userID)
       .single();
- 
+
     if (profileError) {
       console.error("Error fetching user profile:", profileError);
       return res.status(500).json({ error: "Error fetching user profile" });
     }
 
     if (!profile || !profile.settings_id) {
-      return res.status(404).json({ error: "Profile not found or settings_id missing" });
+      return res
+        .status(404)
+        .json({ error: "Profile not found or settings_id missing" });
     }
 
     const settingsID = profile.settings_id;
