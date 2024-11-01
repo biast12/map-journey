@@ -11,7 +11,15 @@ import {
 import useRequestData from "../hooks/useRequestData";
 import "./CreateUserModal.scss";
 
-const CreateUserModal = ({ onDidDismiss }: { onDidDismiss: () => void }) => {
+interface CreateUserProps {
+  closeCreateUserModal: () => void;
+  closeLoginModal: () => void;
+}
+
+const CreateUserModal: React.FC<CreateUserProps> = ({
+  closeCreateUserModal,
+  closeLoginModal,
+}) => {
   const [createSuccess, setCreateSuccess] = useState<boolean | null>(null);
   const toast = useRef<HTMLIonToastElement>(null);
   const { makeRequest, isLoading, data, error } = useRequestData();
@@ -34,7 +42,8 @@ const CreateUserModal = ({ onDidDismiss }: { onDidDismiss: () => void }) => {
     if (!error && data) {
       setCreateSuccess(true);
       toast.current?.present();
-      onDidDismiss();
+      closeCreateUserModal();
+      closeLoginModal();
     } else {
       setCreateSuccess(false);
     }
@@ -91,7 +100,7 @@ const CreateUserModal = ({ onDidDismiss }: { onDidDismiss: () => void }) => {
         id="closeButton"
         expand="block"
         color="medium"
-        onClick={onDidDismiss}
+        onClick={closeCreateUserModal}
       >
         Close
       </IonButton>

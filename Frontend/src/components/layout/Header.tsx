@@ -13,22 +13,20 @@ import useAuth from "../../hooks/useAuth";
 
 interface HeaderProps {
   openNotificationModal: () => void;
-  openLoginModal: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
   openNotificationModal,
-  openLoginModal,
 }) => {
   const [notificationNum, setNotificationNum] = useState<number>(1);
 
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { userID } = useAuth();
+  const { userID, loading } = useAuth();
   useEffect(() => {
-    if (userID) {
+    if (userID && !loading) {
       makeRequest(`users/${userID}`);
     }
-  }, [userID]);
+  }, [userID, loading]);
   
   return (
     <IonHeader>
@@ -43,18 +41,14 @@ const Header: React.FC<HeaderProps> = ({
               <IonBadge color="danger">{notificationNum}</IonBadge>
             </IonButton>
           )}
-          {data === "admin" && (
+          {data && data.role === "admin" && (
             <IonButton routerLink="/admin" fill="clear">
               <IonIcon aria-hidden="true" icon={shieldHalf} />
             </IonButton>
           )}
-          {userID ? (
+          {userID && (
             <IonButton routerLink="/settings" fill="clear">
               <IonIcon aria-hidden="true" icon={settings} />
-            </IonButton>
-          ) : (
-            <IonButton onClick={openLoginModal} fill="clear">
-              <IonIcon aria-hidden="true" icon={logIn} />
             </IonButton>
           )}
         </div>

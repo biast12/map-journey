@@ -25,7 +25,6 @@ const Modals: React.FC<ModalsProps> = ({
   showNotificationModal,
   closeNotificationModal,
 }) => {
-
   const { userID, loading } = useAuth();
   return (
     <>
@@ -35,16 +34,7 @@ const Modals: React.FC<ModalsProps> = ({
         backdropDismiss={!!userID}
       >
         <div className="modal-content">
-          {userID && (
-            <IonButton
-              className="close-button"
-              onClick={closeLoginModal}
-              fill="clear"
-            >
-              <IonIcon icon={close} />
-            </IonButton>
-          )}
-          <LoginModal />
+          <LoginModal closeLoginModal={closeLoginModal} />
         </div>
       </IonModal>
       <IonModal isOpen={makePinModal} onDidDismiss={closeMakePinModal}>

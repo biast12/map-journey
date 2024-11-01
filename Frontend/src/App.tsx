@@ -35,7 +35,6 @@ import Footer from "./components/layout/Footer";
 import Modals from "./components/Modals";
 
 /* Hooks */
-import useRequestData from "./hooks/useRequestData";
 import useAuth from "./hooks/useAuth";
 
 /* App */
@@ -61,15 +60,12 @@ const App: React.FC = () => {
     if (!userID && !loading) {
       openLoginModal();
     }
-  }, [loading, userID]);
+  }, [userID, loading]);
 
   return (
     <IonApp>
       <IonReactRouter>
-        <Header
-          openNotificationModal={openNotificationModal}
-          openLoginModal={openLoginModal}
-        />
+        <Header openNotificationModal={openNotificationModal} />
         <IonContent>
           <IonTabs>
             <IonRouterOutlet>

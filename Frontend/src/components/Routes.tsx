@@ -11,12 +11,14 @@ import Settings from "../pages/Settings";
 
 export const Routes = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { userID } = useAuth();
+  const { userID, loading } = useAuth();
+
   useEffect(() => {
-    if (userID) {
+    if (userID && !loading) {
       makeRequest(`users/${userID}`);
     }
-  }, [userID]);
+  }, [userID, loading]);
+
   return (
     <>
       <Route exact path="/">
@@ -26,7 +28,7 @@ export const Routes = () => {
       <Route
         exact
         path="/ownmap"
-        render={() => userID && <OwnMap userID={userID.toString()} />}
+        render={() => userID && !loading && <OwnMap userID={userID} />}
       />
       <Route
         exact
