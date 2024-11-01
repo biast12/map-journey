@@ -10,14 +10,28 @@ router.get("/", (req, res) => {
   res.json({
     message: "Pins Route",
     routes: {
-      "/create": "Create a new report",
-      "/delete/:id": "Delete a report by ID",
+      "/all": "Get all reports",
+      "/": "Create a new report",
+      "/:id": "Delete a report by ID",
     },
   });
 });
 
-// POST /create - Create a new report
-router.post("/create", async (req, res) => {
+// Get all reports
+router.get("/all", async (req, res) => {
+  try {
+    const { data: reports, error } = await supabase.from("reports").select("*");
+
+    if (error) throw error;
+    res.status(200).json(reports);
+  } catch (error) {
+    console.error("Error fetching reports:", error);
+    res.status(500).json({ error: "Error fetching reports" });
+  }
+});
+
+// Create a new report
+router.post("/", async (req, res) => {
   const { profile_id, text } = req.body;
 
   try {
@@ -34,8 +48,8 @@ router.post("/create", async (req, res) => {
   }
 });
 
-// DELETE /delete/:id - Delete a report by ID
-router.delete("/delete/:id", async (req, res) => {
+// Delete a report by ID
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {

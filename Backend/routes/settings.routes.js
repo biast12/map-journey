@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
     message: "Settings Route",
     routes: {
       "/:id": "Get a user's settings by User ID",
-      "/edit/:id": "Update a user's settings by User ID",
+      "/:id": "Update a user's settings by User ID",
     },
   });
 });
@@ -64,7 +64,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Update a user's settings by ID
-router.put("/edit/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   const userID = req.params.id;
   const { maptheme, language, notification } = req.body;
 

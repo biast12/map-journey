@@ -12,9 +12,9 @@ router.get("/", (req, res) => {
     routes: {
       "/all": "Get all pins with associated profile data",
       "/:id": "Get pins by user ID",
-      "/create/:id": "Create a new pin",
-      "/edit/:id/:pinid": "Update a pin by User ID and Pin ID",
-      "/delete/:id/:pinid": "Delete a pin by User ID and Pin ID",
+      "/:id": "Create a new pin",
+      "/:id/:pinid": "Update a pin by User ID and Pin ID",
+      "/:id/:pinid": "Delete a pin by User ID and Pin ID",
     },
   });
 });
@@ -80,7 +80,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new pin
-router.post("/create/:id", async (req, res) => {
+router.post("/:id", async (req, res) => {
   const profile_id = req.params.id;
   const {
     title,
@@ -139,7 +139,7 @@ router.post("/create/:id", async (req, res) => {
 });
 
 // Update a pin by User ID and Pin ID
-router.put("/edit/:id/:pinid", async (req, res) => {
+router.put("/:id/:pinid", async (req, res) => {
   const userID = req.params.id;
   const pinID = req.params.pinid;
   const {
@@ -197,7 +197,7 @@ router.put("/edit/:id/:pinid", async (req, res) => {
 });
 
 // Delete a pin by User ID and Pin ID
-router.delete("/delete/:id/:pinid", async (req, res) => {
+router.delete("/:id/:pinid", async (req, res) => {
   const userID = req.params.id;
   const pinID = req.params.pinid;
 

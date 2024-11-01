@@ -72,10 +72,11 @@ router.get("/", (req, res) => {
     routes: {
       "/all": "Get all news articles",
       "/:id": "Get a specific news article by ID",
-      "/create": "Create a new news article",
-      "/edit/:id": "Update a news article by ID",
-      "/delete/:id": "Delete a news article by ID",
-      "/read/:id": "Mark a news article as read",
+      "/": "Create a new news article",
+      "/:id": "Update a news article by ID",
+      "/:id": "Delete a news article by ID",
+      "/:id": "Mark a news article as read",
+      "/readall/:id": "Mark all notifications as read",
     },
   });
 });
@@ -126,7 +127,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new news article
-router.post("/create", async (req, res) => {
+router.post("/", async (req, res) => {
   const { title, text } = req.body;
 
   // Basic validation
@@ -182,7 +183,7 @@ router.post("/create", async (req, res) => {
 });
 
 // Update a news article by ID
-router.put("/edit/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   const articleID = req.params.id;
   const { title, text } = req.body;
 
@@ -217,7 +218,7 @@ router.put("/edit/:id", async (req, res) => {
 });
 
 // Delete a news article by ID and remove its ID from all user notifications
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const articleID = req.params.id;
 
   try {
@@ -285,7 +286,7 @@ router.delete("/delete/:id", async (req, res) => {
 });
 
 // Mark a news article as read
-router.post("/read/:id", async (req, res) => {
+router.post("/:id", async (req, res) => {
   const userId = req.params.id;
   const { articleId } = req.body;
 

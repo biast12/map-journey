@@ -7,21 +7,6 @@ const checkApiKey = require("../apiKeyCheck");
 
 router.use(checkApiKey);
 
-// Helper function to generate a unique 10-character alphanumeric ID
-const generateUniqueId = () => {
-  return crypto.randomBytes(5).toString("hex");
-};
-
-// Function to check if an ID already exists in the "profile" table
-const idExists = async (id) => {
-  const { data, error } = await supabase
-    .from("profile")
-    .select("id")
-    .eq("id", id)
-    .single();
-  return !!data;
-};
-
 // Root route
 router.get("/", (req, res) => {
   res.json({
@@ -29,9 +14,9 @@ router.get("/", (req, res) => {
     routes: {
       "/all": "Get all users and their data",
       "/:id": "Get a user by ID",
-      "/create": "Create a new user and default settings",
-      "/edit/:id": "Update a user by User ID",
-      "/delete/:id": "Delete a user by User ID",
+      "/": "Create a new user and default settings",
+      "/:id": "Update a user by User ID",
+      "/:id": "Delete a user by User ID",
       "/login": "Login route",
     },
   });
@@ -76,7 +61,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new user and default settings
-router.post("/create", async (req, res) => {
+router.post("/", async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -143,7 +128,7 @@ router.post("/create", async (req, res) => {
 });
 
 // Update a user by User ID
-router.put("/edit/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   const userID = req.params.id;
   const { name, email, password } = req.body;
 
@@ -176,7 +161,7 @@ router.put("/edit/:id", async (req, res) => {
 });
 
 // Delete a user by User ID
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const userID = req.params.id;
 
   try {

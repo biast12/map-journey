@@ -1,4 +1,3 @@
-
 const checkApiKey = (req, res, next) => {
   const apiKey = req.headers["x-api-key"];
   const validApiKey = process.env.API_KEY;
