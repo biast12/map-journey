@@ -3,13 +3,14 @@ const router = express.Router();
 const supabase = require("../supabaseClient");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const checkApiKey = require("../apiKeyCheck");
 
+router.use(checkApiKey);
 
 // Helper function to generate a unique 10-character alphanumeric ID
 const generateUniqueId = () => {
   return crypto.randomBytes(5).toString("hex");
 };
-
 
 // Function to check if an ID already exists in the "profile" table
 const idExists = async (id) => {
@@ -18,9 +19,8 @@ const idExists = async (id) => {
     .select("id")
     .eq("id", id)
     .single();
-  return !!data; // Returns true if ID exists, false otherwise
+  return !!data;
 };
-
 
 // Root route
 router.get("/", (req, res) => {
@@ -32,18 +32,15 @@ router.get("/", (req, res) => {
       "/create": "Create a new user and default settings",
       "/edit/:id": "Update a user by User ID",
       "/delete/:id": "Delete a user by User ID",
-      "/login": "Login route"
-    }
+      "/login": "Login route",
+    },
   });
 });
-
 
 // Get all users
 router.get("/all", async (req, res) => {
   try {
-    const { data: users, error } = await supabase
-      .from("profile")
-      .select("*");
+    const { data: users, error } = await supabase.from("profile").select("*");
 
     if (error) throw error;
     res.status(200).json(users);
@@ -53,18 +50,15 @@ router.get("/all", async (req, res) => {
   }
 });
 
-
 // Get a user by ID
 router.get("/:id", async (req, res) => {
-  const userID = req.params.id; // This is expected to be a UUID
-
+  const userID = req.params.id;
   try {
     const { data: user, error } = await supabase
       .from("profile")
       .select("*")
       .eq("id", userID)
       .single();
-
     if (error) {
       console.error("Error fetching user:", error);
       return res.status(500).json({ error: "Error fetching user" });
@@ -81,14 +75,14 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
 // Create a new user and default settings
 router.post("/create", async (req, res) => {
   const { name, email, password } = req.body;
 
-  // Validate required fields
   if (!name || !email || !password) {
-    return res.status(400).json({ error: "Name, email, and password are required" });
+    return res
+      .status(400)
+      .json({ error: "Name, email, and password are required" });
   }
 
   try {
@@ -107,33 +101,33 @@ router.post("/create", async (req, res) => {
       return res.status(500).json({ error: "Error creating settings" });
     }
 
-    // Step 2: Function to generate unique UUID
+    // Step 2: Generate unique UUID
     const generateUniqueId = async () => {
       let uniqueId;
       let exists = true;
       while (exists) {
-        uniqueId = crypto.randomUUID(); // Generate a new UUID
+        uniqueId = crypto.randomUUID();
         const { data, error } = await supabase
           .from("profile")
           .select("id")
           .eq("id", uniqueId)
-          .single(); // Check if the ID already exists
-        exists = data !== null; // If data is not null, UUID already exists
+          .single();
+        exists = data !== null;
       }
       return uniqueId;
     };
-
-    // Generate a unique UUID
     const uniqueId = await generateUniqueId();
 
-    // Step 3: Create the user profile
-    const { error: profileError } = await supabase.from("profile").insert([{
-      id: uniqueId,
-      name,
-      email,
-      password: hashedPassword,
-      settings_id: settingsData.id,
-    }]);
+    // Step 3: Create user profile
+    const { error: profileError } = await supabase.from("profile").insert([
+      {
+        id: uniqueId,
+        name,
+        email,
+        password: hashedPassword,
+        settings_id: settingsData.id,
+      },
+    ]);
 
     if (profileError) {
       console.error("Error creating profile:", profileError);
@@ -148,13 +142,11 @@ router.post("/create", async (req, res) => {
   }
 });
 
-
 // Update a user by User ID
 router.put("/edit/:id", async (req, res) => {
   const userID = req.params.id;
   const { name, email, password } = req.body;
 
-  // Create an object to hold the fields to update
   const updatedFields = {};
   if (name) updatedFields.name = name;
   if (email) updatedFields.email = email;
@@ -183,7 +175,6 @@ router.put("/edit/:id", async (req, res) => {
   }
 });
 
-
 // Delete a user by User ID
 router.delete("/delete/:id", async (req, res) => {
   const userID = req.params.id;
@@ -192,7 +183,7 @@ router.delete("/delete/:id", async (req, res) => {
     // Step 1: Fetch the user's profile to check if it exists
     const { data: profile, error: fetchError } = await supabase
       .from("profile")
-      .select("settings_id") // Fetch the settings_id to delete settings later
+      .select("settings_id")
       .eq("id", userID)
       .single();
 
@@ -202,16 +193,16 @@ router.delete("/delete/:id", async (req, res) => {
     }
 
     if (!profile) {
-      return res.status(404).json({ error: "User not found" }); // Profile does not exist
+      return res.status(404).json({ error: "User not found" });
     }
 
-    const { settings_id } = profile; // Get the settings ID from the profile
+    const { settings_id } = profile;
 
     // Step 2: Delete all pins associated with the user
     const { error: deletePinsError } = await supabase
-      .from("pins") // Assuming you have a "pins" table
+      .from("pins")
       .delete()
-      .eq("profile_id", userID); // Delete based on profile_id
+      .eq("profile_id", userID);
 
     if (deletePinsError) {
       console.error("Error deleting user pins:", deletePinsError);
@@ -221,9 +212,9 @@ router.delete("/delete/:id", async (req, res) => {
     // Step 3: Delete user settings using settings_id
     if (settings_id) {
       const { error: deleteSettingsError } = await supabase
-        .from("settings") // Assuming you have a "settings" table
+        .from("settings")
         .delete()
-        .eq("id", settings_id); // Delete based on settings_id
+        .eq("id", settings_id);
 
       if (deleteSettingsError) {
         console.error("Error deleting user settings:", deleteSettingsError);
@@ -244,13 +235,12 @@ router.delete("/delete/:id", async (req, res) => {
     }
 
     // Send a success response
-    res.status(204).send(); // Successfully deleted with no content
+    res.status(204).send();
   } catch (error) {
     console.error("Error during user deletion:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // Login route
 router.post("/login", async (req, res) => {

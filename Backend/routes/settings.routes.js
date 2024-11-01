@@ -1,7 +1,10 @@
+// settings route
 const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
+const checkApiKey = require("../apiKeyCheck");
 
+router.use(checkApiKey);
 
 // Root route
 router.get("/", (req, res) => {
@@ -9,36 +12,50 @@ router.get("/", (req, res) => {
     message: "Settings Route",
     routes: {
       "/:id": "Get a user's settings by User ID",
-      "/edit/:id": "Update a user's settings by User ID"
-    }
+      "/edit/:id": "Update a user's settings by User ID",
+    },
   });
 });
 
-
-// Get a user's settings by User ID
+// Get a user's settings by ID
 router.get("/:id", async (req, res) => {
-  const userID = req.params.id; // Get the user ID from the request parameters
+  const userID = req.params.id;
 
   try {
-    // Query the settings table using the user ID
-    const { data: settings, error } = await supabase
+    // Step 1: Retrieve settings_id from the profile table using the user ID
+    const { data: profile, error: profileError } = await supabase
+      .from("profile")
+      .select("settings_id")
+      .eq("id", userID)
+      .single();
+
+    if (profileError) {
+      console.error("Error fetching user profile:", profileError);
+      return res.status(500).json({ error: "Error fetching user profile" });
+    }
+
+    if (!profile || !profile.settings_id) {
+      return res.status(404).json({ error: "Profile not found or settings_id missing" });
+    }
+
+    const settingsID = profile.settings_id;
+
+    // Step 2: Query the settings table using the settings ID
+    const { data: settings, error: settingsError } = await supabase
       .from("settings")
       .select("*")
-      .eq("user_id", userID) // Assuming you have a user_id column in the settings table
-      .single(); // Get a single record
+      .eq("id", settingsID)
+      .single();
 
-    // Handle any potential errors from the query
-    if (error) {
-      console.error("Error fetching user settings:", error);
+    if (settingsError) {
+      console.error("Error fetching user settings:", settingsError);
       return res.status(500).json({ error: "Error fetching user settings" });
     }
 
-    // Check if settings exist
     if (!settings) {
       return res.status(404).json({ error: "Settings not found for user" });
     }
 
-    // Return the user's settings
     res.status(200).json(settings);
   } catch (error) {
     console.error("Error during fetching settings:", error);
@@ -46,33 +63,53 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
-// Update a user's settings by User ID
+// Update a user's settings by ID
 router.put("/edit/:id", async (req, res) => {
-  const userID = req.params.id; // Get the user ID from the request parameters
-  const { maptheme, language, notification } = req.body; // Extract settings fields from request body
+  const userID = req.params.id;
+  const { maptheme, language, notification } = req.body;
 
-  // Validate required fields
-  if (maptheme === undefined && language === undefined && notification === undefined) {
-    return res.status(400).json({ error: "At least one field must be provided for update" });
+  if (
+    maptheme === undefined &&
+    language === undefined &&
+    notification === undefined
+  ) {
+    return res
+      .status(400)
+      .json({ error: "At least one field must be provided for update" });
   }
 
-  // Create an object to hold updated fields
-  const updatedFields = {};
-  if (maptheme !== undefined) updatedFields.maptheme = maptheme;
-  if (language !== undefined) updatedFields.language = language;
-  if (notification !== undefined) updatedFields.notification = notification;
-
   try {
-    // Update the settings in the database
-    const { error } = await supabase
+    // Step 1: Retrieve settings_id from the profile table using the user ID
+    const { data: profile, error: profileError } = await supabase
+      .from("profile")
+      .select("settings_id")
+      .eq("id", userID)
+      .single();
+ 
+    if (profileError) {
+      console.error("Error fetching user profile:", profileError);
+      return res.status(500).json({ error: "Error fetching user profile" });
+    }
+
+    if (!profile || !profile.settings_id) {
+      return res.status(404).json({ error: "Profile not found or settings_id missing" });
+    }
+
+    const settingsID = profile.settings_id;
+
+    // Step 2: Create an object to hold updated fields
+    const updatedFields = {};
+    if (maptheme !== undefined) updatedFields.maptheme = maptheme;
+    if (language !== undefined) updatedFields.language = language;
+    if (notification !== undefined) updatedFields.notification = notification;
+
+    const { error: updateError } = await supabase
       .from("settings")
       .update(updatedFields)
-      .eq("user_id", userID); // Assuming you have a user_id column in the settings table
+      .eq("settings_id", settingsID);
 
-    // Handle any potential errors from the update
-    if (error) {
-      console.error("Error updating user settings:", error);
+    if (updateError) {
+      console.error("Error updating user settings:", updateError);
       return res.status(500).json({ error: "Error updating user settings" });
     }
 
