@@ -63,6 +63,7 @@ import Settings from "./pages/Settings";
 import LoginModal from "./modals/LoginModal";
 import MakePinModal from "./modals/MakePinModal";
 import NotificationModal from "./modals/NotificationModal";
+import Account from "./pages/Accounts";
 
 /* App */
 setupIonicReact();
@@ -139,6 +140,7 @@ const App: React.FC = () => {
               <Route exact={true} path="/ownmap" render={() => userID && <OwnMap userID={userID.toString()} />} />
               <Route exact={true} path="/admin" render={() => userstatus == "admin" && <Admin />} />
               <Route exact={true} path="/settings" render={() => userID && <Settings />} />
+              <Route exact={true} path="/settings/account" render={() => userID && <Account />} />
               </IonPage>
             </IonRouterOutlet>
             <IonTabBar slot="bottom">
