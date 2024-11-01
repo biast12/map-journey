@@ -71,10 +71,44 @@ router.post("/", async (req, res) => {
   }
 
   try {
+    // Step 1: Check if the email is already in use
+    const { data: existingEmail, error: emailCheckError } = await supabase
+      .from("profile")
+      .select("email")
+      .eq("email", email)
+      .limit(1)  // Limit to 1 result
+      .single(); // Use .single() to avoid errors on multiple results
+
+    if (emailCheckError && emailCheckError.code !== 'PGRST116') { // Handle errors except for "no rows"
+      console.error("Error checking email:", emailCheckError);
+      return res.status(500).json({ error: "Error checking email" });
+    }
+
+    if (existingEmail) {
+      return res.status(400).json({ error: "Email is already in use" });
+    }
+
+    // Step 2: Check if the name is already taken
+    const { data: existingName, error: nameCheckError } = await supabase
+      .from("profile")
+      .select("name")
+      .eq("name", name)
+      .limit(1)
+      .single();
+
+    if (nameCheckError && nameCheckError.code !== 'PGRST116') {
+      console.error("Error checking name:", nameCheckError);
+      return res.status(500).json({ error: "Error checking name" });
+    }
+
+    if (existingName) {
+      return res.status(400).json({ error: "Name is already taken" });
+    }
+
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Step 1: Create default settings
+    // Step 3: Create default settings
     const { data: settingsData, error: settingsError } = await supabase
       .from("settings")
       .insert([{ maptheme: "default", language: "en", notification: true }])
@@ -86,7 +120,7 @@ router.post("/", async (req, res) => {
       return res.status(500).json({ error: "Error creating settings" });
     }
 
-    // Step 2: Generate unique UUID
+    // Step 4: Generate unique UUID
     const generateUniqueId = async () => {
       let uniqueId;
       let exists = true;
@@ -103,7 +137,7 @@ router.post("/", async (req, res) => {
     };
     const uniqueId = await generateUniqueId();
 
-    // Step 3: Create user profile
+    // Step 5: Create user profile
     const { error: profileError } = await supabase.from("profile").insert([
       {
         id: uniqueId,
@@ -126,6 +160,7 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 // Update a user by User ID
 router.put("/:id", async (req, res) => {
