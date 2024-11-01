@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   IonHeader,
   IonToolbar,
@@ -8,6 +8,7 @@ import {
   IonBadge,
 } from "@ionic/react";
 import { notifications, settings, shieldHalf, logIn } from "ionicons/icons";
+import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/useAuth";
 
 interface HeaderProps {
@@ -21,7 +22,14 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const [notificationNum, setNotificationNum] = useState<number>(1);
 
-  const { userID, userStatus } = useAuth();
+  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { userID } = useAuth();
+  useEffect(() => {
+    if (userID) {
+      makeRequest(`users/${userID}`);
+    }
+  }, [userID]);
+  
   return (
     <IonHeader>
       <IonToolbar>
@@ -35,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({
               <IonBadge color="danger">{notificationNum}</IonBadge>
             </IonButton>
           )}
-          {userStatus === "admin" && (
+          {data === "admin" && (
             <IonButton routerLink="/admin" fill="clear">
               <IonIcon aria-hidden="true" icon={shieldHalf} />
             </IonButton>

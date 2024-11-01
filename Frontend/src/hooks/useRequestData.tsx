@@ -59,7 +59,6 @@ function useRequestData(): RequestData {
     const defaultHeaders = {
       "x-api-key": import.meta.env.VITE_API_KEY,
     };
-    console.log(import.meta.env.VITE_API_KEY);
 
     // Merge default headers with provided headers
     const mergedHeaders = { ...defaultHeaders, ...headers };

@@ -3,6 +3,7 @@ import { Preferences } from "@capacitor/preferences";
 
 const useAuth = () => {
   const [userID, setUserID] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const storeToken = async (token: string) => {
     await Preferences.set({ key: "authToken", value: token });
@@ -25,11 +26,13 @@ const useAuth = () => {
       if (token) {
         setUserID(token);
       }
+      setLoading(false);
     }
+
     checkAuthStatus();
   }, []);
 
-  return { userID, storeToken, clearToken };
+  return { userID, loading, storeToken, clearToken };
 };
 
 export default useAuth;

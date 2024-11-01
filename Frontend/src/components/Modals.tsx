@@ -1,6 +1,8 @@
 import { IonModal, IonButton, IonIcon } from "@ionic/react";
 import { close } from "ionicons/icons";
 
+import useAuth from "../hooks/useAuth";
+
 /* Modals */
 import LoginModal from "../modals/LoginModal";
 import MakePinModal from "../modals/MakePinModal";
@@ -23,17 +25,25 @@ const Modals: React.FC<ModalsProps> = ({
   showNotificationModal,
   closeNotificationModal,
 }) => {
+
+  const { userID, loading } = useAuth();
   return (
     <>
-      <IonModal isOpen={showLoginModal} onDidDismiss={closeLoginModal}>
+      <IonModal
+        isOpen={showLoginModal}
+        onDidDismiss={closeLoginModal}
+        backdropDismiss={!!userID}
+      >
         <div className="modal-content">
-          <IonButton
-            className="close-button"
-            onClick={closeLoginModal}
-            fill="clear"
-          >
-            <IonIcon icon={close} />
-          </IonButton>
+          {userID && (
+            <IonButton
+              className="close-button"
+              onClick={closeLoginModal}
+              fill="clear"
+            >
+              <IonIcon icon={close} />
+            </IonButton>
+          )}
           <LoginModal />
         </div>
       </IonModal>
