@@ -61,6 +61,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (userID) {
+      closeLoginModal();
       makeRequest(`users/${userID}`);
     } else {
       openLoginModal();
