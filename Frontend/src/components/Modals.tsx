@@ -1,5 +1,6 @@
 import { IonModal, IonButton, IonIcon } from "@ionic/react";
 import { close } from "ionicons/icons";
+import "./Modals.scss";
 
 import useAuth from "../hooks/useAuth";
 

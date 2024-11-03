@@ -55,7 +55,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
   const closeCreateUserModal = () => setCreateUserModal(false);
 
   return (
-    <IonCard className="loginWrapper">
+    <IonCard>
       <IonCardHeader>
         <IonCardTitle>Login</IonCardTitle>
       </IonCardHeader>
