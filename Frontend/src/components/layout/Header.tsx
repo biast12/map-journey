@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   IonHeader,
   IonToolbar,
@@ -8,20 +8,26 @@ import {
   IonBadge,
 } from "@ionic/react";
 import { notifications, settings, shieldHalf, logIn } from "ionicons/icons";
-import useAuth from "../../hooks/useAuth";
+import useRequestData from "../../hooks/useRequestData";
+import useAuth from "../../hooks/AuthContext";
 
 interface HeaderProps {
   openNotificationModal: () => void;
-  openLoginModal: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
   openNotificationModal,
-  openLoginModal,
 }) => {
   const [notificationNum, setNotificationNum] = useState<number>(1);
 
-  const { userID, userStatus } = useAuth();
+  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { userID, loading } = useAuth();
+  useEffect(() => {
+    if (userID && !loading) {
+      makeRequest(`users/${userID}`);
+    }
+  }, [userID, loading]);
+  
   return (
     <IonHeader>
       <IonToolbar>
@@ -35,18 +41,14 @@ const Header: React.FC<HeaderProps> = ({
               <IonBadge color="danger">{notificationNum}</IonBadge>
             </IonButton>
           )}
-          {userStatus === "admin" && (
+          {data && data.role === "admin" && (
             <IonButton routerLink="/admin" fill="clear">
               <IonIcon aria-hidden="true" icon={shieldHalf} />
             </IonButton>
           )}
-          {userID ? (
+          {userID && (
             <IonButton routerLink="/settings" fill="clear">
               <IonIcon aria-hidden="true" icon={settings} />
-            </IonButton>
-          ) : (
-            <IonButton onClick={openLoginModal} fill="clear">
-              <IonIcon aria-hidden="true" icon={logIn} />
             </IonButton>
           )}
         </div>

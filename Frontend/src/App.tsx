@@ -34,10 +34,8 @@ import Routes from "./components/Routes";
 import Footer from "./components/layout/Footer";
 import Modals from "./components/Modals";
 
-
 /* Hooks */
-import useRequestData from "./hooks/useRequestData";
-import useAuth from "./hooks/useAuth";
+import useAuth from "./hooks/AuthContext";
 
 /* App */
 setupIonicReact();
@@ -47,8 +45,7 @@ const App: React.FC = () => {
   const [makePinModal, setMakePinModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
 
-  const { userID } = useAuth();
-  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { userID, loading } = useAuth();
 
   const openLoginModal = () => setShowLoginModal(true);
   const closeLoginModal = () => setShowLoginModal(false);
@@ -60,21 +57,15 @@ const App: React.FC = () => {
   const closeNotificationModal = () => setShowNotificationModal(false);
 
   useEffect(() => {
-    if (userID) {
-      closeLoginModal();
-      makeRequest(`users/${userID}`);
-    } else {
+    if (!userID && !loading) {
       openLoginModal();
     }
-  }, [userID]);
+  }, [userID, loading]);
 
   return (
     <IonApp>
       <IonReactRouter>
-        <Header
-          openNotificationModal={openNotificationModal}
-          openLoginModal={openLoginModal}
-        />
+        <Header openNotificationModal={openNotificationModal} />
         <IonContent>
           <IonTabs>
             <IonRouterOutlet>
