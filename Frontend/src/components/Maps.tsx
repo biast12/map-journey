@@ -178,7 +178,6 @@ function Map({ APIurl }: MapProps) {
             if (pin) {
               setSelectedPin(pin);
               view.animate({ center: fromLonLat([pin.longitude, pin.latitude]) }, {zoom: 19}, {duration: 10000});
-              console.log(view.getZoom());
               openShowPinModal();
             }
           }
