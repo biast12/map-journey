@@ -1,7 +1,18 @@
-import { useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { Preferences } from "@capacitor/preferences";
 
-const useAuth = () => {
+interface AuthContextProps {
+  userID: string | null;
+  loading: boolean;
+  storeToken: (token: string) => Promise<void>;
+  clearToken: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [userID, setUserID] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,7 +43,19 @@ const useAuth = () => {
     checkAuthStatus();
   }, []);
 
-  return { userID, loading, storeToken, clearToken };
+  return (
+    <AuthContext.Provider value={{ userID, loading, storeToken, clearToken }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };
 
 export default useAuth;
