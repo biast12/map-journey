@@ -14,7 +14,7 @@ const app = express();
 // Environment variables
 const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT || 8101;
-const SESS_SECRET = process.env.SESS_SECRET || "";
+const SESS_SECRET = process.env.SESS_SECRET || "SESS_SECRET";
 const SESSION_NAME = process.env.SESSION_NAME || "server";
 const NODE_ENV = process.env.NODE_ENV || "production";
 
