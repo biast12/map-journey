@@ -201,7 +201,6 @@ function Map({ APIurl }: MapProps) {
       const coordinates = fromLonLat([longitude, latitude]);
       view.setCenter(coordinates);
       view.setZoom(12);
-      console.log('Current position:', position);
     } catch (error) {
       console.error('Error getting current position:', error);
     }
