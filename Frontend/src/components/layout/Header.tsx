@@ -9,7 +9,7 @@ import {
 } from "@ionic/react";
 import { notifications, settings, shieldHalf, logIn } from "ionicons/icons";
 import useRequestData from "../../hooks/useRequestData";
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../hooks/AuthContext";
 
 interface HeaderProps {
   openNotificationModal: () => void;

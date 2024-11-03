@@ -10,7 +10,7 @@ import {
 } from "@ionic/react";
 import { FormEvent, useRef, useState } from "react";
 import useRequestData from "../hooks/useRequestData";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../hooks/AuthContext";
 import "./LoginModal.scss";
 
 /* Modal */

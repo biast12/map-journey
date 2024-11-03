@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 import useRequestData from "../hooks/useRequestData";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../hooks/AuthContext";
 
 /* Pages */
 import Admin from "../pages/admin/Page";
