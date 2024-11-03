@@ -11,38 +11,58 @@ import {
 	IonItem,
 	IonTextarea
 } from '@ionic/react'
-import { UserPhoto, usePhotoGallery } from '../hooks/usePhotoGallery'
 import { add, camera, close, image, locationSharp } from 'ionicons/icons'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
+
+import { usePhotoGallery, UserPhoto } from './../hooks/usePhotoGallery'
 
 function MakePinModal() {
-	const [expanded, setExpanded] = useState(false)
-	const [photos, setPhotos] = useState<UserPhoto[]>([])
-	const [photo, setPhoto] = useState<any>()
-	const { takePhoto } = usePhotoGallery()
+	const [photoUrls, setPhotoUrls] = useState<string[]>([])
+	const { takePhoto, photo } = usePhotoGallery()
+	const fileInputRef = useRef<HTMLInputElement>(null)
+
+	function handleConfirm() {
+		console.log('handleConfirm')
+		if (photoUrls.length > 0) {
+			// Remove the photos from saved state
+			setPhotoUrls([])
+		}
+	}
 
 	const insertLocation = (): void => {
 		console.log('insertLocation')
 	}
 
-	const toggleExpand = (): void => {
-		setExpanded(!expanded)
-	}
-
 	useEffect(() => {
-		if (photo) {
-			console.log(photo)
-			const fileName = Date.now() + '.jpeg'
-			const newPhotos = [
-				{
-					filepath: fileName,
-					webviewPath: photo.webPath
-				},
-				...photos
-			]
-			setPhotos(newPhotos)
+		if (photo && photo.webViewPath) {
+			console.log(photoUrls.length)
+			if (photoUrls.length < 5) {
+				setPhotoUrls(prevUrls => [...prevUrls, photo.webViewPath!])
+			}
 		}
 	}, [photo])
+
+	const handleFileChange = async (
+		event: React.ChangeEvent<HTMLInputElement>
+	) => {
+		const files = event.target.files
+		if (files) {
+			const newPhotoUrls = []
+			for (let i = 0; i < files.length; i++) {
+				if (photoUrls.length < 5) {
+					const file = files[i]
+					const reader = new FileReader()
+					reader.onloadend = () => {
+						setPhotoUrls(prevUrls => [
+							...prevUrls,
+							reader.result as string
+						])
+					}
+					reader.readAsDataURL(file)
+				}
+			}
+		}
+	}
 
 	return (
 		<IonCard>
@@ -54,26 +74,32 @@ function MakePinModal() {
 					label='Title:'
 					placeholder='Your title here'></IonInput>
 			</IonItem>
-			<img
-				src={
-					photo
-						? photo.webviewPath
-						: 'https://ionicframework.com/docs/img/demos/card-media.png'
-				}
-				alt={photo ? 'Photo taken by user' : 'Silhouette of mountains'}
-			/>
+			{photoUrls.map((url, index) => (
+				<img key={index} src={url} alt={`Photo ${index + 1}`} />
+			))}
 			<div className='addimagebutton'>
 				<IonButton
 					size='large'
 					className='fade-in'
-					onClick={() => {
-						setPhoto(takePhoto)
+					onClick={async () => {
+						await takePhoto()
 					}}>
 					<IonIcon icon={camera} />
 				</IonButton>
-				<IonButton size='large' className='fade-in'>
+				<IonButton
+					size='large'
+					className='fade-in'
+					onClick={() => fileInputRef.current?.click()}>
 					<IonIcon icon={image} />
 				</IonButton>
+				<input
+					type='file'
+					ref={fileInputRef}
+					style={{ display: 'none' }}
+					onChange={handleFileChange}
+					multiple
+					accept='image/*'
+				/>
 			</div>
 
 			<IonItem>
@@ -90,7 +116,7 @@ function MakePinModal() {
 					placeholder='Type something here'></IonTextarea>
 			</IonItem>
 			<div id='confirmButton'>
-				<IonButton>Confirm</IonButton>
+				<IonButton onClick={handleConfirm}>Confirm</IonButton>
 			</div>
 		</IonCard>
 	)
