@@ -3,12 +3,15 @@ require("dotenv").config();
 const cors = require("cors");
 
 const app = express();
-const HOST = process.env.HOST || 'localhost';
+const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT || 8101;
 
 // Supabase Client Initialization
 const { createClient } = require("@supabase/supabase-js");
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 
 // APP ----------------------------------------------------------------
 app.use(cors({ credentials: true, origin: true }));
@@ -40,7 +43,7 @@ app.use(
 // HEROKU
 //app.set('trust proxy', 1); // trust first proxy
 
-const formData = require('express-form-data');
+const formData = require("express-form-data");
 app.use(formData.parse());
 
 // ROUTES ----------------------------------------------------------
@@ -55,8 +58,7 @@ app.use("/notification", require("./routes/notification.routes.js"));
 app.use("/pins", require("./routes/pins.routes.js"));
 app.use("/settings", require("./routes/settings.routes.js"));
 app.use("/users", require("./routes/users.routes.js"));
+app.use("/reports", require("./routes/reports.routes.js"));
 
 // LISTEN --------------------------------------------------------------------------------------------------
-app.listen(PORT, () =>
-  console.log(`Listening on: http://${HOST}:${PORT}`)
-);
+app.listen(PORT, () => console.log(`Listening on: http://${HOST}:${PORT}`));

@@ -25,6 +25,7 @@ import ShowPinModal from "../modals/ShowPinModal";
 import View from "ol/View";
 import { close } from "ionicons/icons";
 import { createStringXY } from "ol/coordinate.js";
+import { Geolocation } from '@capacitor/geolocation';
 import useRequestData from "../hooks/useRequestData";
 
 interface MapProps {
@@ -193,19 +194,17 @@ function Map({ APIurl }: MapProps) {
     });
   }, [data]);
 
-  const getBrowserLocation = (map: OlMap, view: View) => {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const coordinates = fromLonLat([longitude, latitude]);
-        view.setCenter(coordinates);
-        view.setZoom(12);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  const getBrowserLocation = async (map: OlMap, view: View) => {
+    try {
+      const position = await Geolocation.getCurrentPosition();
+      const { latitude, longitude } = position.coords;
+      const coordinates = fromLonLat([longitude, latitude]);
+      view.setCenter(coordinates);
+      view.setZoom(12);
+      console.log('Current position:', position);
+    } catch (error) {
+      console.error('Error getting current position:', error);
+    }
   };
 
   return (

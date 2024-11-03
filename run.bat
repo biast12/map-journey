@@ -1,5 +1,5 @@
 CD Backend
-Start "" "run.bat"
+Start "" "dev.bat"
 
 CD ..\Frontend
 Start "" "run-pc.bat"

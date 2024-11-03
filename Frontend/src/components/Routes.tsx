@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
+import useRequestData from "../hooks/useRequestData";
 import useAuth from "../hooks/useAuth";
 
 /* Pages */
@@ -8,7 +10,15 @@ import OwnMap from "../pages/OwnMap";
 import Settings from "../pages/Settings";
 
 export const Routes = () => {
-  const { userID, userStatus } = useAuth();
+  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { userID, loading } = useAuth();
+
+  useEffect(() => {
+    if (userID && !loading) {
+      makeRequest(`users/${userID}`);
+    }
+  }, [userID, loading]);
+
   return (
     <>
       <Route exact path="/">
@@ -18,12 +28,12 @@ export const Routes = () => {
       <Route
         exact
         path="/ownmap"
-        render={() => userID && <OwnMap userID={userID.toString()} />}
+        render={() => userID && !loading && <OwnMap userID={userID} />}
       />
       <Route
         exact
         path="/admin"
-        render={() => userStatus === "admin" && <Admin />}
+        render={() => data.status === "admin" && <Admin />}
       />
       <Route exact path="/settings" render={() => userID && <Settings />} />
     </>
