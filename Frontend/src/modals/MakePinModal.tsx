@@ -12,12 +12,16 @@ import {
 	IonTextarea
 } from '@ionic/react'
 import { camera, image, locationSharp } from 'ionicons/icons'
+import { Geolocation } from '@capacitor/geolocation'
+import { fromLonLat, toLonLat } from 'ol/proj'
 import { useEffect, useState, useRef } from 'react'
-
 import { usePhotoGallery } from './../hooks/usePhotoGallery'
-
+const debug = true // Set this to false to disable logging
 function MakePinModal() {
+	const [title, setTitle] = useState<string>()
 	const [photoUrl, setPhotoUrl] = useState<string>()
+	const [location, setLocation] = useState<string>()
+	const [comment, setComment] = useState<string>()
 	const { takePhoto, photo } = usePhotoGallery()
 	const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -29,8 +33,58 @@ function MakePinModal() {
 		}
 	}
 
-	const insertLocation = (): void => {
-		console.log('insertLocation')
+	function updateTitle(event: any) {
+		console.log(event.detail.value)
+		setTitle(event.detail.value)
+	}
+
+	function updateComment(event: any) {
+		console.log(event.detail.value)
+		setComment(event.detail.value)
+	}
+
+	async function getLocation(useCurrentLocation: boolean = true) {
+		if (!useCurrentLocation) {
+			console.log('insertLocation')
+			return
+		}
+
+		const position = await Geolocation.getCurrentPosition()
+		const { latitude, longitude } = position.coords
+		const coordinates = fromLonLat([longitude, latitude])
+		if (debug) {
+			console.log(`Latitude: ${latitude}, Longitude: ${longitude}`)
+			const position = await fetch(
+				`https://nominatim.openstreetmap.org/reverse.php?lat=${latitude}&lon=${longitude}&format=jsonv2`
+			)
+			const locationData = await position.json()
+			console.log(locationData)
+			let address = ''
+			if (locationData.address.road) {
+				address += locationData.address.road
+			}
+			if (locationData.address.house_number) {
+				address += ` ${locationData.address.house_number}`
+			}
+			if (locationData.address.city) {
+				address += `, ${locationData.address.city}`
+			}
+			if (locationData.address.town) {
+				address += `, ${locationData.address.town}`
+			}
+			if (locationData.address.postcode) {
+				address += `, ${locationData.address.postcode}`
+			}
+			if (locationData.address.state) {
+				address += `, ${locationData.address.state}`
+			}
+			if (locationData.address.country) {
+				address += `, ${locationData.address.country}`
+			}
+			address = address.replace(/undefined/g, '')
+			console.log(address)
+		}
+		console.log('useCurrentLocation')
 	}
 
 	useEffect(() => {
@@ -63,6 +117,7 @@ function MakePinModal() {
 			</IonCardHeader>
 			<IonItem>
 				<IonInput
+					onIonChange={updateTitle}
 					label='Title:'
 					placeholder='Your title here'></IonInput>
 			</IonItem>
@@ -107,12 +162,15 @@ function MakePinModal() {
 				<IonInput
 					label='Location:'
 					placeholder='Input address here'></IonInput>
-				<IonButton aria-label='Location' onClick={insertLocation}>
+				<IonButton
+					aria-label='Location'
+					onClick={() => getLocation(true)}>
 					<IonIcon icon={locationSharp}></IonIcon>
 				</IonButton>
 			</IonItem>
 			<IonItem>
 				<IonTextarea
+					onIonChange={updateComment}
 					label='Comments:'
 					placeholder='Type something here'></IonTextarea>
 			</IonItem>
