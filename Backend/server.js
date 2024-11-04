@@ -1,63 +1,66 @@
 const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
+const session = require("express-session");
+const formData = require("express-form-data");
+const helmet = require("helmet");
+const compression = require("compression");
+const morgan = require("morgan");
+const setupRoutes = require("./routes");
 
+// Initialize Express app
 const app = express();
-const HOST = process.env.HOST || 'localhost';
+
+// Environment variables
+const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT || 8101;
+const SESS_SECRET = process.env.SESS_SECRET || "SESS_SECRET";
+const SESSION_NAME = process.env.SESSION_NAME || "server";
+const NODE_ENV = process.env.NODE_ENV || "production";
 
-// Supabase Client Initialization
-const { createClient } = require("@supabase/supabase-js");
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
-
-// APP ----------------------------------------------------------------
+// Middleware
+app.use(helmet());
 app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/public", express.static("public"));
+app.use(formData.parse());
+app.use(compression());
+app.use(
+  morgan(":method :url :status - :response-time ms")
+);
 
-// SESSION --------------------------------------------------------------
-const session = require("express-session");
-
-const TWO_DAYS = 1000 * 60 * 60 * 60 * 24 * 2;
-
+// Session configuration
+const TWO_DAYS = 1000 * 60 * 60 * 24 * 2;
 app.use(
   session({
-    name: process.env.SESSION_NAME || "server",
+    name: SESSION_NAME,
     resave: true,
     rolling: false,
     saveUninitialized: false,
-    secret: process.env.SESS_SECRET,
+    secret: SESS_SECRET,
     cookie: {
       maxAge: TWO_DAYS,
       sameSite: "strict",
-      secure: process.env.NODE_ENV === "production",
+      secure: NODE_ENV,
       httpOnly: true,
     },
   })
 );
 
-// HEROKU
-//app.set('trust proxy', 1); // trust first proxy
-
-const formData = require('express-form-data');
-app.use(formData.parse());
-
-// ROUTES ----------------------------------------------------------
-
-//  INDEX
-app.get("/", async (req, res) => {
-  console.log("Hey! this server is active!");
+// Routes
+app.get("/", (req, res) => {
+  res.send("Server is active!");
 });
 
-//  ROUTES -------------------------------------------
-app.use("/globalmap", require("./routes/globalmap.routes.js"));
-app.use("/ownmap", require("./routes/ownmap.routes.js"));
-app.use("/users", require("./routes/users.routes.js"));
-app.use("/notification", require("./routes/notification.routes.js"));
-app.use("/pins", require("./routes/pins.routes.js"));
+// Setup routes
+setupRoutes(app);
 
-// LISTEN --------------------------------------------------------------------------------------------------
-app.listen(PORT, () =>
-  console.log(`Listening on: http://${HOST}:${PORT}`)
-);
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
+});
+
+// Start server
+app.listen(PORT, () => console.log(`Listening on: http://${HOST}:${PORT}`));

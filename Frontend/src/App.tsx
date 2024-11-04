@@ -20,62 +20,32 @@ import "./App.scss";
 
 import { useEffect, useState } from "react";
 import {
-  IonApp,
-  IonButton,
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonImg,
-  IonLabel,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
-  IonToolbar,
   setupIonicReact,
-  IonBadge,
-  IonModal,
-  IonPage,
+  IonApp,
+  IonContent,
+  IonTabs,
+  IonRouterOutlet,
 } from "@ionic/react";
-import { Redirect, Route } from "react-router-dom";
 import { IonReactRouter } from "@ionic/react-router";
-import {
-  pin,
-  earth,
-  map,
-  notifications,
-  settings,
-  shieldHalf,
-  logIn,
-  close
-} from "ionicons/icons";
+
+/* Components */
+import Header from "./components/layout/Header";
+import Routes from "./components/Routes";
+import Footer from "./components/layout/Footer";
+import Modals from "./components/Modals";
 
 /* Hooks */
-import useRequestData from "./hooks/useRequestData";
-
-/* Pages */
-import Admin from "./pages/admin/Page";
-import GlobalMap from "./pages/GlobalMap";
-import OwnMap from "./pages/OwnMap";
-import Settings from "./pages/Settings";
-
-/* Modals */
-import LoginModal from "./modals/LoginModal";
-import MakePinModal from "./modals/MakePinModal";
-import NotificationModal from "./modals/NotificationModal";
-import Account from "./pages/Accounts";
+import useAuth from "./hooks/AuthContext";
 
 /* App */
 setupIonicReact();
-
-const userstatus: string = "admin";
-const userID: number | null = 2;
-const NotificationNum: number = 2;
 
 const App: React.FC = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [makePinModal, setMakePinModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+
+  const { userID, loading } = useAuth();
 
   const openLoginModal = () => setShowLoginModal(true);
   const closeLoginModal = () => setShowLoginModal(false);
@@ -86,103 +56,32 @@ const App: React.FC = () => {
   const openNotificationModal = () => setShowNotificationModal(true);
   const closeNotificationModal = () => setShowNotificationModal(false);
 
-  const { makeRequest, data, error, isLoading } = useRequestData();
   useEffect(() => {
-    if (!userID) {
-      makeRequest(`users/${userID}`);
+    if (!userID && !loading) {
+      openLoginModal();
     }
-  }, [userID]);
+  }, [userID, loading]);
 
   return (
     <IonApp>
       <IonReactRouter>
-        <IonHeader>
-          <IonToolbar>
-            <IonButton routerLink="/" fill="clear">
-              <IonImg src="/icons/webp/logo1.webp" alt="Logo" />
-            </IonButton>
-            <div className="IonButtonContainer">
-              {NotificationNum >= 1 && (
-                <IonButton fill="clear" onClick={openNotificationModal} >
-                  <IonIcon aria-hidden="true" icon={notifications} />
-                  <IonBadge color="danger">{NotificationNum}</IonBadge>
-                </IonButton>
-              )}
-              {userstatus === "admin" && (
-                <IonButton routerLink="/admin" fill="clear">
-                  <IonIcon aria-hidden="true" icon={shieldHalf} />
-                </IonButton>
-              )}
-              {userID ? (
-                <IonButton routerLink="/settings" fill="clear">
-                  <IonIcon aria-hidden="true" icon={settings} />
-                </IonButton>
-              ) : (
-                <IonButton onClick={openLoginModal} fill="clear">
-                  <IonIcon aria-hidden="true" icon={logIn} />
-                </IonButton>
-              )}
-            </div>
-          </IonToolbar>
-        </IonHeader>
+        <Header openNotificationModal={openNotificationModal} />
         <IonContent>
           <IonTabs>
             <IonRouterOutlet>
-            <IonPage>
-              <Route exact={true} path="/">
-                <Redirect to="/globalmap" />
-              </Route>
-              <Route
-                exact={true}
-                path="/globalmap"
-                render={() => <GlobalMap />}
-              />
-              <Route exact={true} path="/ownmap" render={() => userID && <OwnMap userID={userID.toString()} />} />
-              <Route exact={true} path="/admin" render={() => userstatus == "admin" && <Admin />} />
-              <Route exact={true} path="/settings" render={() => userID && <Settings />} />
-              <Route exact={true} path="/settings/account" render={() => userID && <Account />} />
-              </IonPage>
+              <Routes />
             </IonRouterOutlet>
-            <IonTabBar slot="bottom">
-              <IonTabButton tab="globalmap" href="/globalmap">
-                <IonIcon aria-hidden="true" icon={earth} />
-                <IonLabel>Global Map</IonLabel>
-              </IonTabButton>
-              <IonTabButton disabled={userID ? false : true} tab="makePinModal" onClick={openMakePinModal} >
-                <IonIcon aria-hidden="true" icon={pin} />
-                <IonLabel>Add pin</IonLabel>
-              </IonTabButton>
-              <IonTabButton disabled={userID ? false : true} tab="ownmap" href="/ownmap">
-                <IonIcon aria-hidden="true" icon={map} />
-                <IonLabel>Own Map</IonLabel>
-              </IonTabButton>
-            </IonTabBar>
+            <Footer openMakePinModal={openMakePinModal} />
           </IonTabs>
         </IonContent>
-        <IonModal isOpen={showLoginModal} onDidDismiss={closeLoginModal}>
-          <div className="modal-content">
-            <IonButton className="close-button" onClick={closeLoginModal} fill="clear">
-              <IonIcon icon={close} />
-            </IonButton>
-            <LoginModal />
-          </div>
-        </IonModal>
-        <IonModal isOpen={makePinModal} onDidDismiss={closeMakePinModal}>
-          <div className="modal-content">
-            <IonButton className="close-button" onClick={closeMakePinModal} fill="clear">
-              <IonIcon icon={close} />
-            </IonButton>
-            <MakePinModal />
-          </div>
-        </IonModal>
-        <IonModal isOpen={showNotificationModal} onDidDismiss={closeNotificationModal}>
-          <div className="modal-content">
-            <IonButton className="close-button" onClick={closeNotificationModal} fill="clear">
-              <IonIcon icon={close} />
-            </IonButton>
-            <NotificationModal />
-          </div>
-        </IonModal>
+        <Modals
+          showLoginModal={showLoginModal}
+          closeLoginModal={closeLoginModal}
+          makePinModal={makePinModal}
+          closeMakePinModal={closeMakePinModal}
+          showNotificationModal={showNotificationModal}
+          closeNotificationModal={closeNotificationModal}
+        />
       </IonReactRouter>
     </IonApp>
   );

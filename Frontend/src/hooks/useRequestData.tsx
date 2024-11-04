@@ -8,9 +8,17 @@ makeRequest(`users`, "POST", { "Content-Type": "application/json" }, { name: "Jo
 makeRequest(`users/${id}`, "PUT", { "Content-Type": "application/json" }, { name: "Jane Doe" });
 makeRequest(`users/${id}`, "DELETE");
 */
+// https://mapapi.biast12.info
+// http://localhost:8101
+const domain = "http://localhost:8101";
 
 interface RequestData {
-  makeRequest: (url: string, method?: string, headers?: Record<string, string> | undefined, data?: any) => Promise<void>;
+  makeRequest: (
+    url: string,
+    method?: string,
+    headers?: Record<string, string> | undefined,
+    data?: any
+  ) => Promise<void>;
   isLoading: boolean;
   data: any;
   error: boolean;
@@ -21,12 +29,25 @@ function useRequestData(): RequestData {
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState(false);
 
-  const makeRequest = async (url: string, method: string = "GET", headers: Record<string, string> | undefined = undefined, data: any = null): Promise<void> => {
+  const makeRequest = async (
+    url: string,
+    method: string = "GET",
+    headers: Record<string, string> | undefined = undefined,
+    data: any = null
+  ): Promise<void> => {
     let response: AxiosResponse | undefined;
     setIsLoading(true);
 
     // Check if method is valid
-    const validMethods = ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"];
+    const validMethods = [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "PATCH",
+      "OPTIONS",
+      "HEAD",
+    ];
     if (!validMethods.includes(method.toUpperCase())) {
       console.error(`Invalid method: ${method}`);
       setError(true);
@@ -34,10 +55,18 @@ function useRequestData(): RequestData {
       return;
     }
 
+    // Default headers
+    const defaultHeaders = {
+      "x-api-key": import.meta.env.VITE_API_KEY,
+    };
+
+    // Merge default headers with provided headers
+    const mergedHeaders = { ...defaultHeaders, ...headers };
+
     const options: AxiosRequestConfig = {
-      url: `http://localhost:8101/${url}`,
+      url: `${domain}/${url}`,
       method: method,
-      headers: headers,
+      headers: mergedHeaders,
       data: data,
     };
 

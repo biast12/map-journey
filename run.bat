@@ -1,6 +1,5 @@
-Set "ThisPath=%CD%"
 CD Backend
-Start "" "run.bat"
+Start "" "dev.bat"
 
 CD ..\Frontend
-Start "" "run.bat"
+Start "" "run-pc.bat"

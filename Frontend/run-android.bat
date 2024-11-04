@@ -1,0 +1,1 @@
+Ionic capacitor run android -l --external
