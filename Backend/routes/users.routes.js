@@ -22,10 +22,13 @@ router.get("/", (req, res) => {
   });
 });
 
-// Get all users
+// Get all users (excluding the "password" field)
 router.get("/all", async (req, res) => {
   try {
-    const { data: users, error } = await supabase.from("profile").select("*");
+    // Selecting all fields except "password"
+    const { data: users, error } = await supabase.from("profile").select(`
+        id, name, email, settings_id, avatar, banner, new_notifications, status, role, news_count
+      `);
 
     if (error) throw error;
     res.status(200).json(users);
@@ -35,15 +38,21 @@ router.get("/all", async (req, res) => {
   }
 });
 
-// Get a user by ID
+// Get a user by ID (excluding the "password" field)
 router.get("/:id", async (req, res) => {
   const userID = req.params.id;
   try {
+    // Selecting all fields except "password"
     const { data: user, error } = await supabase
       .from("profile")
-      .select("*")
+      .select(
+        `
+        id, name, email, settings_id, avatar, banner, new_notifications, status, role, news_count
+      `
+      )
       .eq("id", userID)
       .single();
+
     if (error) {
       console.error("Error fetching user:", error);
       return res.status(500).json({ error: "Error fetching user" });
@@ -76,10 +85,11 @@ router.post("/", async (req, res) => {
       .from("profile")
       .select("email")
       .eq("email", email)
-      .limit(1)  // Limit to 1 result
+      .limit(1) // Limit to 1 result
       .single(); // Use .single() to avoid errors on multiple results
 
-    if (emailCheckError && emailCheckError.code !== 'PGRST116') { // Handle errors except for "no rows"
+    if (emailCheckError && emailCheckError.code !== "PGRST116") {
+      // Handle errors except for "no rows"
       console.error("Error checking email:", emailCheckError);
       return res.status(500).json({ error: "Error checking email" });
     }
@@ -96,7 +106,7 @@ router.post("/", async (req, res) => {
       .limit(1)
       .single();
 
-    if (nameCheckError && nameCheckError.code !== 'PGRST116') {
+    if (nameCheckError && nameCheckError.code !== "PGRST116") {
       console.error("Error checking name:", nameCheckError);
       return res.status(500).json({ error: "Error checking name" });
     }
@@ -160,7 +170,6 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // Update a user by User ID
 router.put("/:id", async (req, res) => {
