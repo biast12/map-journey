@@ -11,21 +11,21 @@ import {
 	IonItem,
 	IonTextarea
 } from '@ionic/react'
-import { add, camera, close, image, locationSharp } from 'ionicons/icons'
+import { camera, image, locationSharp } from 'ionicons/icons'
 import { useEffect, useState, useRef } from 'react'
 
-import { usePhotoGallery, UserPhoto } from './../hooks/usePhotoGallery'
+import { usePhotoGallery } from './../hooks/usePhotoGallery'
 
 function MakePinModal() {
-	const [photoUrls, setPhotoUrls] = useState<string[]>([])
+	const [photoUrl, setPhotoUrl] = useState<string>()
 	const { takePhoto, photo } = usePhotoGallery()
 	const fileInputRef = useRef<HTMLInputElement>(null)
 
 	function handleConfirm() {
 		console.log('handleConfirm')
-		if (photoUrls.length > 0) {
+		if (photoUrl) {
 			// Remove the photos from saved state
-			setPhotoUrls([])
+			setPhotoUrl(undefined)
 		}
 	}
 
@@ -35,10 +35,8 @@ function MakePinModal() {
 
 	useEffect(() => {
 		if (photo && photo.webViewPath) {
-			console.log(photoUrls.length)
-			if (photoUrls.length < 5) {
-				setPhotoUrls(prevUrls => [...prevUrls, photo.webViewPath!])
-			}
+			console.log(photoUrl)
+			setPhotoUrl(photo.webViewPath)
 		}
 	}, [photo])
 
@@ -47,19 +45,13 @@ function MakePinModal() {
 	) => {
 		const files = event.target.files
 		if (files) {
-			const newPhotoUrls = []
 			for (let i = 0; i < files.length; i++) {
-				if (photoUrls.length < 5) {
-					const file = files[i]
-					const reader = new FileReader()
-					reader.onloadend = () => {
-						setPhotoUrls(prevUrls => [
-							...prevUrls,
-							reader.result as string
-						])
-					}
-					reader.readAsDataURL(file)
+				const file = files[i]
+				const reader = new FileReader()
+				reader.onloadend = () => {
+					setPhotoUrl(reader.result as string)
 				}
+				reader.readAsDataURL(file)
 			}
 		}
 	}
@@ -74,30 +66,39 @@ function MakePinModal() {
 					label='Title:'
 					placeholder='Your title here'></IonInput>
 			</IonItem>
-			{photoUrls.map((url, index) => (
-				<img key={index} src={url} alt={`Photo ${index + 1}`} />
-			))}
-			<div className='addimagebutton'>
+			{photoUrl ? (
+				<IonImg src={photoUrl} alt={`User Photo`} />
+			) : (
+				<IonImg
+					src={
+						'https://ionicframework.com/docs/img/demos/card-media.png'
+					}
+					alt={'Silhouette of mountains'}
+				/>
+			)}
+			<div className='add-image-button'>
 				<IonButton
 					size='large'
 					className='fade-in'
+					aria-label='Take Photo'
 					onClick={async () => {
 						await takePhoto()
 					}}>
-					<IonIcon icon={camera} />
+					<IonIcon icon={camera} aria-hidden='true' />
 				</IonButton>
 				<IonButton
 					size='large'
 					className='fade-in'
+					aria-label='Add Image'
 					onClick={() => fileInputRef.current?.click()}>
-					<IonIcon icon={image} />
+					<IonIcon icon={image} aria-hidden='true' />
 				</IonButton>
 				<input
 					type='file'
 					ref={fileInputRef}
 					style={{ display: 'none' }}
+					aria-hidden='true'
 					onChange={handleFileChange}
-					multiple
 					accept='image/*'
 				/>
 			</div>
