@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<manifest package="com.videndjurs.mapjourney" xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:allowBackup="true" android:label="@string/map_journey" android:icon="@mipmap/ic_launcher">
+        <activity android:name=".MapJourneyActivity" android:label="@string/map_journey">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <provider android:authorities="${applicationId}.fileprovider" android:exported="false">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+</manifest>
