@@ -15,11 +15,7 @@ interface HeaderProps {
   openNotificationModal: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({
-  openNotificationModal,
-}) => {
-  const [notificationNum, setNotificationNum] = useState<number>(1);
-
+const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   const { makeRequest, data, error, isLoading } = useRequestData();
   const { userID, loading } = useAuth();
   useEffect(() => {
@@ -27,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({
       makeRequest(`users/${userID}`);
     }
   }, [userID, loading]);
-  
+
   return (
     <IonHeader>
       <IonToolbar>
@@ -35,10 +31,10 @@ const Header: React.FC<HeaderProps> = ({
           <IonImg src="/icons/webp/logo1.webp" alt="Logo" />
         </IonButton>
         <div className="IonButtonContainer">
-          {notificationNum >= 1 && (
+          {data && data.news_count >= 1 && (
             <IonButton fill="clear" onClick={openNotificationModal}>
               <IonIcon aria-hidden="true" icon={notifications} />
-              <IonBadge color="danger">{notificationNum}</IonBadge>
+              <IonBadge color="danger">{data.news_count}</IonBadge>
             </IonButton>
           )}
           {data && data.role === "admin" && (
