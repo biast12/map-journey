@@ -149,9 +149,10 @@ router.post("/", async (req, res) => {
 
     const newID = newArticle.id;
 
+    // Fetch all profiles and increment news_count
     const { data: profiles, error: profileError } = await supabase
       .from("profile")
-      .select("id, new_notifications");
+      .select("id, new_notifications, news_count");
 
     if (profileError) {
       console.error("Error fetching profiles:", profileError);
@@ -160,14 +161,13 @@ router.post("/", async (req, res) => {
 
     for (const profile of profiles) {
       const currentNotifications = profile.new_notifications || [];
-      const updatedNotifications = addNotificationID(
-        currentNotifications,
-        newID
-      );
+      const updatedNotifications = addNotificationID(currentNotifications, newID);
+
+      const updatedNewsCount = (profile.news_count || 0) + 1;
 
       const { error: updateError } = await supabase
         .from("profile")
-        .update({ new_notifications: updatedNotifications })
+        .update({ new_notifications: updatedNotifications, news_count: updatedNewsCount })
         .eq("id", profile.id);
 
       if (updateError) {
@@ -297,7 +297,7 @@ router.post("/:id", async (req, res) => {
   try {
     const { data: profile, error: fetchError } = await supabase
       .from("profile")
-      .select("new_notifications")
+      .select("new_notifications, news_count")
       .eq("id", userId)
       .single();
 
@@ -308,14 +308,12 @@ router.post("/:id", async (req, res) => {
 
     const currentNotifications = profile.new_notifications || [];
 
-    const updatedNotifications = removeNotificationID(
-      currentNotifications,
-      Number(articleId)
-    );
+    const updatedNotifications = removeNotificationID(currentNotifications, Number(articleId));
+    const updatedNewsCount = Math.max((profile.news_count || 0) - 1, 0); // Ensure news_count is not negative
 
     const { error: updateError } = await supabase
       .from("profile")
-      .update({ new_notifications: updatedNotifications })
+      .update({ new_notifications: updatedNotifications, news_count: updatedNewsCount })
       .eq("id", userId);
 
     if (updateError) {
@@ -323,9 +321,7 @@ router.post("/:id", async (req, res) => {
       return res.status(500).send("Error updating notifications");
     }
 
-    res
-      .status(200)
-      .json({ message: "Notification marked as read", updatedNotifications });
+    res.status(200).json({ message: "Notification marked as read", updatedNotifications });
   } catch (error) {
     console.error("Error marking article as read:", error);
     res.status(500).send("Error marking article as read");
@@ -339,7 +335,7 @@ router.post("/readall/:id", async (req, res) => {
   try {
     const { data: profile, error: fetchError } = await supabase
       .from("profile")
-      .select("new_notifications")
+      .select("new_notifications, news_count")
       .eq("id", userId)
       .single();
 
@@ -347,11 +343,13 @@ router.post("/readall/:id", async (req, res) => {
       console.error("Error fetching profile:", fetchError);
       return res.status(404).send("User profile not found");
     }
+
     const updatedNotifications = [""];
+    const updatedNewsCount = 0;
 
     const { error: updateError } = await supabase
       .from("profile")
-      .update({ new_notifications: updatedNotifications })
+      .update({ new_notifications: updatedNotifications, news_count: updatedNewsCount })
       .eq("id", userId);
 
     if (updateError) {
@@ -368,5 +366,6 @@ router.post("/readall/:id", async (req, res) => {
     res.status(500).send("Error marking all notifications as read");
   }
 });
+
 
 module.exports = router;
