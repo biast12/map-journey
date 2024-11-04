@@ -8,6 +8,7 @@ import Admin from "../pages/admin/Page";
 import GlobalMap from "../pages/GlobalMap";
 import OwnMap from "../pages/OwnMap";
 import Settings from "../pages/Settings";
+import Account from "../pages/Accounts";
 
 export const Routes = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
@@ -36,6 +37,11 @@ export const Routes = () => {
         render={() => data.status === "admin" && <Admin />}
       />
       <Route exact path="/settings" render={() => userID && <Settings />} />
+      <Route
+        exact
+        path="/settings/account"
+        render={() => userID && <Account />}
+      />
     </>
   );
 };
