@@ -31,12 +31,12 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
           <IonImg src="/icons/webp/logo1.webp" alt="Logo" />
         </IonButton>
         <div className="IonButtonContainer">
-          {data && data.news_count >= 1 && (
-            <IonButton fill="clear" onClick={openNotificationModal}>
-              <IonIcon aria-hidden="true" icon={notifications} />
+          <IonButton fill="clear" onClick={openNotificationModal}>
+            <IonIcon aria-hidden="true" icon={notifications} />
+            {data && data.news_count >= 1 && (
               <IonBadge color="danger">{data.news_count}</IonBadge>
-            </IonButton>
-          )}
+            )}
+          </IonButton>
           {data && data.role === "admin" && (
             <IonButton routerLink="/admin" fill="clear">
               <IonIcon aria-hidden="true" icon={shieldHalf} />

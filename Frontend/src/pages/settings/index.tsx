@@ -9,21 +9,12 @@ import {
   IonLabel,
   IonIcon,
 } from "@ionic/react";
-import {
-  settingsOutline,
-  notificationsOutline,
-  lockClosedOutline,
-  personOutline,
-  flagOutline,
-} from "ionicons/icons";
+import { settingsOutline, personOutline } from "ionicons/icons";
 
 const Settings: React.FC = () => {
   const settingsData = [
     { name: "General", icon: settingsOutline },
     { name: "Account", icon: personOutline },
-    { name: "Notifications", icon: notificationsOutline },
-    { name: "Privacy", icon: lockClosedOutline },
-    { name: "Language", icon: flagOutline },
   ];
   return (
     <>
