@@ -22,7 +22,7 @@ router.get("/", (req, res) => {
   });
 });
 
-// Get all users (excluding the "password" field)
+// Get all users
 router.get("/all", async (req, res) => {
   try {
     // Selecting all fields except "password"
@@ -38,7 +38,7 @@ router.get("/all", async (req, res) => {
   }
 });
 
-// Get a user by ID (excluding the "password" field)
+// Get a user by ID
 router.get("/:id", async (req, res) => {
   const userID = req.params.id;
   try {
