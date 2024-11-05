@@ -14,22 +14,43 @@ import {
 import { camera, image, locationSharp } from 'ionicons/icons'
 import { Geolocation } from '@capacitor/geolocation'
 import { fromLonLat, toLonLat } from 'ol/proj'
+import { Coordinate } from 'ol/coordinate'
 import { useEffect, useState, useRef } from 'react'
 import { usePhotoGallery } from './../hooks/usePhotoGallery'
+import { toFormData } from 'axios'
 const debug = true // Set this to false to disable logging
 function MakePinModal() {
 	const [title, setTitle] = useState<string>()
 	const [photoUrl, setPhotoUrl] = useState<string>()
-	const [location, setLocation] = useState<string>()
+	const [location, setLocation] = useState<any>()
+	const [coordinates, setCoordinates] = useState<Coordinate>()
 	const [comment, setComment] = useState<string>()
 	const { takePhoto, photo } = usePhotoGallery()
 	const fileInputRef = useRef<HTMLInputElement>(null)
 
 	function handleConfirm() {
-		console.log('handleConfirm')
+		const formData = toFormData({
+			title: title,
+			description: comment,
+			location: location.address,
+			latitude: location.lat,
+			longitude: location.lon,
+			imgurls: [photoUrl]
+		})
+		if (debug) {
+			console.log('handleConfirm')
+			console.log(
+				title,
+				comment,
+				location.address,
+				location.lat,
+				location.lon,
+				photoUrl
+			)
+		}
 		if (photoUrl) {
 			// Remove the photos from saved state
-			setPhotoUrl(undefined)
+			//setPhotoUrl(undefined)
 		}
 	}
 
@@ -44,47 +65,45 @@ function MakePinModal() {
 	}
 
 	async function getLocation(useCurrentLocation: boolean = true) {
-		if (!useCurrentLocation) {
-			console.log('insertLocation')
-			return
-		}
-
+		if (!useCurrentLocation) return
 		const position = await Geolocation.getCurrentPosition()
 		const { latitude, longitude } = position.coords
 		const coordinates = fromLonLat([longitude, latitude])
+		const location = await fetch(
+			`https://nominatim.openstreetmap.org/reverse.php?lat=${latitude}&lon=${longitude}&format=jsonv2`
+		)
+		const locationData = await location.json()
+		let address = ''
+		if (locationData.address.road) {
+			address += locationData.address.road
+		}
+		if (locationData.address.house_number) {
+			address += ` ${locationData.address.house_number}`
+		}
+		if (locationData.address.city) {
+			address += `, ${locationData.address.city}`
+		}
+		if (locationData.address.town) {
+			address += `, ${locationData.address.town}`
+		}
+		if (locationData.address.postcode) {
+			address += `, ${locationData.address.postcode}`
+		}
+		if (locationData.address.state) {
+			address += `, ${locationData.address.state}`
+		}
+		if (locationData.address.country) {
+			address += `, ${locationData.address.country}`
+		}
 		if (debug) {
 			console.log(`Latitude: ${latitude}, Longitude: ${longitude}`)
-			const position = await fetch(
-				`https://nominatim.openstreetmap.org/reverse.php?lat=${latitude}&lon=${longitude}&format=jsonv2`
-			)
-			const locationData = await position.json()
-			console.log(locationData)
-			let address = ''
-			if (locationData.address.road) {
-				address += locationData.address.road
-			}
-			if (locationData.address.house_number) {
-				address += ` ${locationData.address.house_number}`
-			}
-			if (locationData.address.city) {
-				address += `, ${locationData.address.city}`
-			}
-			if (locationData.address.town) {
-				address += `, ${locationData.address.town}`
-			}
-			if (locationData.address.postcode) {
-				address += `, ${locationData.address.postcode}`
-			}
-			if (locationData.address.state) {
-				address += `, ${locationData.address.state}`
-			}
-			if (locationData.address.country) {
-				address += `, ${locationData.address.country}`
-			}
-			address = address.replace(/undefined/g, '')
 			console.log(address)
+			console.log(locationData)
+			console.log('useCurrentLocation')
 		}
-		console.log('useCurrentLocation')
+		address = address.replace(/undefined/g, '')
+		setCoordinates(coordinates)
+		setLocation({ address: address, lat: latitude, lon: longitude })
 	}
 
 	useEffect(() => {
@@ -93,6 +112,10 @@ function MakePinModal() {
 			setPhotoUrl(photo.webViewPath)
 		}
 	}, [photo])
+
+	useEffect(() => {
+		getLocation(true)
+	}, [])
 
 	const handleFileChange = async (
 		event: React.ChangeEvent<HTMLInputElement>
@@ -160,6 +183,8 @@ function MakePinModal() {
 
 			<IonItem>
 				<IonInput
+					disabled
+					value={location?.address}
 					label='Location:'
 					placeholder='Input address here'></IonInput>
 				<IonButton
