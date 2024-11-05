@@ -55,10 +55,18 @@ function useRequestData(): RequestData {
       return;
     }
 
+    // Default headers
+    const defaultHeaders = {
+      "x-api-key": import.meta.env.VITE_API_KEY,
+    };
+
+    // Merge default headers with provided headers
+    const mergedHeaders = { ...defaultHeaders, ...headers };
+
     const options: AxiosRequestConfig = {
       url: `${domain}/${url}`,
       method: method,
-      headers: headers,
+      headers: mergedHeaders,
       data: data,
     };
 

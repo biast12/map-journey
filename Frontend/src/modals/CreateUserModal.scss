@@ -21,6 +21,8 @@ ion-card {
   }
 
   ion-input {
+    --padding-start: 0.5rem;
+    --padding-end: 0.5rem;
     --background: #3a3a3c;
     --placeholder-color: #9e9e9e;
     --color: #e5e5e5;
@@ -30,12 +32,6 @@ ion-card {
     &:focus-within {
       --background: #48484a;
     }
-
-    
-  }
-  .sc-ion-input-md-h {
-    --padding-start: 1rem;
-    --padding-end: 1rem;
   }
 
   #passwordInput {
@@ -43,7 +39,7 @@ ion-card {
     align-items: center;
   }
 
-  #loginFailed {
+  #createFailed {
     color: #ff453a;
     font-size: 0.9rem;
     margin-top: 0.5rem;
@@ -71,11 +67,7 @@ ion-card {
     --color: #2c2c2e;
     --background: #0a84ff;
     --ripple-color: #0a84ff;
-
-    &.create-user-button {
-      margin-top: 0.5rem;
-      --background: #bf5af2;
-    }
+    margin-top: 1rem;
 
     &[disabled] {
       opacity: 0.6;
@@ -88,5 +80,4 @@ ion-card {
     --color: #fff;
     --border-radius: 6px;
   }
-  
 }

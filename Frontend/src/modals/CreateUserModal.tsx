@@ -1,66 +1,71 @@
+import { useRef, useState, FormEvent } from "react";
 import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
+  IonButton,
   IonInput,
   IonInputPasswordToggle,
-  IonButton,
   IonToast,
-  IonModal,
 } from "@ionic/react";
-import { FormEvent, useRef, useState } from "react";
 import useRequestData from "../hooks/useRequestData";
-import useAuth from "../hooks/ProviderContext";
-import "./LoginModal.scss";
+import "./CreateUserModal.scss";
 
-/* Modal */
-import CreateUserModal from "../modals/CreateUserModal";
-
-interface LoginProps {
+interface CreateUserProps {
+  closeCreateUserModal: () => void;
   closeLoginModal: () => void;
 }
 
-const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
-  const [loginSuccess, setLoginSuccess] = useState<boolean | null>(null);
-  const [createUserModal, setCreateUserModal] = useState(false);
+const CreateUserModal: React.FC<CreateUserProps> = ({
+  closeCreateUserModal,
+  closeLoginModal,
+}) => {
+  const [createSuccess, setCreateSuccess] = useState<boolean | null>(null);
   const toast = useRef<HTMLIonToastElement>(null);
-  const { makeRequest, data, error, isLoading } = useRequestData();
-  const { storeAuthToken } = useAuth();
+  const { makeRequest, isLoading, data, error } = useRequestData();
 
-  async function handleLogin(formEvent: FormEvent) {
+  async function handleCreateUser(formEvent: FormEvent) {
     formEvent.preventDefault();
 
     const formData = new FormData(formEvent.target as HTMLFormElement);
+    const name = formData.get("name");
     const email = formData.get("email");
     const password = formData.get("password");
 
     await makeRequest(
-      "users/login",
+      "users",
       "POST",
       { "Content-Type": "application/json" },
-      { email, password }
+      { name, email, password }
     );
 
     if (!error && data) {
-      setLoginSuccess(true);
+      setCreateSuccess(true);
       toast.current?.present();
-      storeAuthToken(data.user.id);
+      closeCreateUserModal();
       closeLoginModal();
     } else {
-      setLoginSuccess(false);
+      setCreateSuccess(false);
     }
   }
-
-  const openCreateUserModal = () => setCreateUserModal(true);
-  const closeCreateUserModal = () => setCreateUserModal(false);
 
   return (
     <IonCard>
       <IonCardHeader>
-        <IonCardTitle>Login</IonCardTitle>
+        <IonCardTitle>Create User</IonCardTitle>
       </IonCardHeader>
-      <form action="" onSubmit={handleLogin}>
+      <form action="" onSubmit={handleCreateUser}>
         <IonInput
+          required
+          id="nameInput"
+          name="name"
+          type="text"
+          label="Name"
+          labelPlacement="fixed"
+          placeholder="Enter name here"
+        ></IonInput>
+        <IonInput
+          required
           id="emailInput"
           name="email"
           type="email"
@@ -69,6 +74,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
           placeholder="Enter email here"
         ></IonInput>
         <IonInput
+          required
           id="passwordInput"
           name="password"
           type="password"
@@ -78,41 +84,34 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
         >
           <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
         </IonInput>
-        {loginSuccess == false && (
-          <p id="loginFailed">Login failed! Check email or password</p>
+        {createSuccess === false && (
+          <p id="createFailed">User creation failed! Check the inputs</p>
         )}
         <IonButton
           type="submit"
-          id="loginButton"
+          id="createButton"
           expand="block"
           disabled={isLoading}
         >
-          Login
+          Create User
         </IonButton>
       </form>
       <IonButton
-        id="createUserButton"
+        id="closeButton"
         expand="block"
-        onClick={openCreateUserModal}
+        color="medium"
+        onClick={closeCreateUserModal}
       >
-        Create User
+        Close
       </IonButton>
       <IonToast
         ref={toast}
-        message="Login successful"
+        message="User created successfully"
         position="bottom"
         duration={1500}
       ></IonToast>
-      <IonModal isOpen={createUserModal} onDidDismiss={closeCreateUserModal}>
-        <div className="modal-content">
-          <CreateUserModal
-            closeCreateUserModal={closeCreateUserModal}
-            closeLoginModal={closeLoginModal}
-          />
-        </div>
-      </IonModal>
     </IonCard>
   );
 };
 
-export default LoginModal;
+export default CreateUserModal;
