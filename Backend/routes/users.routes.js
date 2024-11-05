@@ -41,9 +41,10 @@ router.get("/all", async (req, res) => {
 // Get a user by ID
 router.get("/:id", async (req, res) => {
   const userID = req.params.id;
+
   try {
-    // Selecting all fields except "password"
-    const { data: user, error } = await supabase
+    //Fetch the user profile
+    const { data: user, error: userError } = await supabase
       .from("profile")
       .select(
         `
@@ -53,8 +54,8 @@ router.get("/:id", async (req, res) => {
       .eq("id", userID)
       .single();
 
-    if (error) {
-      console.error("Error fetching user:", error);
+    if (userError) {
+      console.error("Error fetching user:", userError);
       return res.status(500).json({ error: "Error fetching user" });
     }
 
@@ -62,7 +63,19 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json(user);
+    // Fetch the settings
+    const { data: settings, error: settingsError } = await supabase
+      .from("settings")
+      .select("*")
+      .eq("id", user.settings_id)
+      .single();
+
+    if (settingsError) {
+      console.error("Error fetching settings:", settingsError);
+      return res.status(500).json({ error: "Error fetching settings" });
+    }
+
+    res.status(200).json({ ...user, settings });
   } catch (error) {
     console.error("Error during user fetch:", error);
     res.status(500).json({ error: "Internal Server Error" });
