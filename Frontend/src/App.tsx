@@ -35,7 +35,7 @@ import Footer from "./components/layout/Footer";
 import Modals from "./components/Modals";
 
 /* Hooks */
-import useAuth from "./hooks/AuthContext";
+import useAuth from "./hooks/ProviderContext";
 
 /* App */
 setupIonicReact();
