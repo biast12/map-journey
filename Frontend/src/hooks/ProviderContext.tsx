@@ -19,7 +19,9 @@ export const ProviderContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [userID, setUserID] = useState<string | null>(null);
-  const [notificationsStatus, setNotificationsStatus] = useState<boolean | null>(null);
+  const [notificationsStatus, setNotificationsStatus] = useState<
+    boolean | null
+  >(null);
   const [loading, setLoading] = useState(true);
 
   /* Auth */
@@ -54,7 +56,10 @@ export const ProviderContextProvider: React.FC<{
   /* Notifications Status */
   const storeNotificationsStatusToken = async (token: boolean) => {
     try {
-      await Preferences.set({ key: "notificationsStatusToken", value: token.toString() });
+      await Preferences.set({
+        key: "notificationsStatusToken",
+        value: token.toString(),
+      });
       setNotificationsStatus(token);
     } catch (error) {
       console.error("Failed to store notifications status token", error);
@@ -72,7 +77,9 @@ export const ProviderContextProvider: React.FC<{
 
   const getNotificationsStatusToken = async () => {
     try {
-      const { value } = await Preferences.get({ key: "notificationsStatusToken" });
+      const { value } = await Preferences.get({
+        key: "notificationsStatusToken",
+      });
       return value === "true";
     } catch (error) {
       console.error("Failed to get notifications status token", error);
@@ -88,7 +95,8 @@ export const ProviderContextProvider: React.FC<{
           getNotificationsStatusToken(),
         ]);
         if (authToken) setUserID(authToken);
-        if (notificationsStatus !== null) setNotificationsStatus(notificationsStatus);
+        if (notificationsStatusToken)
+          setNotificationsStatus(notificationsStatusToken);
       } catch (error) {
         console.error("Failed to initialize tokens", error);
       } finally {

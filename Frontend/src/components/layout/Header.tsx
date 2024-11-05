@@ -20,13 +20,14 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   const { makeRequest, data, error, isLoading } = useRequestData();
   const { userID, loading } = useAuth();
-  const { notificationsStatus, loading: settingsLoading } = useNotificationsStatus();
+  const { notificationsStatus, loading: settingsLoading } =
+    useNotificationsStatus();
 
   useEffect(() => {
     if (userID && !loading) {
       makeRequest(`users/${userID}`);
     }
-  }, [userID, loading]);
+  }, [userID, loading, notificationsStatus, settingsLoading]);
 
   return (
     <IonHeader>
@@ -35,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
           <IonImg src="/icons/webp/logo1.webp" alt="Logo" />
         </IonButton>
         <div className="IonButtonContainer">
-          {data && data.settings.notification && (
+          {notificationsStatus && (
             <IonButton fill="clear" onClick={openNotificationModal}>
               <IonIcon aria-hidden="true" icon={notifications} />
               {data && data.news_count >= 1 && (
