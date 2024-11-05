@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 import useRequestData from "../hooks/useRequestData";
-import useAuth from "../hooks/AuthContext";
+import useAuth from "../hooks/ProviderContext";
 
 /* Pages */
 import Admin from "../pages/admin/Page";
@@ -43,12 +43,12 @@ export const Routes = () => {
       <Route
         exact
         path="/settings/general"
-        render={() => userID && data && <General userData={data} />}
+        render={() => data && <General userData={data} />}
       />
       <Route
         exact
         path="/settings/account"
-        render={() => userID && data && <Account userData={data} />}
+        render={() => data && <Account userData={data} />}
       />
     </>
   );

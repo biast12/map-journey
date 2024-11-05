@@ -10,7 +10,7 @@ import {
 } from "@ionic/react";
 import { FormEvent, useRef, useState } from "react";
 import useRequestData from "../hooks/useRequestData";
-import useAuth from "../hooks/AuthContext";
+import useAuth from "../hooks/ProviderContext";
 import "./LoginModal.scss";
 
 /* Modal */
@@ -25,7 +25,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
   const [createUserModal, setCreateUserModal] = useState(false);
   const toast = useRef<HTMLIonToastElement>(null);
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { storeToken } = useAuth();
+  const { storeAuthToken } = useAuth();
 
   async function handleLogin(formEvent: FormEvent) {
     formEvent.preventDefault();
@@ -44,7 +44,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
     if (!error && data) {
       setLoginSuccess(true);
       toast.current?.present();
-      storeToken(data.user.id);
+      storeAuthToken(data.user.id);
       closeLoginModal();
     } else {
       setLoginSuccess(false);

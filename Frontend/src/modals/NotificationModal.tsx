@@ -11,7 +11,7 @@ import {
 
 // hooks
 import useRequestData from "../hooks/useRequestData";
-import useAuth from "../hooks/AuthContext";
+import useAuth from "../hooks/ProviderContext";
 
 const NotificationModal: React.FC = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
@@ -31,7 +31,7 @@ const NotificationModal: React.FC = () => {
       makeRequestReset(`notification/readall/${userID}`, "POST");
     }
   }, [userID, loading]);
-  
+
   return (
     <IonCard>
       <IonCardHeader>
