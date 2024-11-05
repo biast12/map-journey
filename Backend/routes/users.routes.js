@@ -25,7 +25,10 @@ router.get("/", (req, res) => {
 // Get all users
 router.get("/all", async (req, res) => {
   try {
-    const { data: users, error } = await supabase.from("profile").select("*");
+    // Selecting all fields except "password"
+    const { data: users, error } = await supabase.from("profile").select(`
+        id, name, email, settings_id, avatar, banner, new_notifications, status, role, news_count
+      `);
 
     if (error) throw error;
     res.status(200).json(users);
@@ -38,14 +41,21 @@ router.get("/all", async (req, res) => {
 // Get a user by ID
 router.get("/:id", async (req, res) => {
   const userID = req.params.id;
+
   try {
-    const { data: user, error } = await supabase
+    //Fetch the user profile
+    const { data: user, error: userError } = await supabase
       .from("profile")
-      .select("*")
+      .select(
+        `
+        id, name, email, settings_id, avatar, banner, new_notifications, status, role, news_count
+      `
+      )
       .eq("id", userID)
       .single();
-    if (error) {
-      console.error("Error fetching user:", error);
+
+    if (userError) {
+      console.error("Error fetching user:", userError);
       return res.status(500).json({ error: "Error fetching user" });
     }
 
@@ -53,7 +63,19 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json(user);
+    // Fetch the settings
+    const { data: settings, error: settingsError } = await supabase
+      .from("settings")
+      .select("*")
+      .eq("id", user.settings_id)
+      .single();
+
+    if (settingsError) {
+      console.error("Error fetching settings:", settingsError);
+      return res.status(500).json({ error: "Error fetching settings" });
+    }
+
+    res.status(200).json({ ...user, settings });
   } catch (error) {
     console.error("Error during user fetch:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -76,10 +98,11 @@ router.post("/", async (req, res) => {
       .from("profile")
       .select("email")
       .eq("email", email)
-      .limit(1)  // Limit to 1 result
+      .limit(1) // Limit to 1 result
       .single(); // Use .single() to avoid errors on multiple results
 
-    if (emailCheckError && emailCheckError.code !== 'PGRST116') { // Handle errors except for "no rows"
+    if (emailCheckError && emailCheckError.code !== "PGRST116") {
+      // Handle errors except for "no rows"
       console.error("Error checking email:", emailCheckError);
       return res.status(500).json({ error: "Error checking email" });
     }
@@ -96,7 +119,7 @@ router.post("/", async (req, res) => {
       .limit(1)
       .single();
 
-    if (nameCheckError && nameCheckError.code !== 'PGRST116') {
+    if (nameCheckError && nameCheckError.code !== "PGRST116") {
       console.error("Error checking name:", nameCheckError);
       return res.status(500).json({ error: "Error checking name" });
     }
@@ -160,7 +183,6 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // Update a user by User ID
 router.put("/:id", async (req, res) => {
