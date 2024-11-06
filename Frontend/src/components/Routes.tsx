@@ -12,6 +12,8 @@ import Settings from "../pages/settings";
 /* Settings Pages */
 import General from "../pages/settings/General";
 import Account from "../pages/settings/Accounts";
+import PageNotFound from "../pages/PageNotFound";
+import ErrorPage from "../pages/ErrorPage";
 
 export const Routes = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
@@ -38,6 +40,7 @@ export const Routes = () => {
         exact
         path="/admin"
         render={() => data.status === "admin" && <Admin />}
+        render={() => data && data.role === "admin" && <Admin />}
       />
       <Route exact path="/settings" render={() => userID && <Settings />} />
       <Route
@@ -50,6 +53,9 @@ export const Routes = () => {
         path="/settings/account"
         render={() => data && <Account userData={data} />}
       />
+      <Route exact path="/error" component={ErrorPage} />
+      <Route exact path="/error/:status" component={ErrorPage} />
+      {/* <Route component={PageNotFound} />  Not exactly working as intended, since it's showing up while loading pages */}
     </>
   );
 };

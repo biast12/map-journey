@@ -3,13 +3,13 @@ import "./ErrorPage.scss";
 
 interface ErrorPageProps
   extends RouteComponentProps<{
-    id?: string;
+    status?: string;
   }> {}
 
 const ErrorPage: React.FunctionComponent<ErrorPageProps> = ({match}) => {
   console.log(match)
   return <div id="errorContainer">
-    <h1>Error - {match.params.id || "404"}</h1>
+    <h1>Error - {match.params.status || "404"}</h1>
     <p>Something went wrong!</p>
   </div>;
 };
