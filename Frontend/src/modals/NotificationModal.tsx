@@ -1,5 +1,13 @@
 import React, { useEffect } from "react";
-import { IonList, IonItem, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from "@ionic/react";
+import {
+  IonList,
+  IonItem,
+  IonLabel,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+} from "@ionic/react";
 
 // hooks
 import useRequestData from "../hooks/useRequestData";
@@ -9,7 +17,11 @@ import Error from "../components/Error";
 
 const NotificationModal: React.FC = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { makeRequest: makeRequestReset, error: errorReset, isLoading: isLoadingReset } = useRequestData();
+  const {
+    makeRequest: makeRequestReset,
+    error: errorReset,
+    isLoading: isLoadingReset,
+  } = useRequestData();
   const { userID, loading } = useAuth();
 
   useEffect(() => {
@@ -24,11 +36,15 @@ const NotificationModal: React.FC = () => {
 
   return (
     <>
-      {(isLoading || isLoadingReset) && <Loader/>}
-      {(error || errorReset) && !(isLoading || isLoadingReset) && <Error message="Something went wrong!" />}
+      {(isLoading || isLoadingReset) && <Loader />}
+      {!(isLoading || isLoadingReset) && (error || errorReset) && (
+        <Error message="Failed reading notification!" />
+      )}
       <IonCard>
         <IonCardHeader>
-          <IonCardTitle style={{ textAlign: "center" }}>Notifications</IonCardTitle>
+          <IonCardTitle style={{ textAlign: "center" }}>
+            Notifications
+          </IonCardTitle>
         </IonCardHeader>
         <IonCardContent>
           <IonList>

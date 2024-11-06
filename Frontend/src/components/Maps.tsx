@@ -1,7 +1,14 @@
 import "ol/ol.css";
 import "./Maps.scss"; // Import the SCSS file
 
-import { Circle as CircleStyle, Fill, Icon, Stroke, Style, Text } from "ol/style.js";
+import {
+  Circle as CircleStyle,
+  Fill,
+  Icon,
+  Stroke,
+  Style,
+  Text,
+} from "ol/style.js";
 import { Cluster, OSM, Vector as VectorSource } from "ol/source.js";
 import { Extent, createEmpty, extend } from "ol/extent.js";
 import { IonButton, IonIcon, IonImg, IonModal } from "@ionic/react";
@@ -156,7 +163,9 @@ function Map({ APIurl }: MapProps) {
       if (currentTime - lastLogTime >= 1000) {
         lastLogTime = currentTime;
         const coordinates = toLonLat(event.coordinate);
-        console.log(`Longitude: ${coordinates[0]}, Latitude: ${coordinates[1]}`);
+        console.log(
+          `Longitude: ${coordinates[0]}, Latitude: ${coordinates[1]}`
+        );
       }
     });
 
@@ -171,7 +180,11 @@ function Map({ APIurl }: MapProps) {
             const pin = data.find((pin: PinData) => pin.id === pinIndex);
             if (pin) {
               setSelectedPin(pin);
-              view.animate({ center: fromLonLat([pin.longitude, pin.latitude]) }, { zoom: 19 }, { duration: 10000 });
+              view.animate(
+                { center: fromLonLat([pin.longitude, pin.latitude]) },
+                { zoom: 19 },
+                { duration: 10000 }
+              );
               openShowPinModal();
             }
           }
@@ -201,17 +214,26 @@ function Map({ APIurl }: MapProps) {
 
   return (
     <>
-      {error && <Error message={data.message} />}
       {isLoading && <Loader />}
+      {!isLoading && error && <Error message={"Failed fetching pins!"} />}
       {data && (
         <div id="map">
           {/* Preload the image cause else React/Ionic will not load it and add it to "the public folder" */}
-          <IonImg src="/icons/webp/ping1.webp" alt="Pin Icon" style={{ display: "none" }} aria-hidden="true" />
+          <IonImg
+            src="/icons/webp/ping1.webp"
+            alt="Pin Icon"
+            style={{ display: "none" }}
+            aria-hidden="true"
+          />
         </div>
       )}
       <IonModal isOpen={showPinModal} onDidDismiss={closeShowPinModal}>
         <div className="modal-content">
-          <IonButton className="close-button" onClick={closeShowPinModal} fill="clear">
+          <IonButton
+            className="close-button"
+            onClick={closeShowPinModal}
+            fill="clear"
+          >
             <IonIcon icon={close} />
           </IonButton>
           <ShowPinModal pinData={selectedPin} />

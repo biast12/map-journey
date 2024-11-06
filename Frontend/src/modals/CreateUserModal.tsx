@@ -18,7 +18,10 @@ interface CreateUserProps {
   closeLoginModal: () => void;
 }
 
-const CreateUserModal: React.FC<CreateUserProps> = ({ closeCreateUserModal, closeLoginModal }) => {
+const CreateUserModal: React.FC<CreateUserProps> = ({
+  closeCreateUserModal,
+  closeLoginModal,
+}) => {
   const [createSuccess, setCreateSuccess] = useState<boolean | null>(null);
   const toast = useRef<HTMLIonToastElement>(null);
   const { makeRequest, isLoading, data, error } = useRequestData();
@@ -31,7 +34,12 @@ const CreateUserModal: React.FC<CreateUserProps> = ({ closeCreateUserModal, clos
     const email = formData.get("email");
     const password = formData.get("password");
 
-    await makeRequest("users", "POST", { "Content-Type": "application/json" }, { name, email, password });
+    await makeRequest(
+      "users",
+      "POST",
+      { "Content-Type": "application/json" },
+      { name, email, password }
+    );
 
     if (!error && data) {
       setCreateSuccess(true);
@@ -46,7 +54,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({ closeCreateUserModal, clos
   return (
     <>
       {isLoading && <Loader />}
-      {error && <Error message="Failed to create user" />}
+      {!isLoading && error && <Error message="Failed to create user" />}
       <IonCard>
         <IonCardHeader>
           <IonCardTitle>Create User</IonCardTitle>
@@ -81,15 +89,32 @@ const CreateUserModal: React.FC<CreateUserProps> = ({ closeCreateUserModal, clos
           >
             <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
           </IonInput>
-          {createSuccess === false && <p id="createFailed">User creation failed! Check the inputs</p>}
-          <IonButton type="submit" id="createButton" expand="block" disabled={isLoading}>
+          {createSuccess === false && (
+            <p id="createFailed">User creation failed! Check the inputs</p>
+          )}
+          <IonButton
+            type="submit"
+            id="createButton"
+            expand="block"
+            disabled={isLoading}
+          >
             Create User
           </IonButton>
         </form>
-        <IonButton id="closeButton" expand="block" color="medium" onClick={closeCreateUserModal}>
+        <IonButton
+          id="closeButton"
+          expand="block"
+          color="medium"
+          onClick={closeCreateUserModal}
+        >
           Close
         </IonButton>
-        <IonToast ref={toast} message="User created successfully" position="bottom" duration={1500}></IonToast>
+        <IonToast
+          ref={toast}
+          message="User created successfully"
+          position="bottom"
+          duration={1500}
+        ></IonToast>
       </IonCard>
     </>
   );

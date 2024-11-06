@@ -12,7 +12,6 @@ import Settings from "../pages/settings";
 /* Settings Pages */
 import General from "../pages/settings/General";
 import Account from "../pages/settings/Accounts";
-import PageNotFound from "../pages/PageNotFound";
 import ErrorPage from "../pages/ErrorPage";
 
 export const Routes = () => {
@@ -54,7 +53,6 @@ export const Routes = () => {
       />
       <Route exact path="/error" component={ErrorPage} />
       <Route exact path="/error/:status" component={ErrorPage} />
-      {/* <Route component={PageNotFound} />  Not exactly working as intended, since it's showing up while loading pages */}
     </>
   );
 };
