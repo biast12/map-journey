@@ -12,6 +12,8 @@ import { FormEvent, useRef, useState } from "react";
 import useRequestData from "../hooks/useRequestData";
 import useAuth from "../hooks/ProviderContext";
 import "./LoginModal.scss";
+import Error from "../components/Error";
+import Loader from "../components/Loader";
 
 /* Modal */
 import CreateUserModal from "../modals/CreateUserModal";
@@ -55,6 +57,8 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
   const closeCreateUserModal = () => setCreateUserModal(false);
 
   return (
+    <>{!isLoading && error && <Error message={"Something went wrong!"} />}
+      {isLoading && <Loader />}
     <IonCard>
       <IonCardHeader>
         <IonCardTitle>Login</IonCardTitle>
@@ -112,6 +116,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
         </div>
       </IonModal>
     </IonCard>
+    </>
   );
 };
 
