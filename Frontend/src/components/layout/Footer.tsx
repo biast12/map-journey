@@ -1,6 +1,6 @@
 import { IonTabBar, IonTabButton, IonIcon, IonLabel } from "@ionic/react";
 import { earth, pin, map } from "ionicons/icons";
-import useAuth from "../../hooks/AuthContext";
+import useAuth from "../../hooks/ProviderContext";
 
 interface FooterProps {
   openMakePinModal: () => void;

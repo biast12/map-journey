@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Version 1.0.0 Released",
+    "text": "We've introduced several new features and improvements. Check out what's new in the latest version!",
+    "date": "2024-10-01"
+  },
+  {
+    "title": "Version 1.1.0 Update",
+    "text": "Minor bug fixes and performance enhancements. Please update to the latest version for a smoother experience.",
+    "date": "2024-10-15"
+  },
+  {
+    "title": "Version 2.0.0 Major Update",
+    "text": "Our biggest update yet! Explore the new UI, added features, and enhanced user experience.",
+    "date": "2024-10-28"
+  }
+]
