@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
   res.json({
     message: "Pins Route",
     routes: {
-      "/all": "Get all pins with associated profile data",
+      "/all/:id": "Get all pins data by user ID",
       "/:id": "Get pins by user ID",
       "/:id": "Create a new pin",
       "/:id/:pinid": "Update a pin by User ID and Pin ID",
@@ -19,21 +19,14 @@ router.get("/", (req, res) => {
   });
 });
 
-// Get all pins with associated profile data
-router.get("/all", async (req, res) => {
+// Get all pins
+router.get("/all/:id", async (req, res) => {
+  const userID = req.params.id;
+
   try {
     const { data: pins, error } = await supabase
       .from("pins")
-      .select(
-        `*
-        ,
-        profile:profile_id (
-          id,
-          name,
-          avatar
-        )
-      `
-      )
+      .select("*")
       .eq("status", "public");
 
     if (error) {
@@ -41,6 +34,20 @@ router.get("/all", async (req, res) => {
       return res.status(500).json({ error: "Error fetching public pins" });
     }
 
+    for (let pin of pins) {
+      const { data: reportData, error: reportError } = await supabase
+        .from("reports")
+        .select("*")
+        .eq("reported_pin_id", pin.id)
+        .eq("profile_id", userID)
+        .eq("active", true);
+
+      if (reportError) {
+        console.error("Error checking reports:", reportError);
+        return res.status(500).json({ error: "Error checking reports" });
+      }
+      pin.reported = reportData.length > 0 ? true : false;
+    }
     res.status(200).json(pins);
   } catch (error) {
     console.error("Error during fetch:", error);
@@ -55,23 +62,29 @@ router.get("/:id", async (req, res) => {
   try {
     const { data: pins, error } = await supabase
       .from("pins")
-      .select(
-        `*
-        ,
-        profile:profile_id (
-          id,
-          name,
-          avatar
-        )
-      `
-      )
+      .select("*")
+      .eq("status", "public")
       .eq("profile_id", userID);
 
     if (error) {
-      console.error("Error fetching pins for user ID:", error);
-      return res.status(500).json({ error: "Error fetching pins for user" });
+      console.error("Error fetching public pins:", error);
+      return res.status(500).json({ error: "Error fetching public pins" });
     }
 
+    for (let pin of pins) {
+      const { data: reportData, error: reportError } = await supabase
+        .from("reports")
+        .select("*")
+        .eq("reported_pin_id", pin.id)
+        .eq("profile_id", userID)
+        .eq("active", true);
+
+      if (reportError) {
+        console.error("Error checking reports:", reportError);
+        return res.status(500).json({ error: "Error checking reports" });
+      }
+      pin.reported = reportData.length > 0 ? true : false;
+    }
     res.status(200).json(pins);
   } catch (error) {
     console.error("Error during fetch:", error);
