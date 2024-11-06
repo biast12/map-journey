@@ -39,7 +39,6 @@ export const Routes = () => {
       <Route
         exact
         path="/admin"
-        render={() => data.status === "admin" && <Admin />}
         render={() => data && data.role === "admin" && <Admin />}
       />
       <Route exact path="/settings" render={() => userID && <Settings />} />
