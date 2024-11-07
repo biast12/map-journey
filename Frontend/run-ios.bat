@@ -1,0 +1,1 @@
+Ionic capacitor run ios --livereload --external

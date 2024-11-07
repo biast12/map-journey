@@ -1,1 +1,1 @@
-Ionic capacitor run android -l --external
+Ionic capacitor run android --livereload --external
