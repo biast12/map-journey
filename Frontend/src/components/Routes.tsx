@@ -26,7 +26,7 @@ export const Routes = () => {
 
   return (
     <>
-      <Route exact path="/">
+      <Route exact path="/*">
         <Redirect to="/globalmap" />
       </Route>
       <Route exact path="/globalmap" render={() => <GlobalMap />} />
