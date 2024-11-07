@@ -1,10 +1,3 @@
-@keyframes fadeOut {
-  0% { opacity: 1; visibility: visible;}
-  75% { opacity: 1;}
-  99% {opacity: 0.01;}
-  100% { opacity: 0; visibility: hidden;}
-}
-
 .error {
   position: absolute;
   top: 50%;
@@ -19,17 +12,14 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 350px;
   z-index: 200;
-  
-  opacity: 0;
-  visibility: hidden;
-  animation: fadeOut 2s;
-}
 
+  opacity: 1;
+  visibility: visible;
+}
 .error h1 {
   margin: 0;
   font-size: 24px;
 }
-
 .error p {
   margin: 10px 0 0;
   font-size: 16px;
