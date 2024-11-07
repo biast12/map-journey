@@ -11,8 +11,15 @@ import {
   IonToggle,
 } from "@ionic/react";
 import { pencilSharp, close } from "ionicons/icons";
+
+/* Hooks */
 import useRequestData from "../../hooks/useRequestData";
 import useNotificationsStatus from "../../hooks/ProviderContext";
+
+/* Components */
+import Loader from "../../components/Loader";
+import Error from "../../components/Error";
+
 import "./General.scss";
 
 interface UserDataProps {
@@ -40,7 +47,7 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
   const [notification, setNotification] = useState(
     userData.settings.notification
   );
-  const { makeRequest, isLoading, error } = useRequestData();
+  const { makeRequest, error, isLoading } = useRequestData();
 
   const { storeNotificationsStatusToken } = useNotificationsStatus();
 
@@ -75,6 +82,8 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
 
   return (
     <>
+      {isLoading && <Loader />}
+      {!isLoading && error && <Error message={"Something went wrong!"} />}
       <IonHeader>
         <IonToolbar>
           <IonTitle>General Settings</IonTitle>

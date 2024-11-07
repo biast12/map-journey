@@ -12,6 +12,7 @@ import Settings from "../pages/settings";
 /* Settings Pages */
 import General from "../pages/settings/General";
 import Account from "../pages/settings/Accounts";
+import ErrorPage from "../pages/ErrorPage";
 
 export const Routes = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
@@ -25,7 +26,7 @@ export const Routes = () => {
 
   return (
     <>
-      <Route exact path="/">
+      <Route exact path="/*">
         <Redirect to="/globalmap" />
       </Route>
       <Route exact path="/globalmap" render={() => <GlobalMap />} />
@@ -37,7 +38,7 @@ export const Routes = () => {
       <Route
         exact
         path="/admin"
-        render={() => data.status === "admin" && <Admin />}
+        render={() => data && data.role === "admin" && <Admin />}
       />
       <Route exact path="/settings" render={() => userID && <Settings />} />
       <Route
@@ -50,6 +51,8 @@ export const Routes = () => {
         path="/settings/account"
         render={() => data && <Account userData={data} />}
       />
+      <Route exact path="/error" component={ErrorPage} />
+      <Route exact path="/error/:status" component={ErrorPage} />
     </>
   );
 };

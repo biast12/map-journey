@@ -1,0 +1,26 @@
+.error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 20px;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 350px;
+  z-index: 200;
+
+  opacity: 1;
+  visibility: visible;
+}
+.error h1 {
+  margin: 0;
+  font-size: 24px;
+}
+.error p {
+  margin: 10px 0 0;
+  font-size: 16px;
+}

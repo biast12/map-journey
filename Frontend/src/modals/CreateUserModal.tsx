@@ -10,6 +10,8 @@ import {
 } from "@ionic/react";
 import useRequestData from "../hooks/useRequestData";
 import "./CreateUserModal.scss";
+import Loader from "../components/Loader";
+import Error from "../components/Error";
 
 interface CreateUserProps {
   closeCreateUserModal: () => void;
@@ -50,67 +52,71 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   }
 
   return (
-    <IonCard>
-      <IonCardHeader>
-        <IonCardTitle>Create User</IonCardTitle>
-      </IonCardHeader>
-      <form action="" onSubmit={handleCreateUser}>
-        <IonInput
-          required
-          id="nameInput"
-          name="name"
-          type="text"
-          label="Name"
-          labelPlacement="fixed"
-          placeholder="Enter name here"
-        ></IonInput>
-        <IonInput
-          required
-          id="emailInput"
-          name="email"
-          type="email"
-          label="Email"
-          labelPlacement="fixed"
-          placeholder="Enter email here"
-        ></IonInput>
-        <IonInput
-          required
-          id="passwordInput"
-          name="password"
-          type="password"
-          labelPlacement="fixed"
-          label="Password"
-          placeholder="Enter password here"
-        >
-          <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
-        </IonInput>
-        {createSuccess === false && (
-          <p id="createFailed">User creation failed! Check the inputs</p>
-        )}
+    <>
+      {isLoading && <Loader />}
+      {!isLoading && error && <Error message="Failed to create user" />}
+      <IonCard>
+        <IonCardHeader>
+          <IonCardTitle>Create User</IonCardTitle>
+        </IonCardHeader>
+        <form action="" onSubmit={handleCreateUser}>
+          <IonInput
+            required
+            id="nameInput"
+            name="name"
+            type="text"
+            label="Name"
+            labelPlacement="fixed"
+            placeholder="Enter name here"
+          ></IonInput>
+          <IonInput
+            required
+            id="emailInput"
+            name="email"
+            type="email"
+            label="Email"
+            labelPlacement="fixed"
+            placeholder="Enter email here"
+          ></IonInput>
+          <IonInput
+            required
+            id="passwordInput"
+            name="password"
+            type="password"
+            labelPlacement="fixed"
+            label="Password"
+            placeholder="Enter password here"
+          >
+            <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
+          </IonInput>
+          {createSuccess === false && (
+            <p id="createFailed">User creation failed! Check the inputs</p>
+          )}
+          <IonButton
+            type="submit"
+            id="createButton"
+            expand="block"
+            disabled={isLoading}
+          >
+            Create User
+          </IonButton>
+        </form>
         <IonButton
-          type="submit"
-          id="createButton"
+          id="closeButton"
           expand="block"
-          disabled={isLoading}
+          color="medium"
+          onClick={closeCreateUserModal}
         >
-          Create User
+          Close
         </IonButton>
-      </form>
-      <IonButton
-        id="closeButton"
-        expand="block"
-        color="medium"
-        onClick={closeCreateUserModal}
-      >
-        Close
-      </IonButton>
-      <IonToast
-        ref={toast}
-        message="User created successfully"
-        position="bottom"
-        duration={1500}
-      ></IonToast>
-    </IonCard>
+        <IonToast
+          ref={toast}
+          message="User created successfully"
+          position="bottom"
+          duration={1500}
+        ></IonToast>
+      </IonCard>
+    </>
   );
 };
 
