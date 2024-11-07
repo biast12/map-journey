@@ -63,7 +63,6 @@ router.get("/:id", async (req, res) => {
     const { data: pins, error } = await supabase
       .from("pins")
       .select("*")
-      .eq("status", "public")
       .eq("profile_id", userID);
 
     if (error) {
