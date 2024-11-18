@@ -8,6 +8,7 @@ import useAuth from "../hooks/ProviderContext";
 import LoginModal from "../modals/LoginModal";
 import MakePinModal from "../modals/MakePinModal";
 import NotificationModal from "../modals/NotificationModal";
+import Modal from "./Modal";
 
 interface ModalsProps {
   showLoginModal: boolean;
@@ -29,42 +30,15 @@ const Modals: React.FC<ModalsProps> = ({
   const { userID, loading } = useAuth();
   return (
     <>
-      <IonModal
-        isOpen={showLoginModal}
-        onDidDismiss={closeLoginModal}
-        backdropDismiss={!!userID}
-      >
-        <div className="modal-content">
-          <LoginModal closeLoginModal={closeLoginModal} />
-        </div>
-      </IonModal>
-      <IonModal isOpen={makePinModal} onDidDismiss={closeMakePinModal}>
-        <div className="modal-content">
-          <IonButton
-            className="close-button"
-            onClick={closeMakePinModal}
-            fill="clear"
-          >
-            <IonIcon icon={close} />
-          </IonButton>
-          <MakePinModal />
-        </div>
-      </IonModal>
-      <IonModal
-        isOpen={showNotificationModal}
-        onDidDismiss={closeNotificationModal}
-      >
-        <div className="modal-content">
-          <IonButton
-            className="close-button"
-            onClick={closeNotificationModal}
-            fill="clear"
-          >
-            <IonIcon icon={close} />
-          </IonButton>
-          <NotificationModal />
-        </div>
-      </IonModal>
+    <Modal isOpen={showLoginModal} onCloseModal={closeLoginModal} backdropDismiss={false} hideCloseButton={!userID}>
+      <LoginModal closeLoginModal={closeLoginModal} />
+    </Modal>
+    <Modal isOpen={makePinModal} onCloseModal={closeMakePinModal}>
+      <MakePinModal />
+    </Modal>
+    <Modal isOpen={showNotificationModal} onCloseModal={closeNotificationModal}>
+      <NotificationModal />
+    </Modal>
     </>
   );
 };
