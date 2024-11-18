@@ -228,13 +228,23 @@ router.delete("/:id/:pinid", async (req, res) => {
       return res.status(403).json({ error: "Unauthorized to delete this pin" });
     }
 
-    const { error: deleteError } = await supabase
+    const { error: deleteReportsError } = await supabase
+      .from("reports")
+      .delete()
+      .eq("reported_pin_id", pinID);
+
+    if (deleteReportsError) {
+      console.error("Error deleting reports for pin:", deleteReportsError);
+      return res.status(500).json({ error: "Error deleting reports for pin" });
+    }
+
+    const { error: deletePinError } = await supabase
       .from("pins")
       .delete()
       .eq("id", pinID);
 
-    if (deleteError) {
-      console.error("Error deleting pin:", deleteError);
+    if (deletePinError) {
+      console.error("Error deleting pin:", deletePinError);
       return res.status(500).json({ error: "Error deleting pin" });
     }
 

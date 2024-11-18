@@ -5,6 +5,8 @@ const checkApiKey = require("../apiKeyCheck");
 
 router.use(checkApiKey);
 
+const Maxnumber = 5;
+
 // Helper function to validate UUIDs
 function isValidUUID(uuid) {
   const uuidRegex =
@@ -106,7 +108,7 @@ router.post("/:id", async (req, res) => {
 
       if (profileCountError) throw profileCountError;
 
-      if (profileReportCount > 5) {
+      if (profileReportCount >= Maxnumber) {
         const { data: profileData, error: profileError } = await supabase
           .from("profile")
           .select("status")
@@ -136,7 +138,7 @@ router.post("/:id", async (req, res) => {
 
       if (pinCountError) throw pinCountError;
 
-      if (pinReportCount > 5) {
+      if (pinReportCount >= Maxnumber) {
         const { data: pinData, error: pinError } = await supabase
           .from("pins")
           .select("status")
@@ -171,12 +173,85 @@ router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
+    const { data: reportToDelete, error: fetchError } = await supabase
+      .from("reports")
+      .select("reported_user_id, reported_pin_id")
+      .eq("id", id)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    if (!reportToDelete) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    const { reported_user_id, reported_pin_id } = reportToDelete;
+
     const { data, error } = await supabase
       .from("reports")
       .delete()
       .eq("id", id);
 
     if (error) throw error;
+
+    if (reported_user_id) {
+      const { count: userReportCount, error: userCountError } = await supabase
+        .from("reports")
+        .select("*", { count: "exact" })
+        .eq("reported_user_id", reported_user_id)
+        .eq("active", true);
+
+      if (userCountError) throw userCountError;
+
+      if (userReportCount < Maxnumber) {
+        const { data: profileData, error: profileError } = await supabase
+          .from("profile")
+          .select("status")
+          .eq("id", reported_user_id)
+          .single();
+
+        if (profileError) throw profileError;
+
+        if (profileData.status === "reported") {
+          const { error: updateProfileError } = await supabase
+            .from("profile")
+            .update({ status: "offline" })
+            .eq("id", reported_user_id);
+
+          if (updateProfileError) throw updateProfileError;
+        }
+      }
+    }
+
+    if (reported_pin_id) {
+      const { count: pinReportCount, error: pinCountError } = await supabase
+        .from("reports")
+        .select("*", { count: "exact" })
+        .eq("reported_pin_id", reported_pin_id)
+        .eq("active", true);
+
+      if (pinCountError) throw pinCountError;
+
+      if (pinReportCount < Maxnumber) {
+        const { data: pinData, error: pinError } = await supabase
+          .from("pins")
+          .select("status")
+          .eq("id", reported_pin_id)
+          .single();
+
+        if (pinError) throw pinError;
+
+        if (pinData.status === "reported") {
+          const { error: updatePinError } = await supabase
+            .from("pins")
+            .update({ status: "offline" })
+            .eq("id", reported_pin_id);
+
+          if (updatePinError) throw updatePinError;
+        }
+      }
+    }
+
     res.status(200).json({ message: "Report deleted successfully", data });
   } catch (error) {
     res
