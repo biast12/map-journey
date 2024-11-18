@@ -5,12 +5,17 @@ import "./UserColumn.scss"
 import { createOutline, trashBin } from "ionicons/icons";
 
 type UserData = {
-  name: string;
+  avatar: string;
+  banner: string;
+  email: string;
   id: string;
-  role: string;
-  reports: number; // Unsure?
-  status: string;
-};
+  name: string;
+  new_notifications: string[];
+  news_count: number;
+  role: "user" | "admin";
+  settings_id: number;
+  status: "public" | "private" | "reported";
+} 
 
 interface UserColumnProps {
   userData: UserData;
@@ -29,7 +34,6 @@ const UserColumn: React.FC<UserColumnProps> = ({ userData, onEditUserClick, onDe
           <p>Name: {userData.name}</p>
           <p>Role: {userData.role}</p>
           <p>Status: {userData.status}</p>
-          <p>Reports: {userData.reports}</p>
         </div>
       </section>
       <IonButton onClick={(e) => onEditUserClick(e, userData)}><IonIcon aria-hidden="true" icon={createOutline} /></IonButton>
