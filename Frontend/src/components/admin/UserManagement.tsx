@@ -1,8 +1,10 @@
-import { MouseEvent, useEffect } from "react";
-import { IonRow } from "@ionic/react";
+"use client";
+import { FormEvent, useEffect, useState } from "react";
+import { IonButton, IonRow } from "@ionic/react";
 
 import useRequestData from "../../hooks/useRequestData";
 import UserColumn from "./UserColumn";
+import Modal from "../Modal";
 
 type UserData = {
   avatar: string;
@@ -18,37 +20,56 @@ type UserData = {
 };
 
 const UserManagement = () => {
-  function handleEditUser(e: MouseEvent, userData: UserData) {
-    //Add actual type
-    //Open modal for adjusting userdata as a form, and once done you can press "save" that sends a POST request.
-    //If the request was successful, update the user with the new changes.
-  }
-  function handleDeleteUser(e: MouseEvent, userData: UserData) {
-    //Open confirmation prompt as a level of protection against accidents
-  }
+  const { data: allUsers, error, isLoading, makeRequest } = useRequestData();
 
-  const { data, error, isLoading, makeRequest } = useRequestData();
+  const [selectedUser, setSelectedUser] = useState<null | UserData>(null);
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+
+  function handleUserEdit(e: FormEvent , userData: UserData) {
+    //Perform edit request based changes to their original data
+    
+    setShowEditModal(false)
+    setSelectedUser(null)
+  }
+  function handleUserDelete(userData: UserData) {
+    //Perform delete request
+    //Update user list according to response
+
+    setShowDeleteModal(false)
+    setSelectedUser(null)
+  }
 
   useEffect(() => {
     makeRequest("users/all");
   }, []);
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
   return (
-    <IonRow id="userRow">
-      {data &&
-        data.map((userData: UserData) => (
-          <UserColumn
-            key={userData.id}
-            userData={userData}
-            onEditUserClick={handleEditUser}
-            onDeleteUserClick={handleDeleteUser}
-          />
-        ))}
-    </IonRow>
+    <>
+      <Modal isOpen={showEditModal} onCloseModal={() => setShowEditModal(false)}>
+        {selectedUser && Object.entries(selectedUser).map((value)=><p>{value.join(": ")}</p>)}
+      </Modal>
+      <Modal isOpen={showDeleteModal} onCloseModal={() => setShowDeleteModal(false)}>
+        {selectedUser && <IonButton onClick={() => handleUserDelete(selectedUser)}>Are you sure?</IonButton>}
+      </Modal>
+      <IonRow id="userRow">
+        {allUsers &&
+          allUsers.map((userData: UserData) => (
+            <UserColumn
+              key={userData.id}
+              userData={userData}
+              onEditUserClick={() => {
+                setSelectedUser(userData);
+                setShowEditModal(true);
+              }}
+              onDeleteUserClick={() => {
+                setSelectedUser(userData);
+                setShowDeleteModal(true);
+              }}
+            />
+          ))}
+      </IonRow>
+    </>
   );
 };
 
