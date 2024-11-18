@@ -36,7 +36,7 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
         </div>
       </IonCardContent>
       <div id="showPinCardButtons">
-        <IonButton>Report</IonButton>
+        <IonButton disabled={pinData.reported}>Report</IonButton>
       </div>
     </IonCard>
   );
