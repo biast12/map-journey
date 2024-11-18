@@ -28,7 +28,11 @@ export const Routes = () => {
       <Route exact path="/">
         <Redirect to="/globalmap" />
       </Route>
-      <Route exact path="/globalmap" render={() => <GlobalMap />} />
+      <Route
+        exact
+        path="/globalmap"
+        render={() => userID && !loading && <GlobalMap userID={userID} />}
+      />
       <Route
         exact
         path="/ownmap"

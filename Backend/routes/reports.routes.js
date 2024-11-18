@@ -22,7 +22,6 @@ router.get("/", (req, res) => {
       "/all": "Get all reports",
       "/": "Create a new report",
       "/:id": "Delete a report by ID",
-      "/dismissed/:id": "dismissed a report by ID",
     },
   });
 });

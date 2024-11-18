@@ -26,7 +26,16 @@ router.get("/all/:id", async (req, res) => {
   try {
     const { data: pins, error } = await supabase
       .from("pins")
-      .select("*")
+      .select(
+        `*
+        ,
+        profile:profile_id (
+          id,
+          name,
+          avatar
+        )
+      `
+      )
       .eq("status", "public");
 
     if (error) {
@@ -62,7 +71,16 @@ router.get("/:id", async (req, res) => {
   try {
     const { data: pins, error } = await supabase
       .from("pins")
-      .select("*")
+      .select(
+        `*
+        ,
+        profile:profile_id (
+          id,
+          name,
+          avatar
+        )
+      `
+      )
       .eq("profile_id", userID);
 
     if (error) {
