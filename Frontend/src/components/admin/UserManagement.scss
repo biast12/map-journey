@@ -1,11 +1,32 @@
 #editUserModal {
 
-    figure img {
-        width: 100%;
+    div {
+        display: flex;
+
+        figure {
+            margin: 0;
+            img {
+                width: 100%;
+                height: auto;
+                margin: 0;
+            }
+        }
     }
 
-    form select {
+    form {
         display: flex;
         flex-direction: column;
+        gap: 0.25rem;
+        margin-top: 0.5rem;
+        height: 75%;
+        
+        select, input {
+            padding: 0.2rem;   
+        }
+
+        .submitButton {
+            margin-top: auto;
+        }
+
     }
 }

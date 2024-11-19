@@ -6,7 +6,7 @@ import useRequestData from "../../hooks/useRequestData";
 import UserColumn from "./UserColumn";
 import Modal from "../Modal";
 
-import "./UserManagement.scss"
+import "./UserManagement.scss";
 
 type UserData = {
   avatar: string;
@@ -22,23 +22,43 @@ type UserData = {
 };
 
 const UserManagement = () => {
-  const { data: allUsers, error, isLoading, makeRequest } = useRequestData();
+  const { data, error, isLoading, makeRequest } = useRequestData();
+  const { data: delData, error: delError, isLoading: delIsLoading, makeRequest: delMakeRequest } = useRequestData();
+  const { data: editData, error: editError, isLoading: editIsLoading, makeRequest: editMakeRequest} = useRequestData();
 
   const [selectedUser, setSelectedUser] = useState<null | UserData>(null);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [handlingRequest, setHandlingRequest] = useState<boolean>(false);
 
-  function handleUserEdit(e: FormEvent, userData: UserData) {
+  async function handleUserEdit(e: FormEvent, userData: UserData) {
+    setHandlingRequest(true);
+    e.preventDefault();
     //Perform edit request based changes to their original data
+    const form = e.target as HTMLFormElement;
+    console.log(form.username.value);
+
+    const body = {
+      name: form.username.value,
+      status: form.status.value,
+      role: form.userrole.value
+    }
+
+    const res = await editMakeRequest(`users/${userData.id}`, "PUT", undefined, body) //INSERT DATA HERE
+
     setShowEditModal(false);
     setSelectedUser(null);
+    setHandlingRequest(false);
   }
-  function handleUserDelete(userData: UserData) {
-    //Perform delete request
-    //Update user list according to response
+  async function handleUserDelete(userData: UserData) {
+    setHandlingRequest(true);
+
+    const res = await delMakeRequest(`users/${userData.id}`, "DELETE");
+    makeRequest("users/all");
 
     setShowDeleteModal(false);
     setSelectedUser(null);
+    setHandlingRequest(false);
   }
 
   useEffect(() => {
@@ -47,55 +67,55 @@ const UserManagement = () => {
 
   return (
     <>
-      <Modal isOpen={showEditModal} onCloseModal={() => setShowEditModal(false)}>
+      <Modal isOpen={showEditModal} onCloseModal={() => setShowEditModal(false)} backdropDismiss={!handlingRequest}>
         {selectedUser && (
           <section id="editUserModal">
             <h3>Edit user</h3>
-            <figure>
-              <img src={selectedUser.banner} alt="User banner" />
-            </figure>
-            <figure>
-              <img src={selectedUser.avatar} alt="User avatar" />
-            </figure>
-            <form>
-              <input name="name" type="text" placeholder="Name" required defaultValue={selectedUser.name} />
-              <select name="role" id="">
-                <option selected={selectedUser.role === "user"} value="user">
-                  User
-                </option>
-                <option selected={selectedUser.role === "admin"} value="admin">
-                  Admin
-                </option>
+            <div>
+              <figure>
+                <img src={selectedUser.banner} alt="User banner" />
+              </figure>
+              <figure>
+                <img src={selectedUser.avatar} alt="User avatar" />
+              </figure>
+            </div>
+            <form onSubmit={(e) => handleUserEdit(e, selectedUser)}>
+              <label htmlFor="username">Name:</label>
+              <input name="username" type="text" placeholder="Name" required defaultValue={selectedUser.name} />
+              <label htmlFor="userrole">Role:</label>
+              <select value={selectedUser.role} name="userrole" id="">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
               </select>
-              <select name="status" id="">
-                <option selected={selectedUser.status === "public"} value="public">
-                  Public
-                </option>
-                <option selected={selectedUser.status === "private"} value="private">
-                  Private
-                </option>
-                <option selected={selectedUser.status === "reported"} value="reported">
-                  Reported
-                </option>
+              <label htmlFor="status">Status:</label>
+              <select value={selectedUser.status} name="status" id="">
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+                <option value="reported">Reported</option>
               </select>
+              <IonButton className="submitButton" type="submit">
+                Save changes
+              </IonButton>
             </form>
           </section>
         )}
       </Modal>
-      <Modal isOpen={showDeleteModal} onCloseModal={() => setShowDeleteModal(false)}>
+      <Modal isOpen={showDeleteModal} onCloseModal={() => setShowDeleteModal(false)} backdropDismiss={!handlingRequest}>
         {selectedUser && <IonButton onClick={() => handleUserDelete(selectedUser)}>Are you sure?</IonButton>}
       </Modal>
       <IonRow id="userRow">
-        {allUsers &&
-          allUsers.map((userData: UserData) => (
+        {data &&
+          data.map((userData: UserData) => (
             <UserColumn
               key={userData.id}
               userData={userData}
               onEditUserClick={() => {
+                if (handlingRequest) return;
                 setSelectedUser(userData);
                 setShowEditModal(true);
               }}
               onDeleteUserClick={() => {
+                if (handlingRequest) return;
                 setSelectedUser(userData);
                 setShowDeleteModal(true);
               }}
