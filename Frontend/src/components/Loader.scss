@@ -1,0 +1,40 @@
+$color: #fff;
+$color2: #fff2;
+
+.loader {
+  width: 15px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  animation: l5 1s infinite linear alternate;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes l5 {
+  0% {
+    box-shadow:
+      20px 0 $color,
+      -20px 0 $color2;
+    background: $color;
+  }
+  33% {
+    box-shadow:
+      20px 0 $color,
+      -20px 0 $color2;
+    background: $color2;
+  }
+  66% {
+    box-shadow:
+      20px 0 $color2,
+      -20px 0 $color;
+    background: $color2;
+  }
+  100% {
+    box-shadow:
+      20px 0 $color2,
+      -20px 0 $color;
+    background: $color;
+  }
+}

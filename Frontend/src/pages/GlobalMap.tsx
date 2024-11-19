@@ -1,9 +1,13 @@
 import Map from "../components/Maps";
 
-function GlobalMap() {
+interface OwnMapProps {
+  userID: string;
+}
+
+function GlobalMap({ userID }: OwnMapProps) {
   return (
     <>
-      <Map APIurl="all"/>
+      <Map APIurl={`all/${userID}`} />
     </>
   );
 }

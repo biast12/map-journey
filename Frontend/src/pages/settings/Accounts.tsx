@@ -10,8 +10,15 @@ import {
   IonToast,
 } from "@ionic/react";
 import { pencilSharp, close } from "ionicons/icons";
+
+/* Hooks */
 import useRequestData from "../../hooks/useRequestData";
 import useImageHandler from "../../hooks/useImageHandler";
+
+/* Components */
+import Loader from "../../components/Loader";
+import Error from "../../components/Error";
+
 import "./Accounts.scss";
 
 interface UserDataProps {
@@ -84,6 +91,8 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
 
   return (
     <>
+      {isLoading && <Loader />}
+      {!isLoading && error && <Error message={"Something went wrong!"} />}
       <IonHeader>
         <IonToolbar>
           <IonTitle>Account</IonTitle>

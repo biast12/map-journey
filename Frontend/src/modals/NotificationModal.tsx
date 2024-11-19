@@ -12,6 +12,8 @@ import {
 // hooks
 import useRequestData from "../hooks/useRequestData";
 import useAuth from "../hooks/ProviderContext";
+import Loader from "../components/Loader";
+import Error from "../components/Error";
 
 const NotificationModal: React.FC = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
@@ -33,27 +35,33 @@ const NotificationModal: React.FC = () => {
   }, [userID, loading]);
 
   return (
-    <IonCard>
-      <IonCardHeader>
-        <IonCardTitle style={{ textAlign: "center" }}>
-          Notifications
-        </IonCardTitle>
-      </IonCardHeader>
-      <IonCardContent>
-        <IonList>
-          {data &&
-            data.map((notification: any, index: number) => (
-              <IonItem key={index}>
-                <IonLabel>
-                  <h2>{notification.title}</h2>
-                  <p>{notification.text}</p>
-                  <small>{notification.date}</small>
-                </IonLabel>
-              </IonItem>
-            ))}
-        </IonList>
-      </IonCardContent>
-    </IonCard>
+    <>
+      {(isLoading || isLoadingReset) && <Loader />}
+      {!(isLoading || isLoadingReset) && (error || errorReset) && (
+        <Error message="Failed reading notification!" />
+      )}
+      <IonCard>
+        <IonCardHeader>
+          <IonCardTitle style={{ textAlign: "center" }}>
+            Notifications
+          </IonCardTitle>
+        </IonCardHeader>
+        <IonCardContent>
+          <IonList>
+            {data &&
+              data.map((notification: any, index: number) => (
+                <IonItem key={index}>
+                  <IonLabel>
+                    <h2>{notification.title}</h2>
+                    <p>{notification.text}</p>
+                    <small>{notification.date}</small>
+                  </IonLabel>
+                </IonItem>
+              ))}
+          </IonList>
+        </IonCardContent>
+      </IonCard>
+    </>
   );
 };
 

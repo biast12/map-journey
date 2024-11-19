@@ -5,8 +5,13 @@ import {
   IonCardSubtitle,
   IonCardContent,
   IonButton,
+  IonModal,
 } from "@ionic/react";
+import { useState } from "react";
 import "./ShowPinModal.scss";
+
+/* Modal */
+import ReportModal from "../modals/ReportModal";
 
 interface ShowPinModalProps {
   pinData: any;
@@ -14,16 +19,16 @@ interface ShowPinModalProps {
 
 const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
   if (!pinData) return null;
+  const [reportModal, setReportModal] = useState(false);
+  const openReportModal = () => setReportModal(true);
+  const closeReportModal = () => setReportModal(false);
 
   return (
     <IonCard>
       <IonCardHeader>
         <IonCardTitle>{pinData.title}</IonCardTitle>
         <div>
-          <img
-            alt={pinData.description}
-            src={pinData.imgurls}
-          />
+          <img alt={pinData.description} src={pinData.imgurls} />
         </div>
         <IonCardSubtitle>{pinData.location}</IonCardSubtitle>
       </IonCardHeader>
@@ -36,8 +41,19 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
         </div>
       </IonCardContent>
       <div id="showPinCardButtons">
-        <IonButton>Report</IonButton>
+        <IonButton disabled={pinData.reported} onClick={openReportModal}>
+          Report pin
+        </IonButton>
       </div>
+      <IonModal isOpen={reportModal} onDidDismiss={closeReportModal}>
+        <div className="modal-content">
+          <ReportModal
+            closeReportModal={closeReportModal}
+            reported_id={pinData.id}
+            reportedType="pin"
+          />
+        </div>
+      </IonModal>
     </IonCard>
   );
 };

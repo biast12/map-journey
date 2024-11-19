@@ -12,6 +12,8 @@ import { FormEvent, useRef, useState } from "react";
 import useRequestData from "../hooks/useRequestData";
 import useAuth from "../hooks/ProviderContext";
 import "./LoginModal.scss";
+import Error from "../components/Error";
+import Loader from "../components/Loader";
 
 /* Modal */
 import CreateUserModal from "../modals/CreateUserModal";
@@ -55,63 +57,67 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
   const closeCreateUserModal = () => setCreateUserModal(false);
 
   return (
-    <IonCard>
-      <IonCardHeader>
-        <IonCardTitle>Login</IonCardTitle>
-      </IonCardHeader>
-      <form action="" onSubmit={handleLogin}>
-        <IonInput
-          id="emailInput"
-          name="email"
-          type="email"
-          label="Email"
-          labelPlacement="fixed"
-          placeholder="Enter email here"
-        ></IonInput>
-        <IonInput
-          id="passwordInput"
-          name="password"
-          type="password"
-          labelPlacement="fixed"
-          label="Password"
-          placeholder="Enter password here"
-        >
-          <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
-        </IonInput>
-        {loginSuccess == false && (
-          <p id="loginFailed">Login failed! Check email or password</p>
-        )}
+    <>
+      {isLoading && <Loader />}
+      {!isLoading && error && <Error message={"Failed login!"} />}
+      <IonCard>
+        <IonCardHeader>
+          <IonCardTitle>Login</IonCardTitle>
+        </IonCardHeader>
+        <form action="" onSubmit={handleLogin}>
+          <IonInput
+            id="emailInput"
+            name="email"
+            type="email"
+            label="Email"
+            labelPlacement="fixed"
+            placeholder="Enter email here"
+          ></IonInput>
+          <IonInput
+            id="passwordInput"
+            name="password"
+            type="password"
+            labelPlacement="fixed"
+            label="Password"
+            placeholder="Enter password here"
+          >
+            <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
+          </IonInput>
+          {loginSuccess == false && (
+            <p id="loginFailed">Login failed! Check email or password</p>
+          )}
+          <IonButton
+            type="submit"
+            id="loginButton"
+            expand="block"
+            disabled={isLoading}
+          >
+            Login
+          </IonButton>
+        </form>
         <IonButton
-          type="submit"
-          id="loginButton"
+          id="createUserButton"
           expand="block"
-          disabled={isLoading}
+          onClick={openCreateUserModal}
         >
-          Login
+          Create User
         </IonButton>
-      </form>
-      <IonButton
-        id="createUserButton"
-        expand="block"
-        onClick={openCreateUserModal}
-      >
-        Create User
-      </IonButton>
-      <IonToast
-        ref={toast}
-        message="Login successful"
-        position="bottom"
-        duration={1500}
-      ></IonToast>
-      <IonModal isOpen={createUserModal} onDidDismiss={closeCreateUserModal}>
-        <div className="modal-content">
-          <CreateUserModal
-            closeCreateUserModal={closeCreateUserModal}
-            closeLoginModal={closeLoginModal}
-          />
-        </div>
-      </IonModal>
-    </IonCard>
+        <IonToast
+          ref={toast}
+          message="Login successful"
+          position="bottom"
+          duration={1500}
+        ></IonToast>
+        <IonModal isOpen={createUserModal} onDidDismiss={closeCreateUserModal}>
+          <div className="modal-content">
+            <CreateUserModal
+              closeCreateUserModal={closeCreateUserModal}
+              closeLoginModal={closeLoginModal}
+            />
+          </div>
+        </IonModal>
+      </IonCard>
+    </>
   );
 };
 
