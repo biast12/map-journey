@@ -20,12 +20,13 @@ router.get("/", (req, res) => {
     message: "Pins Route",
     routes: {
       "/all": "Get all reports",
-      "/": "Create a new report",
+      "/:id": "Create a new report",
       "/:id": "Delete a report by ID",
     },
   });
 });
 
+// Get all reports
 router.get("/all", async (req, res) => {
   try {
     const { data: reports, error: reportsError } = await supabase
@@ -107,8 +108,8 @@ router.get("/all", async (req, res) => {
 
     res.status(200).json(enhancedReports);
   } catch (error) {
-    console.error("Error fetching detailed reports:", error);
-    res.status(500).json({ error: "Error fetching detailed reports" });
+    console.error("Error fetching reports:", error);
+    res.status(500).json({ error: "Error fetching reports" });
   }
 });
 
