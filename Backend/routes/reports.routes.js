@@ -26,16 +26,89 @@ router.get("/", (req, res) => {
   });
 });
 
-// Get all reports
 router.get("/all", async (req, res) => {
   try {
-    const { data: reports, error } = await supabase.from("reports").select("*");
+    const { data: reports, error: reportsError } = await supabase
+      .from("reports")
+      .select("*");
 
-    if (error) throw error;
-    res.status(200).json(reports);
+    if (reportsError) throw reportsError;
+
+    const enhancedReports = await Promise.all(
+      reports.map(async (report) => {
+        const { data: reportingUser, error: reportingUserError } =
+          await supabase
+            .from("profile")
+            .select("id, name, email, avatar")
+            .eq("id", report.profile_id)
+            .single();
+
+        if (reportingUserError) {
+          console.error(
+            `Error fetching reporting user (profile_id: ${report.profile_id}):`,
+            reportingUserError
+          );
+          throw reportingUserError;
+        }
+
+        let reportedUser = null;
+        if (report.reported_user_id) {
+          const { data: reportedUserData, error: reportedUserError } =
+            await supabase
+              .from("profile")
+              .select("id, name, email, avatar")
+              .eq("id", report.reported_user_id)
+              .single();
+
+          if (reportedUserError) {
+            console.error(
+              `Error fetching reported user (reported_user_id: ${report.reported_user_id}):`,
+              reportedUserError
+            );
+            throw reportedUserError;
+          }
+
+          reportedUser = reportedUserData;
+        }
+
+        let reportedPin = null;
+        if (report.reported_pin_id) {
+          const { data: reportedPinData, error: reportedPinError } =
+            await supabase
+              .from("pins")
+              .select(
+                "id, profile_id, title, description, imgurls, date, location, longitude, latitude"
+              )
+              .eq("id", report.reported_pin_id)
+              .single();
+
+          if (reportedPinError) {
+            console.error(
+              `Error fetching reported pin (reported_pin_id: ${report.reported_pin_id}):`,
+              reportedPinError
+            );
+            throw reportedPinError;
+          }
+
+          reportedPin = reportedPinData;
+        }
+
+        return {
+          id: report.id,
+          reporting_user: reportingUser,
+          text: report.text,
+          date: report.date,
+          reported_user: reportedUser,
+          reported_pin: reportedPin,
+          active: report.active,
+        };
+      })
+    );
+
+    res.status(200).json(enhancedReports);
   } catch (error) {
-    console.error("Error fetching reports:", error);
-    res.status(500).json({ error: "Error fetching reports" });
+    console.error("Error fetching detailed reports:", error);
+    res.status(500).json({ error: "Error fetching detailed reports" });
   }
 });
 
