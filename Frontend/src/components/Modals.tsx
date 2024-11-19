@@ -47,7 +47,7 @@ const Modals: React.FC<ModalsProps> = ({
           >
             <IonIcon icon={close} />
           </IonButton>
-          <MakePinModal />
+          <MakePinModal onClose={closeMakePinModal} />
         </div>
       </IonModal>
       <IonModal

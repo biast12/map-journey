@@ -32,6 +32,7 @@
     "@types/react-router-dom": "^5.3.3",
     "android": "^0.0.8",
     "axios": "^1.7.7",
+    "compressorjs": "^1.2.1",
     "fs": "^0.0.1-security",
     "ionic-logging-service": "^18.0.0",
     "ionicons": "^7.0.0",

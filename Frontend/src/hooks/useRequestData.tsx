@@ -81,10 +81,16 @@ function useRequestData(): RequestData {
         setError(true);
         throw new Error("Error: No data in response");
       }
+
+      // Throw an error if the response status is not in the 2xx range
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
     } catch (error) {
       setData(null);
       setError(true);
       console.log(error);
+      throw error;
     } finally {
       setIsLoading(false);
     }

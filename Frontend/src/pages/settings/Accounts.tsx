@@ -13,7 +13,7 @@ import { pencilSharp, close } from "ionicons/icons";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
-import { usePhotoGallery } from "../../hooks/usePhotoGallery";
+import useImageHandler from "../../hooks/useImageHandler";
 
 /* Components */
 import Loader from "../../components/Loader";
@@ -39,22 +39,43 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
       "https://ionicframework.com/docs/img/demos/card-media.png"
   );
   const { makeRequest, isLoading, error } = useRequestData();
-  const { takePhoto, photo } = usePhotoGallery();
+  const { takePhoto, photoUrl, handleUpload, removeImage } = useImageHandler();
   const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
-    if (photo) {
-      setAvatar(photo.webViewPath || "");
+    if (photoUrl) {
+      setAvatar(photoUrl);
     }
-  }, [photo]);
+  }, [photoUrl]);
 
   const handleSave = async () => {
-    const updatedData = {
-      avatar: avatar,
+    let updatedAvatar = avatar;
+
+    if (photoUrl) {
+      try {
+        const { publicUrl } = await handleUpload(userData.id);
+        updatedAvatar = publicUrl;
+      } catch (error) {
+        console.error("Error uploading avatar:", error);
+      }
+    }
+
+    let updatedData: {
+      avatar: string;
+      name: string;
+      email: string;
+      password?: string;
+    } = {
+      avatar: updatedAvatar,
       name: username,
       email: email,
-      password: password,
     };
+
+    if (password) {
+      updatedData = { ...updatedData, password };
+    }
+
+    console.log("Updated data:", updatedData);
 
     await makeRequest(
       `users/${userData.id}`,
@@ -65,6 +86,9 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
 
     if (!error) {
       setShowToast(true);
+      await removeImage(userData.avatar).catch((error) =>
+        console.error("Error removing old image:", error)
+      );
     } else {
       console.error("Error updating user data");
     }
@@ -83,13 +107,15 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <div
-          className="imageContainer"
-          onClick={async () => {
-            await takePhoto();
-          }}
-        >
-          <img id="showPinImage" alt="User Avatar" src={avatar} />
+        <div className="imageContainer">
+          <img
+            id="showPinImage"
+            alt="User Avatar"
+            src={avatar}
+            onClick={async () => {
+              await takePhoto();
+            }}
+          />
         </div>
         <div className="inlineTagsContainer">
           <div className="inlineTags">

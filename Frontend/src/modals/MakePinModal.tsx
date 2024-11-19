@@ -1,126 +1,189 @@
-import './MakePinModal.scss'
-
+import "./MakePinModal.scss";
 import {
-	IonButton,
-	IonCard,
-	IonCardHeader,
-	IonCardTitle,
-	IonIcon,
-	IonImg,
-	IonInput,
-	IonItem,
-	IonTextarea
-} from '@ionic/react'
-import { camera, image, locationSharp } from 'ionicons/icons'
-import { useEffect, useState, useRef } from 'react'
+  IonButton,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonIcon,
+  IonImg,
+  IonInput,
+  IonItem,
+  IonTextarea,
+} from "@ionic/react";
+import { camera, locationSharp } from "ionicons/icons";
+import { Geolocation } from "@capacitor/geolocation";
+import { fromLonLat } from "ol/proj";
+import { Coordinate } from "ol/coordinate";
+import { useEffect, useState, useRef } from "react";
+import useRequestData from "../hooks/useRequestData";
+import useAuth from "../hooks/ProviderContext";
+import useImageHandler from "../hooks/useImageHandler";
 
-import { usePhotoGallery } from './../hooks/usePhotoGallery'
-
-function MakePinModal() {
-	const [photoUrl, setPhotoUrl] = useState<string>()
-	const { takePhoto, photo } = usePhotoGallery()
-	const fileInputRef = useRef<HTMLInputElement>(null)
-
-	function handleConfirm() {
-		console.log('handleConfirm')
-		if (photoUrl) {
-			// Remove the photos from saved state
-			setPhotoUrl(undefined)
-		}
-	}
-
-	const insertLocation = (): void => {
-		console.log('insertLocation')
-	}
-
-	useEffect(() => {
-		if (photo && photo.webViewPath) {
-			console.log(photoUrl)
-			setPhotoUrl(photo.webViewPath)
-		}
-	}, [photo])
-
-	const handleFileChange = async (
-		event: React.ChangeEvent<HTMLInputElement>
-	) => {
-		const files = event.target.files
-		if (files) {
-			for (let i = 0; i < files.length; i++) {
-				const file = files[i]
-				const reader = new FileReader()
-				reader.onloadend = () => {
-					setPhotoUrl(reader.result as string)
-				}
-				reader.readAsDataURL(file)
-			}
-		}
-	}
-
-	return (
-		<IonCard>
-			<IonCardHeader>
-				<IonCardTitle>Map your Journey</IonCardTitle>
-			</IonCardHeader>
-			<IonItem>
-				<IonInput
-					label='Title:'
-					placeholder='Your title here'></IonInput>
-			</IonItem>
-			{photoUrl ? (
-				<IonImg src={photoUrl} alt={`User Photo`} />
-			) : (
-				<IonImg
-					src={
-						'https://ionicframework.com/docs/img/demos/card-media.png'
-					}
-					alt={'Silhouette of mountains'}
-				/>
-			)}
-			<div className='add-image-button'>
-				<IonButton
-					size='large'
-					className='fade-in'
-					aria-label='Take Photo'
-					onClick={async () => {
-						await takePhoto()
-					}}>
-					<IonIcon icon={camera} aria-hidden='true' />
-				</IonButton>
-				<IonButton
-					size='large'
-					className='fade-in'
-					aria-label='Add Image'
-					onClick={() => fileInputRef.current?.click()}>
-					<IonIcon icon={image} aria-hidden='true' />
-				</IonButton>
-				<input
-					type='file'
-					ref={fileInputRef}
-					style={{ display: 'none' }}
-					aria-hidden='true'
-					onChange={handleFileChange}
-					accept='image/*'
-				/>
-			</div>
-
-			<IonItem>
-				<IonInput
-					label='Location:'
-					placeholder='Input address here'></IonInput>
-				<IonButton aria-label='Location' onClick={insertLocation}>
-					<IonIcon icon={locationSharp}></IonIcon>
-				</IonButton>
-			</IonItem>
-			<IonItem>
-				<IonTextarea
-					label='Comments:'
-					placeholder='Type something here'></IonTextarea>
-			</IonItem>
-			<div id='confirmButton'>
-				<IonButton onClick={handleConfirm}>Confirm</IonButton>
-			</div>
-		</IonCard>
-	)
+interface MakePinModalProps {
+  onClose: () => void;
 }
 
-export default MakePinModal
+const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
+  const [title, setTitle] = useState<string>("");
+  const [location, setLocation] = useState<any>(null);
+  const [coordinates, setCoordinates] = useState<Coordinate | null>(null);
+  const [comment, setComment] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const confirmButton = useRef<HTMLIonButtonElement>(null);
+  const cancelButton = useRef<HTMLIonButtonElement>(null);
+  const titleInput = useRef<HTMLIonInputElement>(null);
+  const commentInput = useRef<HTMLIonTextareaElement>(null);
+  const cameraButton = useRef<HTMLIonButtonElement>(null);
+  const locationButton = useRef<HTMLIonButtonElement>(null);
+  const { makeRequest } = useRequestData();
+  const { userID } = useAuth();
+  const { photoUrl, takePhoto, handleUpload, removeImage } = useImageHandler();
+
+  useEffect(() => {
+    const refs = [
+      titleInput,
+      commentInput,
+      cameraButton,
+      locationButton,
+      confirmButton,
+      cancelButton,
+    ];
+
+    refs.forEach((ref) => {
+      if (ref.current) {
+        ref.current.disabled = isSubmitting;
+      }
+    });
+  }, [isSubmitting]);
+
+  const handleConfirm = async () => {
+    if (!title || !photoUrl || !comment || !location || !coordinates) {
+      console.error("All fields are required");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    let fileName = "";
+
+    try {
+      const { fileName: imageName, publicUrl } = await handleUpload();
+      fileName = imageName;
+
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", comment);
+      formData.append("location", location.address);
+      formData.append("latitude", location.lat);
+      formData.append("longitude", location.lon);
+      formData.append("imgurls", publicUrl);
+
+      await makeRequest(`pins/${userID}`, "POST", undefined, formData);
+      console.log("Pin uploaded successfully");
+      onClose();
+    } catch (error) {
+      console.error("Error uploading pin:", error);
+      await removeImage(fileName);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const updateTitle = (event: any) => setTitle(event.detail.value);
+  const updateComment = (event: any) => setComment(event.detail.value);
+
+  const getLocation = async (useCurrentLocation: boolean = true) => {
+    if (!useCurrentLocation) return;
+    try {
+      const position = await Geolocation.getCurrentPosition();
+      const { latitude, longitude } = position.coords;
+      const coordinates = fromLonLat([longitude, latitude]);
+      const locationResponse = await fetch(
+        `https://nominatim.openstreetmap.org/reverse.php?lat=${latitude}&lon=${longitude}&format=jsonv2`
+      );
+      const locationData = await locationResponse.json();
+      const address = [
+        locationData.address.road,
+        locationData.address.house_number,
+        locationData.address.city,
+        locationData.address.town,
+        locationData.address.postcode,
+        locationData.address.state,
+        locationData.address.country,
+      ]
+        .filter(Boolean)
+        .join(", ");
+      setCoordinates(coordinates);
+      setLocation({ address, lat: latitude, lon: longitude });
+    } catch (error) {
+      console.error("Error getting location:", error);
+    }
+  };
+
+  useEffect(() => {
+    getLocation(true);
+  }, []);
+
+  return (
+    <IonCard>
+      <IonCardHeader>
+        <IonCardTitle>Map your Journey</IonCardTitle>
+      </IonCardHeader>
+      <IonItem>
+        <IonInput
+          onIonChange={updateTitle}
+          ref={titleInput}
+          label="Title:"
+          placeholder="Your title here"
+        />
+      </IonItem>
+      <IonImg
+        src={
+          photoUrl || "https://ionicframework.com/docs/img/demos/card-media.png"
+        }
+        alt="User Photo"
+      />
+      <div className="add-image-button">
+        <IonButton
+          ref={cameraButton}
+          size="large"
+          className="fade-in"
+          aria-label="Take Photo"
+          onClick={takePhoto}
+        >
+          <IonIcon icon={camera} aria-hidden="true" />
+        </IonButton>
+      </div>
+      <IonItem>
+        <IonInput
+          disabled
+          value={location?.address}
+          label="Location:"
+          placeholder="Input address here"
+        />
+        <IonButton
+          ref={locationButton}
+          aria-label="Location"
+          onClick={() => getLocation(true)}
+        >
+          <IonIcon icon={locationSharp} />
+        </IonButton>
+      </IonItem>
+      <IonItem>
+        <IonTextarea
+          ref={commentInput}
+          onIonChange={updateComment}
+          label="Comments:"
+          placeholder="Type something here"
+        />
+      </IonItem>
+      <div id="confirmButton">
+        <IonButton onClick={handleConfirm} ref={confirmButton}>
+          Confirm
+        </IonButton>
+      </div>
+    </IonCard>
+  );
+};
+
+export default MakePinModal;
