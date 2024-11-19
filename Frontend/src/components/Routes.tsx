@@ -1,13 +1,13 @@
-import { useEffect } from 'react'
-import { Route, Redirect } from 'react-router-dom'
-import useRequestData from '../hooks/useRequestData'
-import useAuth from '../hooks/ProviderContext'
+import { useEffect } from "react";
+import { Route, Redirect } from "react-router-dom";
+import useRequestData from "../hooks/useRequestData";
+import useAuth from "../hooks/ProviderContext";
 
 /* Pages */
-import Admin from '../pages/admin/Page'
-import GlobalMap from '../pages/GlobalMap'
-import OwnMap from '../pages/OwnMap'
-import Settings from '../pages/settings'
+import Admin from "../pages/admin/Page";
+import GlobalMap from "../pages/GlobalMap";
+import OwnMap from "../pages/OwnMap";
+import Settings from "../pages/settings";
 
 /* Settings Pages */
 import General from "../pages/settings/General";
@@ -15,14 +15,14 @@ import Account from "../pages/settings/Accounts";
 import ErrorPage from "../pages/ErrorPage";
 
 export const Routes = () => {
-	const { makeRequest, data, error, isLoading } = useRequestData()
-	const { userID, loading } = useAuth()
+  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { userID, loading } = useAuth();
 
-	useEffect(() => {
-		if (userID && !loading) {
-			makeRequest(`users/${userID}`)
-		}
-	}, [userID, loading])
+  useEffect(() => {
+    if (userID && !loading) {
+      makeRequest(`users/${userID}`);
+    }
+  }, [userID, loading]);
 
   return (
     <>

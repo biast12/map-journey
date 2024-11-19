@@ -1,5 +1,5 @@
-import 'ol/ol.css'
-import './Maps.scss' // Import the SCSS file
+import "ol/ol.css";
+import "./Maps.scss"; // Import the SCSS file
 
 import {
   Circle as CircleStyle,
@@ -31,19 +31,19 @@ import Loader from "./Loader";
 import Error from "./Error";
 
 interface MapProps {
-	APIurl: string
+  APIurl: string;
 }
 
 interface PinData {
-	id: number
-	longitude: number
-	latitude: number
-	[key: string]: any // Add other properties as needed
+  id: number;
+  longitude: number;
+  latitude: number;
+  [key: string]: any; // Add other properties as needed
 }
 
-const debug = true // Set this to false to disable logging
+const debug = true; // Set this to false to disable logging
 
-const iconSrc: string = 'http://localhost:8100/icons/webp/ping1.webp' // Replace with the correct URL to the pin icon
+const iconSrc: string = "http://localhost:8100/icons/webp/ping1.webp"; // Replace with the correct URL to the pin icon
 
 // Predefined styles for clustering
 const distanceBetweenPinsBeforeClustering = 20; // Distance between pins before clustering
@@ -54,13 +54,13 @@ const clusterStrokeColor = "#fff"; // Color of the cluster circle stroke
 const clusterTextColor = "#fff"; // Color of the text/number inside the cluster circle
 
 const mousePositionControl = new MousePosition({
-	coordinateFormat: createStringXY(4),
-	projection: 'EPSG:4326',
-	// comment the following two lines to have the mouse position
-	// be placed within the map.
-	className: 'custom-mouse-position',
-	target: document.getElementById('mouse-position') as HTMLElement
-})
+  coordinateFormat: createStringXY(4),
+  projection: "EPSG:4326",
+  // comment the following two lines to have the mouse position
+  // be placed within the map.
+  className: "custom-mouse-position",
+  target: document.getElementById("mouse-position") as HTMLElement,
+});
 
 function createStyle(size: number = 0.3) {
   return new Style({
@@ -243,4 +243,4 @@ function Map({ APIurl }: MapProps) {
   );
 }
 
-export default Map
+export default Map;

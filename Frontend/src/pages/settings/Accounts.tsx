@@ -60,7 +60,12 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
       }
     }
 
-    let updatedData: { avatar: string; name: string; email: string; password?: string } = {
+    let updatedData: {
+      avatar: string;
+      name: string;
+      email: string;
+      password?: string;
+    } = {
       avatar: updatedAvatar,
       name: username,
       email: email,
@@ -102,12 +107,15 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <div
-          className="imageContainer"
-        >
-          <img id="showPinImage" alt="User Avatar" src={avatar} onClick={async () => {
-            await takePhoto();
-          }} />
+        <div className="imageContainer">
+          <img
+            id="showPinImage"
+            alt="User Avatar"
+            src={avatar}
+            onClick={async () => {
+              await takePhoto();
+            }}
+          />
         </div>
         <div className="inlineTagsContainer">
           <div className="inlineTags">
