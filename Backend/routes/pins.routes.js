@@ -132,12 +132,50 @@ router.post("/:id", async (req, res) => {
     !latitude ||
     !imgurls
   ) {
-    return res
-      .status(400)
-      .json({ error: "All required fields must be provided" });
+    return res.status(400).json({
+      error:
+        "All required fields must be provided: title, description, location, longitude, latitude, imgurls.",
+    });
   }
 
+  // generate a unique UUID
+  const generateUniqueId = async () => {
+    let uniqueId;
+    let exists = true;
+
+    while (exists) {
+      uniqueId = crypto.randomUUID();
+
+      const { data: profileData, error: profileError } = await supabase
+        .from("profile")
+        .select("id")
+        .eq("id", uniqueId)
+        .single();
+
+      const { data: pinsData, error: pinsError } = await supabase
+        .from("pins")
+        .select("id")
+        .eq("id", uniqueId)
+        .single();
+
+      exists = profileData !== null || pinsData !== null;
+
+      if (profileError && profileError.code !== "PGRST116") {
+        console.error("Error checking profile table:", profileError);
+        throw new Error("Error checking profile table");
+      }
+
+      if (pinsError && pinsError.code !== "PGRST116") {
+        console.error("Error checking pins table:", pinsError);
+        throw new Error("Error checking pins table");
+      }
+    }
+
+    return uniqueId;
+  };
+  const uniqueId = await generateUniqueId();
   const pinData = {
+    id: uniqueId,
     profile_id,
     title,
     description,
@@ -145,13 +183,9 @@ router.post("/:id", async (req, res) => {
     longitude,
     latitude,
     imgurls,
+    status: status === true ? "public" : "private",
+    groups: groups || null,
   };
-
-  pinData.status = status === true ? "public" : "private";
-
-  if (groups) {
-    pinData.groups = groups;
-  }
 
   try {
     const { error: pinError } = await supabase.from("pins").insert([pinData]);

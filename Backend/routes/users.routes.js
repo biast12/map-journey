@@ -149,12 +149,27 @@ router.post("/", async (req, res) => {
       let exists = true;
       while (exists) {
         uniqueId = crypto.randomUUID();
-        const { data, error } = await supabase
+        const { data: profileData, error: profileError } = await supabase
           .from("profile")
           .select("id")
           .eq("id", uniqueId)
           .single();
-        exists = data !== null;
+        const { data: pinsData, error: pinsError } = await supabase
+          .from("pins")
+          .select("id")
+          .eq("id", uniqueId)
+          .single();
+        exists = profileData !== null || pinsData !== null;
+
+        if (profileError) {
+          console.error("Error checking profile table:", profileError);
+          throw new Error("Error checking profile table");
+        }
+
+        if (pinsError) {
+          console.error("Error checking pins table:", pinsError);
+          throw new Error("Error checking pins table");
+        }
       }
       return uniqueId;
     };
@@ -264,7 +279,18 @@ router.delete("/:id", async (req, res) => {
       }
     }
 
-    // Step 4: Delete the user profile
+    // Step 4: Delete all reports related to the user
+    const { error: deleteReportsError } = await supabase
+      .from("reports")
+      .delete()
+      .eq("reported_user_id", userID);
+
+    if (deleteReportsError) {
+      console.error("Error deleting user reports:", deleteReportsError);
+      return res.status(500).json({ error: "Error deleting user reports" });
+    }
+
+    // Step 5: Delete the user profile
     const { error: deleteProfileError } = await supabase
       .from("profile")
       .delete()
@@ -277,7 +303,7 @@ router.delete("/:id", async (req, res) => {
     }
 
     // Send a success response
-    res.status(204).send();
+    res.status(200).send();
   } catch (error) {
     console.error("Error during user deletion:", error);
     res.status(500).json({ error: "Internal Server Error" });

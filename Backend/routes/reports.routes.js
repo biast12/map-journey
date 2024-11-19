@@ -148,36 +148,34 @@ router.post("/:id", async (req, res) => {
   }
 
   if (reported_pin_id) {
-    sanitizedReportedPinId = parseInt(reported_pin_id, 10);
-    if (isNaN(sanitizedReportedPinId)) {
+    if (typeof reported_pin_id !== "string" || 
+      !isValidUUID(reported_pin_id)) {
       return res
         .status(400)
-        .json({ message: "reported_pin_id must be a valid integer" });
+        .json({ message: "reported_pin_id must be a valid UUID" });
     }
+    sanitizedReportedPinId = reported_pin_id;
   }
 
   try {
     const { data: reportData, error: reportError } = await supabase
       .from("reports")
-      .insert([
-        {
-          profile_id,
-          text,
-          reported_user_id: sanitizedReportedUserId,
-          reported_pin_id: sanitizedReportedPinId,
-          active: true,
-        },
-      ]);
+      .insert([{
+        profile_id,
+        text,
+        reported_user_id: sanitizedReportedUserId,
+        reported_pin_id: sanitizedReportedPinId,
+        active: true,
+      }]);
 
     if (reportError) throw reportError;
 
     if (sanitizedReportedUserId) {
-      const { count: profileReportCount, error: profileCountError } =
-        await supabase
-          .from("reports")
-          .select("*", { count: "exact" })
-          .eq("reported_user_id", sanitizedReportedUserId)
-          .eq("active", true);
+      const { count: profileReportCount, error: profileCountError } = await supabase
+        .from("reports")
+        .select("*", { count: "exact" })
+        .eq("reported_user_id", sanitizedReportedUserId)
+        .eq("active", true);
 
       if (profileCountError) throw profileCountError;
 
@@ -202,7 +200,9 @@ router.post("/:id", async (req, res) => {
           if (updateProfileError) throw updateProfileError;
         }
       }
-    } else if (sanitizedReportedPinId) {
+    }
+
+    if (sanitizedReportedPinId) {
       const { count: pinReportCount, error: pinCountError } = await supabase
         .from("reports")
         .select("*", { count: "exact" })
@@ -230,7 +230,6 @@ router.post("/:id", async (req, res) => {
         }
       }
     }
-
     res
       .status(201)
       .json({ message: "Report created successfully", data: reportData });
