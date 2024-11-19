@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Route, Redirect, useLocation } from "react-router-dom";
 import useRequestData from "../hooks/useRequestData";
 import useAuth from "../hooks/ProviderContext";
 
@@ -17,6 +17,7 @@ import ErrorPage from "../pages/ErrorPage";
 export const Routes = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
   const { userID, loading } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
     if (userID && !loading) {
@@ -24,10 +25,12 @@ export const Routes = () => {
     }
   }, [userID, loading]);
 
+  const isSettingsPath = location.pathname.startsWith("/settings");
+
   return (
     <>
       <Route exact path="/*">
-        <Redirect to="/globalmap" />
+        {!isSettingsPath && <Redirect to="/globalmap" />}
       </Route>
       <Route
         exact
