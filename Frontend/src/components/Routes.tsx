@@ -25,7 +25,9 @@ export const Routes = () => {
     }
   }, [userID, loading]);
 
-  const isSettingsPath = location.pathname.startsWith("/settings");
+  const isSettingsPath = location.pathname.match(
+    "/settings/general|/settings/account"
+  );
 
   return (
     <>
