@@ -166,6 +166,7 @@ export const usePhotoGallery = () => {
             .upload(fileName, image, {
                 cacheControl: '3600',
                 contentType: fileType, // Ensure the correct MIME type is set
+                upsert: true // Do not overwrite the file if it exists
             })
 
         if (error) {

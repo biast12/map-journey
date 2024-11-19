@@ -15,10 +15,9 @@ import { Geolocation } from "@capacitor/geolocation";
 import { fromLonLat } from "ol/proj";
 import { Coordinate } from "ol/coordinate";
 import { useEffect, useState, useRef } from "react";
-import { usePhotoGallery } from "./../hooks/usePhotoGallery";
-import supabase from "../hooks/useSupabaseClient";
 import useRequestData from "../hooks/useRequestData";
 import useAuth from "../hooks/ProviderContext";
+import useImageHandler from "../hooks/useImageHandler";
 
 interface MakePinModalProps {
   onClose: () => void;
@@ -26,7 +25,6 @@ interface MakePinModalProps {
 
 const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
   const [title, setTitle] = useState<string>("");
-  const [photoUrl, setPhotoUrl] = useState<string>("");
   const [location, setLocation] = useState<any>(null);
   const [coordinates, setCoordinates] = useState<Coordinate | null>(null);
   const [comment, setComment] = useState<string>("");
@@ -37,9 +35,9 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
   const commentInput = useRef<HTMLIonTextareaElement>(null);
   const cameraButton = useRef<HTMLIonButtonElement>(null);
   const locationButton = useRef<HTMLIonButtonElement>(null);
-  const { takePhoto, photo, uploadImageToStorage, blob } = usePhotoGallery();
   const { makeRequest } = useRequestData();
   const { userID } = useAuth();
+  const { photoUrl, takePhoto, handleUpload, removeImage } = useImageHandler();
 
   useEffect(() => {
     const refs = [
@@ -59,40 +57,18 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
   }, [isSubmitting]);
 
   const handleConfirm = async () => {
-    if (!title || !photo || !comment || !location || !coordinates) {
+    if (!title || !photoUrl || !comment || !location || !coordinates) {
       console.error("All fields are required");
-      return;
-    }
-
-    if (!blob) {
-      console.error("No photo blob available");
       return;
     }
 
     setIsSubmitting(true);
 
-    const time = new Date().getTime();
-    const fileName = `userImage-${time}.jpg`;
+    let fileName = "";
 
     try {
-      const uploadResult = await uploadImageToStorage(
-        "user-images",
-        fileName,
-        blob,
-        blob?.type as string
-      );
-
-      if (!uploadResult) {
-        throw new Error("Failed to upload image");
-      }
-
-      const { data: publicData } = supabase.storage
-        .from("user-images")
-        .getPublicUrl(fileName);
-
-      if (!publicData.publicUrl) {
-        throw new Error("No public URL generated");
-      }
+      const { fileName: imageName, publicUrl } = await handleUpload();
+      fileName = imageName;
 
       const formData = new FormData();
       formData.append("title", title);
@@ -100,7 +76,7 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
       formData.append("location", location.address);
       formData.append("latitude", location.lat);
       formData.append("longitude", location.lon);
-      formData.append("imgurls", publicData.publicUrl);
+      formData.append("imgurls", publicUrl);
 
       await makeRequest(`pins/${userID}`, "POST", undefined, formData);
       console.log("Pin uploaded successfully");
@@ -110,21 +86,6 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
       await removeImage(fileName);
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const removeImage = async (fileName: string) => {
-    try {
-      const removedImage = await supabase.storage
-        .from("user-images")
-        .remove([fileName]);
-      if (removedImage.error) {
-        console.error("Error removing image:", removedImage.error);
-      } else {
-        console.log("Image removed successfully");
-      }
-    } catch (removeError) {
-      console.error("Error during image removal:", removeError);
     }
   };
 
@@ -158,12 +119,6 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
       console.error("Error getting location:", error);
     }
   };
-
-  useEffect(() => {
-    if (photo && photo.webViewPath) {
-      setPhotoUrl(photo.webViewPath);
-    }
-  }, [photo]);
 
   useEffect(() => {
     getLocation(true);

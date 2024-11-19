@@ -187,9 +187,10 @@ router.post("/", async (req, res) => {
 // Update a user by User ID
 router.put("/:id", async (req, res) => {
   const userID = req.params.id;
-  const { name, email, password } = req.body;
+  const { name, email, password, avatar } = req.body;
 
   const updatedFields = {};
+  if (avatar) updatedFields.avatar = avatar;
   if (name) updatedFields.name = name;
   if (email) updatedFields.email = email;
   if (password) updatedFields.password = await bcrypt.hash(password, 10);
