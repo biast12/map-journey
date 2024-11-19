@@ -9,6 +9,7 @@ import {
   IonInput,
   IonItem,
   IonTextarea,
+  IonToggle,
 } from "@ionic/react";
 import { camera, locationSharp } from "ionicons/icons";
 import { Geolocation } from "@capacitor/geolocation";
@@ -24,17 +25,23 @@ interface MakePinModalProps {
 }
 
 const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
+  /* States */
   const [title, setTitle] = useState<string>("");
   const [location, setLocation] = useState<any>(null);
   const [coordinates, setCoordinates] = useState<Coordinate | null>(null);
   const [comment, setComment] = useState<string>("");
+  const [status, setStatus] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  /* Refs */
   const confirmButton = useRef<HTMLIonButtonElement>(null);
   const cancelButton = useRef<HTMLIonButtonElement>(null);
   const titleInput = useRef<HTMLIonInputElement>(null);
   const commentInput = useRef<HTMLIonTextareaElement>(null);
   const cameraButton = useRef<HTMLIonButtonElement>(null);
   const locationButton = useRef<HTMLIonButtonElement>(null);
+
+  /* Hooks */
   const { makeRequest } = useRequestData();
   const { userID } = useAuth();
   const { photoUrl, takePhoto, handleUpload, removeImage } = useImageHandler();
@@ -77,12 +84,11 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
       formData.append("latitude", location.lat);
       formData.append("longitude", location.lon);
       formData.append("imgurls", publicUrl);
+      formData.append("status", status.toString());
 
       await makeRequest(`pins/${userID}`, "POST", undefined, formData);
-      console.log("Pin uploaded successfully");
       onClose();
     } catch (error) {
-      console.error("Error uploading pin:", error);
       await removeImage(fileName);
     } finally {
       setIsSubmitting(false);
@@ -175,6 +181,13 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
           onIonChange={updateComment}
           label="Comments:"
           placeholder="Type something here"
+        />
+      </IonItem>
+      <IonItem>
+        <label>Public?</label>
+        <IonToggle
+          checked={status}
+          onIonChange={(e) => setStatus(e.detail.checked)}
         />
       </IonItem>
       <div id="confirmButton">

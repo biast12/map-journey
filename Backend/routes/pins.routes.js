@@ -183,7 +183,7 @@ router.post("/:id", async (req, res) => {
     longitude,
     latitude,
     imgurls,
-    status: status === true ? "public" : "private",
+    status: status === "true" ? "public" : "private",
     groups: groups || null,
   };
 
