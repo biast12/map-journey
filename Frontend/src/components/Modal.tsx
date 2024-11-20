@@ -2,7 +2,11 @@ import { IonButton, IonIcon, IonModal } from "@ionic/react";
 import { close } from "ionicons/icons";
 import React from "react";
 
+import "./Modal.scss"
+
 type ModalProps = {
+  id?: string;
+  className?: string;
   children?: React.ReactNode;
   isOpen: boolean;
   onCloseModal: () => void;
@@ -10,9 +14,9 @@ type ModalProps = {
   hideCloseButton?: boolean;
 };
 
-const Modal = ({ children, isOpen = false, onCloseModal, backdropDismiss = true, hideCloseButton }: ModalProps) => {
+const Modal = ({ id, className, children, isOpen = false, onCloseModal, backdropDismiss = true, hideCloseButton }: ModalProps) => {
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={onCloseModal} backdropDismiss={backdropDismiss}>
+    <IonModal id={id} className={className} isOpen={isOpen} onDidDismiss={onCloseModal} backdropDismiss={backdropDismiss}>
       <div className="modal-content">
         {!hideCloseButton && (
           <IonButton className="close-button" onClick={onCloseModal} fill="clear">

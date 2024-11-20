@@ -34,17 +34,17 @@ const UserManagement = () => {
   async function handleUserEdit(e: FormEvent, userData: UserData) {
     setHandlingRequest(true);
     e.preventDefault();
-    //Perform edit request based changes to their original data
     const form = e.target as HTMLFormElement;
-    console.log(form.username.value);
-
+    
     const body = {
       name: form.username.value,
       status: form.status.value,
       role: form.userrole.value
     }
 
-    const res = await editMakeRequest(`users/${userData.id}`, "PUT", undefined, body) //INSERT DATA HERE
+    const res = await editMakeRequest(`users/${userData.id}`, "PUT", undefined, body)
+
+    //LACKS AN UPDATE TO LIST
 
     setShowEditModal(false);
     setSelectedUser(null);
@@ -83,12 +83,12 @@ const UserManagement = () => {
               <label htmlFor="username">Name:</label>
               <input name="username" type="text" placeholder="Name" required defaultValue={selectedUser.name} />
               <label htmlFor="userrole">Role:</label>
-              <select value={selectedUser.role} name="userrole" id="">
+              <select defaultValue={selectedUser.role} name="userrole" id="">
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
               </select>
               <label htmlFor="status">Status:</label>
-              <select value={selectedUser.status} name="status" id="">
+              <select defaultValue={selectedUser.status} name="status" id="">
                 <option value="public">Public</option>
                 <option value="private">Private</option>
                 <option value="reported">Reported</option>
@@ -100,9 +100,10 @@ const UserManagement = () => {
           </section>
         )}
       </Modal>
-      <Modal isOpen={showDeleteModal} onCloseModal={() => setShowDeleteModal(false)} backdropDismiss={!handlingRequest}>
+      <Modal id="deleteUserModal" isOpen={showDeleteModal} onCloseModal={() => setShowDeleteModal(false)} backdropDismiss={!handlingRequest}>
         {selectedUser && <IonButton onClick={() => handleUserDelete(selectedUser)}>Are you sure?</IonButton>}
       </Modal>
+
       <IonRow id="userRow">
         {data &&
           data.map((userData: UserData) => (

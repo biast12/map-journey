@@ -1,0 +1,29 @@
+ion-modal {
+    --height: 80%;
+    border-radius: 8px;
+    --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    .modal-content {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #3a3a3c;
+      border-radius: 8px;
+      color: #e5e5e5;
+      height: 100%;
+  
+      // Close Button
+      .close-button {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 1.2rem;
+        z-index: 10;
+        color: #9e9e9e;
+  
+        &:hover {
+          color: #ffffff;
+        }
+      }
+    }
+  }
