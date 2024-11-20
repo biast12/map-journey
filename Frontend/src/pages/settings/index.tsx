@@ -30,7 +30,7 @@ const Settings: React.FC = () => {
     <>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Settings</IonTitle>
+          <IonTitle>{t("pages.settings.index.card_title")}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>

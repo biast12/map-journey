@@ -67,6 +67,7 @@
   "pages": {
     "settings": {
       "index": {
+        "card_title": "Einstellungen",
         "account": "Konto",
         "general": "Allgemein"
       },
