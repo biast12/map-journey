@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import "./Error.scss";
 
 interface ErrorProps {
@@ -6,9 +7,10 @@ interface ErrorProps {
 }
 
 const Error: React.FC<ErrorProps> = ({ message }) => {
+  const { t } = useTranslation();
   return (
     <div className="error">
-      <h1>Error</h1>
+      <h1>{t("pages.errorpage.error")}</h1>
       <p>{message}</p>
     </div>
   );

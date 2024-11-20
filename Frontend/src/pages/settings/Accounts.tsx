@@ -10,6 +10,7 @@ import {
   IonToast,
 } from "@ionic/react";
 import { pencilSharp, close } from "ionicons/icons";
+import { useTranslation } from "react-i18next";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
@@ -31,6 +32,9 @@ interface UserDataProps {
 }
 
 const Account: React.FC<UserDataProps> = ({ userData }) => {
+  const { t } = useTranslation();
+
+  /* States */
   const [username, setUsername] = useState(userData.name || "");
   const [email, setEmail] = useState(userData.email || "");
   const [password, setPassword] = useState("");
@@ -38,9 +42,11 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
     userData.avatar ||
       "https://ionicframework.com/docs/img/demos/card-media.png"
   );
+  const [showToast, setShowToast] = useState(false);
+
+  /* Hooks */
   const { makeRequest, isLoading, error } = useRequestData();
   const { takePhoto, photoUrl, handleUpload, removeImage } = useImageHandler();
-  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     if (photoUrl) {
@@ -97,10 +103,12 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && <Error message={"Something went wrong!"} />}
+      {!isLoading && error && (
+        <Error message={t("pages.settings.accounts.error_page_message")} />
+      )}
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Account</IonTitle>
+          <IonTitle>{t("pages.settings.accounts.card_title")}</IonTitle>
           <IonButton slot="end" href="/settings" fill="clear">
             <IonIcon icon={close} />
           </IonButton>
@@ -110,7 +118,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
         <div className="imageContainer">
           <img
             id="showPinImage"
-            alt="User Avatar"
+            alt={t("pages.settings.accounts.img_alt")}
             src={avatar}
             onClick={async () => {
               await takePhoto();
@@ -121,14 +129,14 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
           <div className="inlineTags">
             <IonInput
               value={username}
-              placeholder="Username"
+              placeholder={t("pages.settings.accounts.username")}
               onIonChange={(e) => setUsername(e.detail.value!)}
             />
           </div>
           <div className="inlineTags">
             <IonInput
               value={email}
-              placeholder="Email"
+              placeholder={t("pages.settings.accounts.email")}
               onIonChange={(e) => setEmail(e.detail.value!)}
             />
           </div>
@@ -136,19 +144,19 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
             <IonInput
               value={password}
               type="password"
-              placeholder="Password"
+              placeholder={t("pages.settings.accounts.password")}
               onIonChange={(e) => setPassword(e.detail.value!)}
             />
           </div>
           <IonButton onClick={handleSave} disabled={isLoading}>
             <IonIcon icon={pencilSharp}></IonIcon>
-            Save
+            {t("pages.settings.accounts.submit")}
           </IonButton>
         </div>
         <IonToast
           isOpen={showToast}
           onDidDismiss={() => setShowToast(false)}
-          message="User data updated successfully"
+          message={t("pages.settings.accounts.successful")}
           duration={2000}
         />
       </IonContent>

@@ -4,10 +4,10 @@ import useAuth from "../../hooks/ProviderContext";
 import { useTranslation } from "react-i18next";
 
 interface FooterProps {
-  openMakePinModal: () => void;
+  openCreatePinModal: () => void;
 }
 
-const Footer: React.FC<FooterProps> = ({ openMakePinModal }) => {
+const Footer: React.FC<FooterProps> = ({ openCreatePinModal }) => {
   const { userID } = useAuth();
   const { t } = useTranslation();
 
@@ -15,19 +15,19 @@ const Footer: React.FC<FooterProps> = ({ openMakePinModal }) => {
     <IonTabBar slot="bottom">
       <IonTabButton tab="globalmap" href="/globalmap">
         <IonIcon aria-hidden="true" icon={earth} />
-        <IonLabel>{t('header.global_map')}</IonLabel>
+        <IonLabel>{t("footer.global_map")}</IonLabel>
       </IonTabButton>
       <IonTabButton
         disabled={!userID}
-        tab="makePinModal"
-        onClick={openMakePinModal}
+        tab="createPinModal"
+        onClick={openCreatePinModal}
       >
         <IonIcon aria-hidden="true" icon={pin} />
-        <IonLabel>{t('header.add_pin')}</IonLabel>
+        <IonLabel>{t("footer.add_pin")}</IonLabel>
       </IonTabButton>
       <IonTabButton disabled={!userID} tab="ownmap" href="/ownmap">
         <IonIcon aria-hidden="true" icon={map} />
-        <IonLabel>{t('header.own_map')}</IonLabel>
+        <IonLabel>{t("footer.own_map")}</IonLabel>
       </IonTabButton>
     </IonTabBar>
   );

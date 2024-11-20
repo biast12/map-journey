@@ -1,20 +1,101 @@
 {
   "lang": "English",
-  "lang-code": "en",
   "flag": "🇬🇧",
   "header": {
+    "error_page_message": "Failed fetching user! Please try again later"
+  },
+  "footer": {
     "global_map": "Global Map",
     "add_pin": "Add Pin",
     "own_map": "Own Map"
   },
-  "create_pin": {
-    "card_title": "Map your Journey",
-    "title": "Title",
-    "title_placeholder": "Your title here",
-    "location": "Location",
-    "comment": "Comments",
-    "comment_placeholder": "Your title here",
-    "visibility" : "Public",
-    "submit": "Confirm"
+  "modals": {
+    "create_pin": {
+      "card_title": "Map your Journey",
+      "title": "Title",
+      "title_placeholder": "Your title here",
+      "location": "Location",
+      "comment": "Comments",
+      "comment_placeholder": "Your title here",
+      "visibility": "Public",
+      "submit": "Confirm"
+    },
+    "create_user": {
+      "card_title": "Create User",
+      "username": "Username",
+      "username_placeholder": "Your username here",
+      "email": "Email",
+      "email_placeholder": "Your email here",
+      "password": "Password",
+      "password_placeholder": "Your password here",
+      "submit": "Create user",
+      "close": "Close",
+      "failed": "User creation failed! Check the inputs",
+      "error_page_message": "Failed to create user, please try again later"
+    },
+    "login": {
+      "card_title": "Login",
+      "email": "Email",
+      "email_placeholder": "Your email here",
+      "password": "Password",
+      "password_placeholder": "Your password here",
+      "submit": "Login",
+      "create_user": "Create user",
+      "successful": "Login successful",
+      "failed": "Login failed! Check the inputs",
+      "error_page_message": "Failed to login, please try again later"
+    },
+    "notification": {
+      "card_title": "Notifications",
+      "error_page_message": "Failed to get notifications, please try again later"
+    },
+    "report": {
+      "card_title": "Reporting",
+      "text": "Report Text",
+      "submit": "Submit Report",
+      "close": "Close",
+      "successful": "Reported successfully",
+      "failed": "Reporting {{type}} failed! Check the inputs",
+      "error_page_message": "Failed to report, please try again later"
+    },
+    "pin": {
+      "img_alt": "User avatar",
+      "add": "Add",
+      "report": "Report pin"
+    }
+  },
+  "pages": {
+    "settings": {
+      "index": {
+        "account": "Account",
+        "general": "General"
+      },
+      "accounts": {
+        "card_title": "Account",
+        "img_alt": "User avatar",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "submit": "Save",
+        "successful": "Account updated successfully",
+        "failed": "Account update failed! Check the inputs",
+        "error_page_message": "Failed to get users, please try again later"
+      },
+      "general": {
+        "lang_missing_key": "Lang key missing",
+        "card_title": "General Settings",
+        "map_theme": "Map Theme",
+        "map_theme_placeholder": "Select Map Theme",
+        "language": "Language",
+        "language_placeholder": "Select Language",
+        "notification": "Enable Notifications",
+        "submit": "Save",
+        "error_page_message": "Failed to get settings, please try again later"
+      }
+    },
+    "errorpage": {
+      "error": "Error",
+      "errormessage": "Something went wrong!"
+    }
   }
 }

@@ -1,6 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import HttpBackend from "i18next-http-backend";
+import HttpBackend from "i18next-http-backend/cjs";
 import LanguageDetector from "i18next-browser-languagedetector";
 
 const defaultLanguage = "en";
@@ -18,6 +18,10 @@ i18n
     interpolation: {
       escapeValue: false,
     },
+    saveMissing: true,
+    missingKeyHandler: function (lng, ns, key, fallbackValue) {
+      console.warn(`Missing translation for key: ${key} in language: ${lng}`);
+    },
   });
 
 const changeLanguage = (language: string) => {
@@ -26,8 +30,8 @@ const changeLanguage = (language: string) => {
 
 const setDebugMode = (debug: boolean) => {
   i18n.init({
-    debug: debug
-  })
+    debug: debug,
+  });
   i18n.reloadResources();
 };
 

@@ -1,4 +1,4 @@
-import "./MakePinModal.scss";
+import "./CreatePinModal.scss";
 import {
   IonButton,
   IonCard,
@@ -21,11 +21,13 @@ import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
 import useImageHandler from "../../hooks/useImageHandler";
 
-interface MakePinModalProps {
+interface CreatePinModalProps {
   onClose: () => void;
 }
 
-const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
+const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
+  const { t } = useTranslation();
+
   /* States */
   const [title, setTitle] = useState<string>("");
   const [location, setLocation] = useState<any>(null);
@@ -46,7 +48,6 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
   const { makeRequest } = useRequestData();
   const { userID } = useAuth();
   const { photoUrl, takePhoto, handleUpload, removeImage } = useImageHandler();
-  const { t } = useTranslation();
 
   useEffect(() => {
     const refs = [
@@ -135,14 +136,14 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
   return (
     <IonCard>
       <IonCardHeader>
-        <IonCardTitle>{t("create_pin.card_title")}</IonCardTitle>
+        <IonCardTitle>{t("modals.create_pin.card_title")}</IonCardTitle>
       </IonCardHeader>
       <IonItem>
         <IonInput
           onIonChange={updateTitle}
           ref={titleInput}
-          label={`${t("create_pin.title")}:`}
-          placeholder={t("create_pin.title_placeholder")}
+          label={`${t("modals.create_pin.title")}:`}
+          placeholder={t("modals.create_pin.title_placeholder")}
         />
       </IonItem>
       <IonImg
@@ -166,7 +167,7 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
         <IonInput
           disabled
           value={location?.address}
-          label={`${t("create_pin.location")}:`}
+          label={`${t("modals.create_pin.location")}:`}
         />
         <IonButton
           ref={locationButton}
@@ -180,12 +181,12 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
         <IonTextarea
           ref={commentInput}
           onIonChange={updateComment}
-          label={`${t("create_pin.comment")}:`}
-          placeholder={t("create_pin.comment_placeholder")}
+          label={`${t("modals.create_pin.comment")}:`}
+          placeholder={t("modals.create_pin.comment_placeholder")}
         />
       </IonItem>
       <IonItem>
-        <label>{`${t("create_pin.visibility")}?`}</label>
+        <label>{`${t("modals.create_pin.visibility")}?`}</label>
         <IonToggle
           checked={status}
           onIonChange={(e) => setStatus(e.detail.checked)}
@@ -193,11 +194,11 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
       </IonItem>
       <div id="confirmButton">
         <IonButton onClick={handleConfirm} ref={confirmButton}>
-          {t("create_pin.submit")}
+          {t("modals.create_pin.submit")}
         </IonButton>
       </div>
     </IonCard>
   );
 };
 
-export default MakePinModal;
+export default CreatePinModal;

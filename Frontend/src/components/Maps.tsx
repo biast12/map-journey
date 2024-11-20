@@ -102,10 +102,15 @@ function createClusterStyle(feature: FeatureLike): Style {
 
 function Map({ APIurl }: MapProps) {
   const points: Feature[] = [];
-  const { makeRequest, data, error, isLoading } = useRequestData();
+
+  /* States */
   const [showPinModal, setShowPinModal] = useState(false);
   const [selectedPin, setSelectedPin] = useState<PinData | null>(null);
 
+  /* Hooks */
+  const { makeRequest, data, error, isLoading } = useRequestData();
+
+  /* Functions */
   const openShowPinModal = () => setShowPinModal(true);
   const closeShowPinModal = () => setShowPinModal(false);
 
