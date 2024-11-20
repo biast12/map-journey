@@ -16,9 +16,9 @@ import { Geolocation } from "@capacitor/geolocation";
 import { fromLonLat } from "ol/proj";
 import { Coordinate } from "ol/coordinate";
 import { useEffect, useState, useRef } from "react";
-import useRequestData from "../hooks/useRequestData";
-import useAuth from "../hooks/ProviderContext";
-import useImageHandler from "../hooks/useImageHandler";
+import useRequestData from "../../hooks/useRequestData";
+import useAuth from "../../hooks/ProviderContext";
+import useImageHandler from "../../hooks/useImageHandler";
 
 interface MakePinModalProps {
   onClose: () => void;

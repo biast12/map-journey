@@ -9,14 +9,14 @@ import {
   IonModal,
 } from "@ionic/react";
 import { FormEvent, useRef, useState } from "react";
-import useRequestData from "../hooks/useRequestData";
-import useAuth from "../hooks/ProviderContext";
+import useRequestData from "../../hooks/useRequestData";
+import useAuth from "../../hooks/ProviderContext";
 import "./LoginModal.scss";
-import Error from "../components/Error";
-import Loader from "../components/Loader";
+import Error from "../../components/Error";
+import Loader from "../../components/Loader";
 
 /* Modal */
-import CreateUserModal from "../modals/CreateUserModal";
+import CreateUserModal from "./CreateUserModal";
 
 interface LoginProps {
   closeLoginModal: () => void;

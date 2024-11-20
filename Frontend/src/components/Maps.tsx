@@ -21,7 +21,7 @@ import Feature from "ol/Feature";
 import { FeatureLike } from "ol/Feature";
 import { default as OlMap } from "ol/Map";
 import Point from "ol/geom/Point";
-import ShowPinModal from "../modals/ShowPinModal";
+import ShowPinModal from "../components/modals/ShowPinModal";
 import View from "ol/View";
 import { close } from "ionicons/icons";
 import { createStringXY } from "ol/coordinate.js";
