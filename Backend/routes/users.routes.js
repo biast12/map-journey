@@ -4,6 +4,7 @@ const supabase = require("../supabaseClient");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const checkApiKey = require("../apiKeyCheck");
+const generateUniqueId = require("../utils/uuid-generator");
 
 router.use(checkApiKey);
 
@@ -144,35 +145,6 @@ router.post("/", async (req, res) => {
     }
 
     // Step 4: Generate unique UUID
-    const generateUniqueId = async () => {
-      let uniqueId;
-      let exists = true;
-      while (exists) {
-        uniqueId = crypto.randomUUID();
-        const { data: profileData, error: profileError } = await supabase
-          .from("profile")
-          .select("id")
-          .eq("id", uniqueId)
-          .single();
-        const { data: pinsData, error: pinsError } = await supabase
-          .from("pins")
-          .select("id")
-          .eq("id", uniqueId)
-          .single();
-        exists = profileData !== null || pinsData !== null;
-
-        if (profileError) {
-          console.error("Error checking profile table:", profileError);
-          throw new Error("Error checking profile table");
-        }
-
-        if (pinsError) {
-          console.error("Error checking pins table:", pinsError);
-          throw new Error("Error checking pins table");
-        }
-      }
-      return uniqueId;
-    };
     const uniqueId = await generateUniqueId();
 
     // Step 5: Create user profile
