@@ -8,10 +8,10 @@ import {
   IonInputPasswordToggle,
   IonToast,
 } from "@ionic/react";
-import useRequestData from "../hooks/useRequestData";
+import useRequestData from "../../hooks/useRequestData";
 import "./CreateUserModal.scss";
-import Loader from "../components/Loader";
-import Error from "../components/Error";
+import Loader from "../../components/Loader";
+import Error from "../../components/Error";
 
 interface CreateUserProps {
   closeCreateUserModal: () => void;

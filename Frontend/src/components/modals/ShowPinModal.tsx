@@ -11,7 +11,7 @@ import { useState } from "react";
 import "./ShowPinModal.scss";
 
 /* Modal */
-import ReportModal from "../modals/ReportModal";
+import ReportModal from "./ReportModal";
 
 interface ShowPinModalProps {
   pinData: any;

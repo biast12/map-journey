@@ -12,10 +12,10 @@ import {
 import { useRef, useState, FormEvent } from "react";
 import "./ReportModal.scss";
 
-import useRequestData from "../hooks/useRequestData";
-import useAuth from "../hooks/ProviderContext";
-import Error from "../components/Error";
-import Loader from "../components/Loader";
+import useRequestData from "../../hooks/useRequestData";
+import useAuth from "../../hooks/ProviderContext";
+import Error from "../../components/Error";
+import Loader from "../../components/Loader";
 
 interface ReportedProps {
   closeReportModal: () => void;

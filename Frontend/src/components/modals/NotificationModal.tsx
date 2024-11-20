@@ -10,10 +10,10 @@ import {
 } from "@ionic/react";
 
 // hooks
-import useRequestData from "../hooks/useRequestData";
-import useAuth from "../hooks/ProviderContext";
-import Loader from "../components/Loader";
-import Error from "../components/Error";
+import useRequestData from "../../hooks/useRequestData";
+import useAuth from "../../hooks/ProviderContext";
+import Loader from "../../components/Loader";
+import Error from "../../components/Error";
 
 const NotificationModal: React.FC = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();

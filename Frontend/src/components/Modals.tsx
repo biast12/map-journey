@@ -5,9 +5,9 @@ import "./Modals.scss";
 import useAuth from "../hooks/ProviderContext";
 
 /* Modals */
-import LoginModal from "../modals/LoginModal";
-import MakePinModal from "../modals/MakePinModal";
-import NotificationModal from "../modals/NotificationModal";
+import LoginModal from "./modals/LoginModal";
+import MakePinModal from "./modals/MakePinModal";
+import NotificationModal from "./modals/NotificationModal";
 
 interface ModalsProps {
   showLoginModal: boolean;
