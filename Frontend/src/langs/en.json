@@ -1,0 +1,20 @@
+{
+  "lang": "English",
+  "lang-code": "en",
+  "flag": "🇬🇧",
+  "header": {
+    "global_map": "Global Map",
+    "add_pin": "Add Pin",
+    "own_map": "Own Map"
+  },
+  "create_pin": {
+    "card_title": "Map your Journey",
+    "title": "Title",
+    "title_placeholder": "Your title here",
+    "location": "Location",
+    "comment": "Comments",
+    "comment_placeholder": "Your title here",
+    "visibility" : "Public",
+    "submit": "Confirm"
+  }
+}

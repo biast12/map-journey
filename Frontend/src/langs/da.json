@@ -1,0 +1,20 @@
+{
+  "lang": "Dansk",
+  "lang-code": "da",
+  "flag": "🇩🇰",
+  "header": {
+    "global_map": "Globalt Kort",
+    "add_pin": "Tilføj Pin",
+    "own_map": "Eget Kort"
+  },
+  "create_pin": {
+    "card_title": "Kortlæg din rejse",
+    "title": "Titel",
+    "title_placeholder": "Din titel her",
+    "location": "Placering",
+    "comment": "Kommentarer",
+    "comment_placeholder": "Din kommentar her",
+    "visibility": "Offentlig",
+    "submit": "Bekræft"
+  }
+}

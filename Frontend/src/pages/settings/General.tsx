@@ -15,6 +15,7 @@ import { pencilSharp, close } from "ionicons/icons";
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
 import useNotificationsStatus from "../../hooks/ProviderContext";
+import { changeLanguage } from "../../i18n";
 
 /* Components */
 import Loader from "../../components/Loader";
@@ -57,6 +58,7 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
 
   const languages: Languages = {
     en: "English",
+    da: "Danish",
   };
 
   const handleSave = async () => {
@@ -75,6 +77,7 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
 
     if (!error) {
       storeNotificationsStatusToken(updatedData.notification);
+      changeLanguage(updatedData.language);
     } else {
       console.error("Error updating settings");
     }

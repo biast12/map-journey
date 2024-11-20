@@ -1,7 +1,10 @@
 import { useEffect } from "react";
 import { Route, Redirect, useLocation } from "react-router-dom";
+
+/* Hooks */
 import useRequestData from "../hooks/useRequestData";
 import useAuth from "../hooks/ProviderContext";
+import { changeLanguage, setDebugMode } from "../i18n";
 
 /* Pages */
 import Admin from "../pages/admin/Page";
@@ -25,6 +28,13 @@ export const Routes = () => {
     }
   }, [userID, loading]);
 
+  useEffect(() => {
+    if (data && !isLoading) {
+      changeLanguage(data.settings.language);
+      data.role === "admin" && setDebugMode(true);
+    }
+  }, [data, isLoading]);
+  
   const isSettingsPath = location.pathname.match(
     "/settings|/settings/general|/settings/account"
   );
