@@ -1,0 +1,101 @@
+{
+  "lang": "Deutsch",
+  "flag": "🇩🇪",
+  "header": {
+    "error_page_message": "Benutzer konnte nicht abgerufen werden! Bitte versuchen Sie es später erneut"
+  },
+  "footer": {
+    "global_map": "Globale Karte",
+    "add_pin": "Pin hinzufügen",
+    "own_map": "Eigene Karte"
+  },
+  "modals": {
+    "create_pin": {
+      "card_title": "Reise kartieren",
+      "title": "Titel",
+      "title_placeholder": "Ihr Titel hier",
+      "location": "Ort",
+      "comment": "Kommentare",
+      "comment_placeholder": "Ihr Kommentar hier",
+      "visibility": "Öffentlich",
+      "submit": "Bestätigen"
+    },
+    "create_user": {
+      "card_title": "Benutzer erstellen",
+      "username": "Benutzername",
+      "username_placeholder": "Ihr Benutzername hier",
+      "email": "E-Mail",
+      "email_placeholder": "Ihre E-Mail hier",
+      "password": "Passwort",
+      "password_placeholder": "Ihr Passwort hier",
+      "submit": "Benutzer erstellen",
+      "close": "Schließen",
+      "failed": "Benutzererstellung fehlgeschlagen! Überprüfen Sie die Eingaben",
+      "error_page_message": "Benutzer konnte nicht erstellt werden, bitte versuchen Sie es später erneut"
+    },
+    "login": {
+      "card_title": "Anmelden",
+      "email": "E-Mail",
+      "email_placeholder": "Ihre E-Mail hier",
+      "password": "Passwort",
+      "password_placeholder": "Ihr Passwort hier",
+      "submit": "Anmelden",
+      "create_user": "Benutzer erstellen",
+      "successful": "Anmeldung erfolgreich",
+      "failed": "Anmeldung fehlgeschlagen! Überprüfen Sie die Eingaben",
+      "error_page_message": "Anmeldung fehlgeschlagen, bitte versuchen Sie es später erneut"
+    },
+    "notification": {
+      "card_title": "Benachrichtigungen",
+      "error_page_message": "Benachrichtigungen konnten nicht abgerufen werden, bitte versuchen Sie es später erneut"
+    },
+    "report": {
+      "card_title": "Berichterstattung",
+      "text": "Berichtstext",
+      "submit": "Bericht einreichen",
+      "close": "Schließen",
+      "successful": "Erfolgreich gemeldet",
+      "failed": "Berichterstattung von {{type}} fehlgeschlagen! Überprüfen Sie die Eingaben",
+      "error_page_message": "Bericht konnte nicht erstellt werden, bitte versuchen Sie es später erneut"
+    },
+    "pin": {
+      "img_alt": "Benutzeravatar",
+      "add": "Hinzufügen",
+      "report": "Pin melden"
+    }
+  },
+  "pages": {
+    "settings": {
+      "index": {
+        "account": "Konto",
+        "general": "Allgemein"
+      },
+      "accounts": {
+        "card_title": "Konto",
+        "img_alt": "Benutzeravatar",
+        "username": "Benutzername",
+        "email": "E-Mail",
+        "password": "Passwort",
+        "submit": "Speichern",
+        "successful": "Konto erfolgreich aktualisiert",
+        "failed": "Kontoaktualisierung fehlgeschlagen! Überprüfen Sie die Eingaben",
+        "error_page_message": "Benutzer konnten nicht abgerufen werden, bitte versuchen Sie es später erneut"
+      },
+      "general": {
+        "lang_missing_key": "Sprachschlüssel fehlt",
+        "card_title": "Allgemeine Einstellungen",
+        "map_theme": "Kartenthema",
+        "map_theme_placeholder": "Kartenthema auswählen",
+        "language": "Sprache",
+        "language_placeholder": "Sprache auswählen",
+        "notification": "Benachrichtigungen aktivieren",
+        "submit": "Speichern",
+        "error_page_message": "Einstellungen konnten nicht abgerufen werden, bitte versuchen Sie es später erneut"
+      }
+    },
+    "errorpage": {
+      "error": "Fehler",
+      "errormessage": "Etwas ist schief gelaufen!"
+    }
+  }
+}
