@@ -13,19 +13,21 @@ i18n
   .init({
     fallbackLng: defaultLanguage,
     backend: {
-      loadPath: loadPath,
+      loadPath: (lngs: string) => {
+        return loadPath.replace("{{lng}}", lngs[0].toLowerCase());
+      },
     },
     interpolation: {
       escapeValue: false,
     },
     saveMissing: true,
-    missingKeyHandler: function (lng, ns, key, fallbackValue) {
+    missingKeyHandler: function (lng, key) {
       console.warn(`Missing translation for key: ${key} in language: ${lng}`);
     },
   });
 
 const changeLanguage = (language: string) => {
-  i18n.changeLanguage(language);
+  i18n.changeLanguage(language.toLowerCase());
 };
 
 const setDebugMode = (debug: boolean) => {
