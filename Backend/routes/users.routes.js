@@ -131,7 +131,14 @@ router.post("/", async (req, res) => {
 
     const { data: settingsData, error: settingsError } = await supabase
       .from("settings")
-      .insert([{ id: settingsId, maptheme: "default", language: "en", notification: true }])
+      .insert([
+        {
+          id: settingsId,
+          maptheme: "default",
+          language: "en",
+          notification: true,
+        },
+      ])
       .select("id")
       .single();
 
@@ -219,6 +226,40 @@ router.delete("/:id", async (req, res) => {
 
     const { settings_id } = profile;
 
+    const { data: pins, error: fetchPinsError } = await supabase
+      .from("pins")
+      .select("id")
+      .eq("profile_id", userID);
+
+    if (fetchPinsError) {
+      console.error("Error fetching user pins:", fetchPinsError);
+      return res.status(500).json({ error: "Error fetching user pins" });
+    }
+
+    const pinIds = pins.map((pin) => pin.id);
+    const { data: reports, error: fetchReportsError } = await supabase
+      .from("reports")
+      .select("id")
+      .in("reported_pin_id", pinIds);
+
+    if (fetchReportsError) {
+      console.error("Error fetching reports:", fetchReportsError);
+      return res.status(500).json({ error: "Error checking reports" });
+    }
+
+    if (reports.length > 0) {
+      const reportIds = reports.map((report) => report.id);
+      const { error: deleteReportsError } = await supabase
+        .from("reports")
+        .delete()
+        .in("id", reportIds);
+
+      if (deleteReportsError) {
+        console.error("Error deleting user reports:", deleteReportsError);
+        return res.status(500).json({ error: "Error deleting user reports" });
+      }
+    }
+
     const { error: deletePinsError } = await supabase
       .from("pins")
       .delete()
@@ -241,14 +282,20 @@ router.delete("/:id", async (req, res) => {
       }
     }
 
-    const { error: deleteReportsError } = await supabase
+    const { error: deleteReportsUserError } = await supabase
       .from("reports")
       .delete()
-      .eq("reported_user_id", userID);
+      .in("profile_id", [userID])
+      .or("reported_user_id.eq." + userID);
 
-    if (deleteReportsError) {
-      console.error("Error deleting user reports:", deleteReportsError);
-      return res.status(500).json({ error: "Error deleting user reports" });
+    if (deleteReportsUserError) {
+      console.error(
+        "Error deleting user reports related to user:",
+        deleteReportsUserError
+      );
+      return res
+        .status(500)
+        .json({ error: "Error deleting user reports related to user" });
     }
 
     const { error: deleteProfileError } = await supabase
@@ -259,7 +306,10 @@ router.delete("/:id", async (req, res) => {
 
     if (deleteProfileError) {
       console.error("Error deleting user profile:", deleteProfileError);
-      return res.status(500).json({ error: "Error deleting user profile" });
+      return res.status(500).json({
+        error: "Error deleting user profile",
+        details: deleteProfileError.details,
+      });
     }
 
     res.status(200).send();
