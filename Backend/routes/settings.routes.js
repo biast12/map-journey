@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
-const checkApiKey = require("../apiKeyCheck");
+const checkApiKey = require("../utils/apiKeyCheck");
 
 router.use(checkApiKey);
 
@@ -22,7 +22,6 @@ router.get("/:id", async (req, res) => {
   const settingsID = req.params.id;
 
   try {
-    // Query the settings table using the settings ID
     const { data: settings, error: settingsError } = await supabase
       .from("settings")
       .select("*")
@@ -61,7 +60,6 @@ router.put("/:id", async (req, res) => {
   }
 
   try {
-    // Create an object to hold updated fields
     const updatedFields = {};
     if (maptheme !== undefined) updatedFields.maptheme = maptheme;
     if (language !== undefined) updatedFields.language = language;

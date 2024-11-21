@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
-const checkApiKey = require("../apiKeyCheck");
+const checkApiKey = require("../utils/apiKeyCheck");
+const generateUniqueId = require("../utils/uuid-generator");
 
 router.use(checkApiKey);
 
@@ -138,42 +139,8 @@ router.post("/:id", async (req, res) => {
     });
   }
 
-  // generate a unique UUID
-  const generateUniqueId = async () => {
-    let uniqueId;
-    let exists = true;
-
-    while (exists) {
-      uniqueId = crypto.randomUUID();
-
-      const { data: profileData, error: profileError } = await supabase
-        .from("profile")
-        .select("id")
-        .eq("id", uniqueId)
-        .single();
-
-      const { data: pinsData, error: pinsError } = await supabase
-        .from("pins")
-        .select("id")
-        .eq("id", uniqueId)
-        .single();
-
-      exists = profileData !== null || pinsData !== null;
-
-      if (profileError && profileError.code !== "PGRST116") {
-        console.error("Error checking profile table:", profileError);
-        throw new Error("Error checking profile table");
-      }
-
-      if (pinsError && pinsError.code !== "PGRST116") {
-        console.error("Error checking pins table:", pinsError);
-        throw new Error("Error checking pins table");
-      }
-    }
-
-    return uniqueId;
-  };
   const uniqueId = await generateUniqueId();
+
   const pinData = {
     id: uniqueId,
     profile_id,

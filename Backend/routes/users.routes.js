@@ -3,7 +3,8 @@ const router = express.Router();
 const supabase = require("../supabaseClient");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const checkApiKey = require("../apiKeyCheck");
+const checkApiKey = require("../utils/apiKeyCheck");
+const generateUniqueId = require("../utils/uuid-generator");
 
 router.use(checkApiKey);
 
@@ -25,7 +26,6 @@ router.get("/", (req, res) => {
 // Get all users
 router.get("/all", async (req, res) => {
   try {
-    // Selecting all fields except "password"
     const { data: users, error } = await supabase.from("profile").select(`
         id, name, email, settings_id, avatar, banner, new_notifications, status, role, news_count
       `);
@@ -43,7 +43,6 @@ router.get("/:id", async (req, res) => {
   const userID = req.params.id;
 
   try {
-    //Fetch the user profile
     const { data: user, error: userError } = await supabase
       .from("profile")
       .select(
@@ -63,7 +62,6 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Fetch the settings
     const { data: settings, error: settingsError } = await supabase
       .from("settings")
       .select("*")
@@ -93,16 +91,14 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    // Step 1: Check if the email is already in use
     const { data: existingEmail, error: emailCheckError } = await supabase
       .from("profile")
       .select("email")
       .eq("email", email)
-      .limit(1) // Limit to 1 result
-      .single(); // Use .single() to avoid errors on multiple results
+      .limit(1)
+      .single();
 
     if (emailCheckError && emailCheckError.code !== "PGRST116") {
-      // Handle errors except for "no rows"
       console.error("Error checking email:", emailCheckError);
       return res.status(500).json({ error: "Error checking email" });
     }
@@ -111,7 +107,6 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "Email is already in use" });
     }
 
-    // Step 2: Check if the name is already taken
     const { data: existingName, error: nameCheckError } = await supabase
       .from("profile")
       .select("name")
@@ -131,10 +126,12 @@ router.post("/", async (req, res) => {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Step 3: Create default settings
+    const settingsId = await generateUniqueId();
+    const userId = await generateUniqueId();
+
     const { data: settingsData, error: settingsError } = await supabase
       .from("settings")
-      .insert([{ maptheme: "default", language: "en", notification: true }])
+      .insert([{ id: settingsId, maptheme: "default", language: "en", notification: true }])
       .select("id")
       .single();
 
@@ -143,42 +140,9 @@ router.post("/", async (req, res) => {
       return res.status(500).json({ error: "Error creating settings" });
     }
 
-    // Step 4: Generate unique UUID
-    const generateUniqueId = async () => {
-      let uniqueId;
-      let exists = true;
-      while (exists) {
-        uniqueId = crypto.randomUUID();
-        const { data: profileData, error: profileError } = await supabase
-          .from("profile")
-          .select("id")
-          .eq("id", uniqueId)
-          .single();
-        const { data: pinsData, error: pinsError } = await supabase
-          .from("pins")
-          .select("id")
-          .eq("id", uniqueId)
-          .single();
-        exists = profileData !== null || pinsData !== null;
-
-        if (profileError) {
-          console.error("Error checking profile table:", profileError);
-          throw new Error("Error checking profile table");
-        }
-
-        if (pinsError) {
-          console.error("Error checking pins table:", pinsError);
-          throw new Error("Error checking pins table");
-        }
-      }
-      return uniqueId;
-    };
-    const uniqueId = await generateUniqueId();
-
-    // Step 5: Create user profile
     const { error: profileError } = await supabase.from("profile").insert([
       {
-        id: uniqueId,
+        id: userId,
         name,
         email,
         password: hashedPassword,
@@ -238,7 +202,6 @@ router.delete("/:id", async (req, res) => {
   const userID = req.params.id;
 
   try {
-    // Step 1: Fetch the user's profile to check if it exists
     const { data: profile, error: fetchError } = await supabase
       .from("profile")
       .select("settings_id")
@@ -256,7 +219,6 @@ router.delete("/:id", async (req, res) => {
 
     const { settings_id } = profile;
 
-    // Step 2: Delete all pins associated with the user
     const { error: deletePinsError } = await supabase
       .from("pins")
       .delete()
@@ -267,7 +229,6 @@ router.delete("/:id", async (req, res) => {
       return res.status(500).json({ error: "Error deleting user pins" });
     }
 
-    // Step 3: Delete user settings using settings_id
     if (settings_id) {
       const { error: deleteSettingsError } = await supabase
         .from("settings")
@@ -280,7 +241,6 @@ router.delete("/:id", async (req, res) => {
       }
     }
 
-    // Step 4: Delete all reports related to the user
     const { error: deleteReportsError } = await supabase
       .from("reports")
       .delete()
@@ -291,7 +251,6 @@ router.delete("/:id", async (req, res) => {
       return res.status(500).json({ error: "Error deleting user reports" });
     }
 
-    // Step 5: Delete the user profile
     const { error: deleteProfileError } = await supabase
       .from("profile")
       .delete()
@@ -303,7 +262,6 @@ router.delete("/:id", async (req, res) => {
       return res.status(500).json({ error: "Error deleting user profile" });
     }
 
-    // Send a success response
     res.status(200).send();
   } catch (error) {
     console.error("Error during user deletion:", error);
