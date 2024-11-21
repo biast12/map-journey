@@ -77,7 +77,6 @@ const UserManagement = () => {
       return true;
     }
 
-
     return userData[searchOptions.searchBy].toLowerCase().match(searchOptions.search.toLowerCase());
   }
 

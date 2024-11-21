@@ -1,6 +1,7 @@
-import { IonCol, IonRow } from "@ionic/react";
+import {IonRow } from "@ionic/react";
 import useRequestData from "../../hooks/useRequestData";
 import { useEffect } from "react";
+import ReportColumn from "./ReportColumn";
 
 type ReportUser = {
   id: string;
@@ -45,9 +46,7 @@ const ReportManagement = () => {
     <>
       <IonRow id="reportsRow">
         {
-          data && data.map((reportData: ReportData)=> <IonCol>
-            <p>{reportData.text}</p>
-          </IonCol>)
+          data && data.map((reportData: ReportData)=> <ReportColumn reportData={reportData} />)
         }
       </IonRow>
     </>
