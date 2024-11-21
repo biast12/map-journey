@@ -98,5 +98,9 @@
       "error": "Fejl",
       "errormessage": "Noget gik galt!"
     }
+  },
+  "map": {
+    "pin_alt": "Pin Ikon",
+    "error_page_message": "Kunne ikke hente pins, prøv venligst igen senere"
   }
 }

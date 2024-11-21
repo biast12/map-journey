@@ -98,5 +98,9 @@
       "error": "Error",
       "errormessage": "Something went wrong!"
     }
+  },
+  "map": {
+    "pin_alt": "Pin Icon",
+    "error_page_message": "Failed to get pins, please try again later"
   }
 }

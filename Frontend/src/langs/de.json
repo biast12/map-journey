@@ -98,5 +98,9 @@
       "error": "Fehler",
       "errormessage": "Etwas ist schief gelaufen!"
     }
+  },
+  "map": {
+    "pin_alt": "Pin-Symbol",
+    "error_page_message": "Pins konnten nicht abgerufen werden, bitte versuchen Sie es später erneut"
   }
 }
