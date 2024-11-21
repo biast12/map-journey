@@ -27,7 +27,7 @@ i18n
   });
 
 const changeLanguage = (language: string) => {
-  i18n.changeLanguage(language.toLowerCase());
+  i18n.changeLanguage(language);
 };
 
 const setDebugMode = (debug: boolean) => {
