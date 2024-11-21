@@ -1,4 +1,4 @@
-import "./MakePinModal.scss";
+import "./CreatePinModal.scss";
 import {
   IonButton,
   IonCard,
@@ -16,15 +16,18 @@ import { Geolocation } from "@capacitor/geolocation";
 import { fromLonLat } from "ol/proj";
 import { Coordinate } from "ol/coordinate";
 import { useEffect, useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
 import useImageHandler from "../../hooks/useImageHandler";
 
-interface MakePinModalProps {
+interface CreatePinModalProps {
   onClose: () => void;
 }
 
-const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
+const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
+  const { t } = useTranslation();
+
   /* States */
   const [title, setTitle] = useState<string>("");
   const [location, setLocation] = useState<any>(null);
@@ -133,14 +136,14 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
   return (
     <IonCard>
       <IonCardHeader>
-        <IonCardTitle>Map your Journey</IonCardTitle>
+        <IonCardTitle>{t("modals.create_pin.card_title")}</IonCardTitle>
       </IonCardHeader>
       <IonItem>
         <IonInput
           onIonChange={updateTitle}
           ref={titleInput}
-          label="Title:"
-          placeholder="Your title here"
+          label={`${t("modals.create_pin.title")}:`}
+          placeholder={t("modals.create_pin.title_placeholder")}
         />
       </IonItem>
       <IonImg
@@ -164,8 +167,7 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
         <IonInput
           disabled
           value={location?.address}
-          label="Location:"
-          placeholder="Input address here"
+          label={`${t("modals.create_pin.location")}:`}
         />
         <IonButton
           ref={locationButton}
@@ -179,12 +181,12 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
         <IonTextarea
           ref={commentInput}
           onIonChange={updateComment}
-          label="Comments:"
-          placeholder="Type something here"
+          label={`${t("modals.create_pin.comment")}:`}
+          placeholder={t("modals.create_pin.comment_placeholder")}
         />
       </IonItem>
       <IonItem>
-        <label>Public?</label>
+        <label>{`${t("modals.create_pin.visibility")}?`}</label>
         <IonToggle
           checked={status}
           onIonChange={(e) => setStatus(e.detail.checked)}
@@ -192,11 +194,11 @@ const MakePinModal: React.FC<MakePinModalProps> = ({ onClose }) => {
       </IonItem>
       <div id="confirmButton">
         <IonButton onClick={handleConfirm} ref={confirmButton}>
-          Confirm
+          {t("modals.create_pin.submit")}
         </IonButton>
       </div>
     </IonCard>
   );
 };
 
-export default MakePinModal;
+export default CreatePinModal;

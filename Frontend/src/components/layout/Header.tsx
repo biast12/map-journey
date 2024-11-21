@@ -8,6 +8,7 @@ import {
   IonBadge,
 } from "@ionic/react";
 import { notifications, settings, shieldHalf } from "ionicons/icons";
+import { useTranslation } from "react-i18next";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
@@ -22,6 +23,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
+  const { t } = useTranslation();
   const { makeRequest, data, error, isLoading } = useRequestData();
   const { userID, loading } = useAuth();
   const { notificationsStatus, loading: settingsLoading } =
@@ -36,7 +38,9 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && <Error message={"Failed fetching user!"} />}
+      {!isLoading && error && (
+        <Error message={t("modals.header.error_page_message")} />
+      )}
       <IonHeader>
         <IonToolbar>
           <IonButton routerLink="/" fill="clear">

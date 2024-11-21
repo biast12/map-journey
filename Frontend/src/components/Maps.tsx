@@ -16,6 +16,7 @@ import { MousePosition, defaults as defaultControls } from "ol/control.js";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer.js";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import Feature from "ol/Feature";
 import { FeatureLike } from "ol/Feature";
@@ -101,11 +102,17 @@ function createClusterStyle(feature: FeatureLike): Style {
 }
 
 function Map({ APIurl }: MapProps) {
+  const { t } = useTranslation();
   const points: Feature[] = [];
-  const { makeRequest, data, error, isLoading } = useRequestData();
+
+  /* States */
   const [showPinModal, setShowPinModal] = useState(false);
   const [selectedPin, setSelectedPin] = useState<PinData | null>(null);
 
+  /* Hooks */
+  const { makeRequest, data, error, isLoading } = useRequestData();
+
+  /* Functions */
   const openShowPinModal = () => setShowPinModal(true);
   const closeShowPinModal = () => setShowPinModal(false);
 
@@ -215,13 +222,13 @@ function Map({ APIurl }: MapProps) {
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && <Error message={"Failed fetching pins!"} />}
+      {!isLoading && error && <Error message={t("map.error_page_message")} />}
       {data && (
         <div id="map">
           {/* Preload the image cause else React/Ionic will not load it and add it to "the public folder" */}
           <IonImg
             src="/icons/webp/ping1.webp"
-            alt="Pin Icon"
+            alt={t("map.pin_alt")}
             style={{ display: "none" }}
             aria-hidden="true"
           />

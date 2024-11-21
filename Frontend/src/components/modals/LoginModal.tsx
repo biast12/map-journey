@@ -9,6 +9,7 @@ import {
   IonModal,
 } from "@ionic/react";
 import { FormEvent, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
 import "./LoginModal.scss";
@@ -26,6 +27,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
   const [loginSuccess, setLoginSuccess] = useState<boolean | null>(null);
   const [createUserModal, setCreateUserModal] = useState(false);
   const toast = useRef<HTMLIonToastElement>(null);
+  const { t } = useTranslation();
   const { makeRequest, data, error, isLoading } = useRequestData();
   const { storeAuthToken } = useAuth();
 
@@ -59,32 +61,34 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && <Error message={"Failed login!"} />}
+      {!isLoading && error && (
+        <Error message={t("modals.login.error_page_message")} />
+      )}
       <IonCard>
         <IonCardHeader>
-          <IonCardTitle>Login</IonCardTitle>
+          <IonCardTitle>{t("modals.login.card_title")}</IonCardTitle>
         </IonCardHeader>
         <form action="" onSubmit={handleLogin}>
           <IonInput
             id="emailInput"
             name="email"
             type="email"
-            label="Email"
             labelPlacement="fixed"
-            placeholder="Enter email here"
+            label={t("modals.login.email")}
+            placeholder={t("modals.login.email_placeholder")}
           ></IonInput>
           <IonInput
             id="passwordInput"
             name="password"
             type="password"
             labelPlacement="fixed"
-            label="Password"
-            placeholder="Enter password here"
+            label={t("modals.login.password")}
+            placeholder={t("modals.login.password_placeholder")}
           >
             <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
           </IonInput>
           {loginSuccess == false && (
-            <p id="loginFailed">Login failed! Check email or password</p>
+            <p id="loginFailed">{t("modals.login.failed")}</p>
           )}
           <IonButton
             type="submit"
@@ -92,7 +96,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
             expand="block"
             disabled={isLoading}
           >
-            Login
+            {t("modals.login.submit")}
           </IonButton>
         </form>
         <IonButton
@@ -100,11 +104,11 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
           expand="block"
           onClick={openCreateUserModal}
         >
-          Create User
+          {t("modals.login.create_user")}
         </IonButton>
         <IonToast
           ref={toast}
-          message="Login successful"
+          message={t("modals.login.failed")}
           position="bottom"
           duration={1500}
         ></IonToast>

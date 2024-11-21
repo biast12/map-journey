@@ -10,6 +10,7 @@ import {
   IonToast,
 } from "@ionic/react";
 import { useRef, useState, FormEvent } from "react";
+import { useTranslation } from "react-i18next";
 import "./ReportModal.scss";
 
 import useRequestData from "../../hooks/useRequestData";
@@ -30,6 +31,7 @@ const ReportModal = ({
 }: ReportedProps) => {
   const [reportSuccess, setReportSuccess] = useState<boolean | null>(null);
   const toast = useRef<HTMLIonToastElement>(null);
+  const { t } = useTranslation();
   const { makeRequest, data, error, isLoading } = useRequestData();
   const { userID } = useAuth();
   const [text, setText] = useState("");
@@ -62,15 +64,19 @@ const ReportModal = ({
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && <Error message={"Failed reporting!"} />}
+      {!isLoading && error && (
+        <Error message={t("modals.report.error_page_message")} />
+      )}
       <IonCard>
         <IonCardHeader>
-          <IonCardTitle>Reporting {reportedType}</IonCardTitle>
+          <IonCardTitle>
+            {t("modals.report.card_title")} {reportedType}
+          </IonCardTitle>
         </IonCardHeader>
         <IonCardContent>
           <form onSubmit={handleReport}>
             <IonItem>
-              <IonLabel position="stacked">Report Text</IonLabel>
+              <IonLabel position="stacked">{t("modals.report.text")}</IonLabel>
               <IonInput
                 value={text}
                 onIonChange={(e) => setText(e.detail.value!)}
@@ -79,11 +85,11 @@ const ReportModal = ({
             </IonItem>
             {reportSuccess === false && (
               <p id="reportFailed">
-                Reporting {reportedType} failed! Check the inputs
+                {t("modals.report.failed", { type: reportedType })}
               </p>
             )}
             <IonButton type="submit" expand="block">
-              Submit Report
+              {t("modals.report.submit")}
             </IonButton>
             <IonButton
               id="closeButton"
@@ -91,11 +97,11 @@ const ReportModal = ({
               color="medium"
               onClick={closeReportModal}
             >
-              Close
+              {t("modals.report.close")}
             </IonButton>
             <IonToast
               ref={toast}
-              message="User created successfully"
+              message={t("modals.report.successful")}
               position="bottom"
               duration={1500}
             ></IonToast>

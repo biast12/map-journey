@@ -8,6 +8,7 @@ import {
   IonInputPasswordToggle,
   IonToast,
 } from "@ionic/react";
+import { useTranslation } from "react-i18next";
 import useRequestData from "../../hooks/useRequestData";
 import "./CreateUserModal.scss";
 import Loader from "../../components/Loader";
@@ -24,6 +25,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
 }) => {
   const [createSuccess, setCreateSuccess] = useState<boolean | null>(null);
   const toast = useRef<HTMLIonToastElement>(null);
+  const { t } = useTranslation();
   const { makeRequest, isLoading, data, error } = useRequestData();
 
   async function handleCreateUser(formEvent: FormEvent) {
@@ -54,10 +56,12 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && <Error message="Failed to create user" />}
+      {!isLoading && error && (
+        <Error message={t("modals.create_user.error_page_message")} />
+      )}
       <IonCard>
         <IonCardHeader>
-          <IonCardTitle>Create User</IonCardTitle>
+          <IonCardTitle>{t("modals.create_user.card_title")}</IonCardTitle>
         </IonCardHeader>
         <form action="" onSubmit={handleCreateUser}>
           <IonInput
@@ -65,18 +69,18 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
             id="nameInput"
             name="name"
             type="text"
-            label="Name"
             labelPlacement="fixed"
-            placeholder="Enter name here"
+            label={t("modals.create_user.username")}
+            placeholder={t("modals.create_user.username_placeholder")}
           ></IonInput>
           <IonInput
             required
             id="emailInput"
             name="email"
             type="email"
-            label="Email"
             labelPlacement="fixed"
-            placeholder="Enter email here"
+            label={t("modals.create_user.email")}
+            placeholder={t("modals.create_user.email_placeholder")}
           ></IonInput>
           <IonInput
             required
@@ -84,13 +88,13 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
             name="password"
             type="password"
             labelPlacement="fixed"
-            label="Password"
-            placeholder="Enter password here"
+            label={t("modals.create_user.password")}
+            placeholder={t("modals.create_user.password_placeholder")}
           >
             <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
           </IonInput>
           {createSuccess === false && (
-            <p id="createFailed">User creation failed! Check the inputs</p>
+            <p id="createFailed">{t("modals.create_user.failed")}</p>
           )}
           <IonButton
             type="submit"
@@ -98,7 +102,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
             expand="block"
             disabled={isLoading}
           >
-            Create User
+            {t("modals.create_user.submit")}
           </IonButton>
         </form>
         <IonButton
@@ -107,7 +111,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
           color="medium"
           onClick={closeCreateUserModal}
         >
-          Close
+          {t("modals.create_user.close")}
         </IonButton>
         <IonToast
           ref={toast}

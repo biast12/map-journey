@@ -6,14 +6,14 @@ import useAuth from "../hooks/ProviderContext";
 
 /* Modals */
 import LoginModal from "./modals/LoginModal";
-import MakePinModal from "./modals/MakePinModal";
+import CreatePinModal from "./modals/CreatePinModal";
 import NotificationModal from "./modals/NotificationModal";
 
 interface ModalsProps {
   showLoginModal: boolean;
   closeLoginModal: () => void;
-  makePinModal: boolean;
-  closeMakePinModal: () => void;
+  createPinModal: boolean;
+  closeCreatePinModal: () => void;
   showNotificationModal: boolean;
   closeNotificationModal: () => void;
 }
@@ -21,8 +21,8 @@ interface ModalsProps {
 const Modals: React.FC<ModalsProps> = ({
   showLoginModal,
   closeLoginModal,
-  makePinModal,
-  closeMakePinModal,
+  createPinModal,
+  closeCreatePinModal,
   showNotificationModal,
   closeNotificationModal,
 }) => {
@@ -38,16 +38,16 @@ const Modals: React.FC<ModalsProps> = ({
           <LoginModal closeLoginModal={closeLoginModal} />
         </div>
       </IonModal>
-      <IonModal isOpen={makePinModal} onDidDismiss={closeMakePinModal}>
+      <IonModal isOpen={createPinModal} onDidDismiss={closeCreatePinModal}>
         <div className="modal-content">
           <IonButton
             className="close-button"
-            onClick={closeMakePinModal}
+            onClick={closeCreatePinModal}
             fill="clear"
           >
             <IonIcon icon={close} />
           </IonButton>
-          <MakePinModal onClose={closeMakePinModal} />
+          <CreatePinModal onClose={closeCreatePinModal} />
         </div>
       </IonModal>
       <IonModal

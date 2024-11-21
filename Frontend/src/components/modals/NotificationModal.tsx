@@ -8,6 +8,7 @@ import {
   IonCardTitle,
   IonCardContent,
 } from "@ionic/react";
+import { useTranslation } from "react-i18next";
 
 // hooks
 import useRequestData from "../../hooks/useRequestData";
@@ -16,6 +17,7 @@ import Loader from "../../components/Loader";
 import Error from "../../components/Error";
 
 const NotificationModal: React.FC = () => {
+  const { t } = useTranslation();
   const { makeRequest, data, error, isLoading } = useRequestData();
   const {
     makeRequest: makeRequestReset,
@@ -38,12 +40,12 @@ const NotificationModal: React.FC = () => {
     <>
       {(isLoading || isLoadingReset) && <Loader />}
       {!(isLoading || isLoadingReset) && (error || errorReset) && (
-        <Error message="Failed reading notification!" />
+        <Error message={t("modals.notification.error_page_message")} />
       )}
       <IonCard>
         <IonCardHeader>
           <IonCardTitle style={{ textAlign: "center" }}>
-            Notifications
+            {t("modals.notification.card_title")}
           </IonCardTitle>
         </IonCardHeader>
         <IonCardContent>

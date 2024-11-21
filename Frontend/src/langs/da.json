@@ -1,0 +1,106 @@
+{
+  "lang": "Dansk",
+  "flag": "🇩🇰",
+  "header": {
+    "error_page_message": "Kunne ikke hente bruger! Prøv igen senere"
+  },
+  "footer": {
+    "global_map": "Globalt Kort",
+    "add_pin": "Tilføj Pin",
+    "own_map": "Eget Kort"
+  },
+  "modals": {
+    "create_pin": {
+      "card_title": "Kortlæg din Rejse",
+      "title": "Titel",
+      "title_placeholder": "Din titel her",
+      "location": "Placering",
+      "comment": "Kommentarer",
+      "comment_placeholder": "Din kommentar her",
+      "visibility": "Offentlig",
+      "submit": "Bekræft"
+    },
+    "create_user": {
+      "card_title": "Opret Bruger",
+      "username": "Brugernavn",
+      "username_placeholder": "Dit brugernavn her",
+      "email": "Email",
+      "email_placeholder": "Din email her",
+      "password": "Adgangskode",
+      "password_placeholder": "Din adgangskode her",
+      "submit": "Opret bruger",
+      "close": "Luk",
+      "failed": "Brugeroprettelse mislykkedes! Tjek indtastningerne",
+      "error_page_message": "Kunne ikke oprette bruger, prøv igen senere"
+    },
+    "login": {
+      "card_title": "Login",
+      "email": "Email",
+      "email_placeholder": "Din email her",
+      "password": "Adgangskode",
+      "password_placeholder": "Din adgangskode her",
+      "submit": "Login",
+      "create_user": "Opret bruger",
+      "successful": "Login succesfuld",
+      "failed": "Login mislykkedes! Tjek indtastningerne",
+      "error_page_message": "Kunne ikke logge ind, prøv igen senere"
+    },
+    "notification": {
+      "card_title": "Notifikationer",
+      "error_page_message": "Kunne ikke hente notifikationer, prøv igen senere"
+    },
+    "report": {
+      "card_title": "Rapportering",
+      "text": "Rapport Tekst",
+      "submit": "Indsend Rapport",
+      "close": "Luk",
+      "successful": "Rapporteret succesfuldt",
+      "failed": "Rapportering af {{type}} mislykkedes! Tjek indtastningerne",
+      "error_page_message": "Kunne ikke rapportere, prøv igen senere"
+    },
+    "pin": {
+      "img_alt": "Bruger avatar",
+      "add": "Tilføj",
+      "report": "Rapporter pin"
+    }
+  },
+  "pages": {
+    "settings": {
+      "index": {
+        "card_title": "Indstillinger",
+        "account": "Konto",
+        "general": "Generelt"
+      },
+      "accounts": {
+        "card_title": "Konto",
+        "img_alt": "Bruger avatar",
+        "username": "Brugernavn",
+        "email": "Email",
+        "password": "Adgangskode",
+        "submit": "Gem",
+        "successful": "Konto opdateret succesfuldt",
+        "failed": "Kontoopdatering mislykkedes! Tjek indtastningerne",
+        "error_page_message": "Kunne ikke hente brugere, prøv igen senere"
+      },
+      "general": {
+        "lang_missing_key": "Sprog nøgle mangler",
+        "card_title": "Generelle Indstillinger",
+        "map_theme": "Kort Tema",
+        "map_theme_placeholder": "Vælg Kort Tema",
+        "language": "Sprog",
+        "language_placeholder": "Vælg Sprog",
+        "notification": "Aktiver Notifikationer",
+        "submit": "Gem",
+        "error_page_message": "Kunne ikke hente indstillinger, prøv igen senere"
+      }
+    },
+    "errorpage": {
+      "error": "Fejl",
+      "errormessage": "Noget gik galt!"
+    }
+  },
+  "map": {
+    "pin_alt": "Pin Ikon",
+    "error_page_message": "Kunne ikke hente pins, prøv venligst igen senere"
+  }
+}

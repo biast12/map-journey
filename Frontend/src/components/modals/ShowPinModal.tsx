@@ -8,6 +8,7 @@ import {
   IonModal,
 } from "@ionic/react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./ShowPinModal.scss";
 
 /* Modal */
@@ -19,6 +20,7 @@ interface ShowPinModalProps {
 
 const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
   if (!pinData) return null;
+  const { t } = useTranslation();
   const [reportModal, setReportModal] = useState(false);
   const openReportModal = () => setReportModal(true);
   const closeReportModal = () => setReportModal(false);
@@ -35,14 +37,14 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
       <IonCardContent>
         <p>{pinData.description}</p>
         <div>
-          <img alt="User avatar" src={pinData.profile.avatar} />
+          <img alt={t("modals.pin.img_alt")} src={pinData.profile.avatar} />
           <p>{pinData.profile.name}</p>
-          <IonButton>Add</IonButton>
+          <IonButton>{t("modals.pin.add")}</IonButton>
         </div>
       </IonCardContent>
       <div id="showPinCardButtons">
         <IonButton disabled={pinData.reported} onClick={openReportModal}>
-          Report pin
+          {t("modals.pin.report")}
         </IonButton>
       </div>
       <IonModal isOpen={reportModal} onDidDismiss={closeReportModal}>

@@ -42,7 +42,7 @@ setupIonicReact();
 
 const App: React.FC = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [makePinModal, setMakePinModal] = useState(false);
+  const [createPinModal, setCreatePinModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   const { userID, loading } = useAuth();
@@ -50,8 +50,8 @@ const App: React.FC = () => {
   const openLoginModal = () => setShowLoginModal(true);
   const closeLoginModal = () => setShowLoginModal(false);
 
-  const openMakePinModal = () => setMakePinModal(true);
-  const closeMakePinModal = () => setMakePinModal(false);
+  const openCreatePinModal = () => setCreatePinModal(true);
+  const closeCreatePinModal = () => setCreatePinModal(false);
 
   const openNotificationModal = () => setShowNotificationModal(true);
   const closeNotificationModal = () => setShowNotificationModal(false);
@@ -71,14 +71,14 @@ const App: React.FC = () => {
             <IonRouterOutlet>
               <Routes />
             </IonRouterOutlet>
-            <Footer openMakePinModal={openMakePinModal} />
+            <Footer openCreatePinModal={openCreatePinModal} />
           </IonTabs>
         </IonContent>
         <Modals
           showLoginModal={showLoginModal}
           closeLoginModal={closeLoginModal}
-          makePinModal={makePinModal}
-          closeMakePinModal={closeMakePinModal}
+          createPinModal={createPinModal}
+          closeCreatePinModal={closeCreatePinModal}
           showNotificationModal={showNotificationModal}
           closeNotificationModal={closeNotificationModal}
         />

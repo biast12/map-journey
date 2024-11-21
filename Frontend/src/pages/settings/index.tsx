@@ -10,27 +10,33 @@ import {
   IonIcon,
 } from "@ionic/react";
 import { settingsOutline, personOutline } from "ionicons/icons";
+import { useTranslation } from "react-i18next";
 
 const Settings: React.FC = () => {
+  const { t } = useTranslation();
   const settingsData = [
-    { name: "General", icon: settingsOutline },
-    { name: "Account", icon: personOutline },
+    {
+      name: t("pages.settings.index.account"),
+      url: "account",
+      icon: settingsOutline,
+    },
+    {
+      name: t("pages.settings.index.general"),
+      url: "general",
+      icon: personOutline,
+    },
   ];
   return (
     <>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Settings</IonTitle>
+          <IonTitle>{t("pages.settings.index.card_title")}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <IonList>
           {settingsData.map((setting, index) => (
-            <IonItem
-              key={index}
-              button
-              href={"/settings/" + setting.name.toLowerCase()}
-            >
+            <IonItem key={index} button href={"/settings/" + setting.url}>
               <IonIcon icon={setting.icon} slot="start" />
               <IonLabel>{setting.name}</IonLabel>
             </IonItem>
