@@ -367,7 +367,7 @@ router.post("/readall/:id", async (req, res) => {
       return res.status(404).send("User profile not found");
     }
 
-    const updatedNotifications = [""];
+    const updatedNotifications = [];
     const updatedNewsCount = 0;
 
     const { error: updateError } = await supabase
