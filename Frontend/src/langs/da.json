@@ -1,6 +1,5 @@
 {
   "lang": "Dansk",
-  "flag": "🇩🇰",
   "header": {
     "error_page_message": "Kunne ikke hente bruger! Prøv igen senere"
   },
@@ -80,7 +79,20 @@
         "submit": "Gem",
         "successful": "Konto opdateret succesfuldt",
         "failed": "Kontoopdatering mislykkedes! Tjek indtastningerne",
-        "error_page_message": "Kunne ikke hente brugere, prøv igen senere"
+        "error_page_message": "Kunne ikke hente brugere, prøv igen senere",
+        "Logout": {
+          "header": "Log ud",
+          "message": "Er du sikker på, at du vil logge ud?",
+
+          "yes": "Ja",
+          "cancel": "Annuller"
+        },
+        "Delete": {
+          "header": "Slet",
+          "message": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
+          "yes": "Ja",
+          "cancel": "Annuller"
+        }
       },
       "general": {
         "lang_missing_key": "Sprog nøgle mangler",

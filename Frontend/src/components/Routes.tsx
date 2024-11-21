@@ -34,7 +34,7 @@ export const Routes = () => {
       data.role === "admin" && setDebugMode(true);
     }
   }, [data, isLoading]);
-  
+
   const isSettingsPath = location.pathname.match(
     "/settings|/settings/general|/settings/account"
   );
