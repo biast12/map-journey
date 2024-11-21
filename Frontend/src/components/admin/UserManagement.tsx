@@ -21,28 +21,35 @@ type UserData = {
   status: "public" | "private" | "reported";
 };
 
+type SearchOptions = {
+  search: string;
+  searchBy: "id" | "name" | "role" | "status";
+  sortBy: "id" | "name" | "role" | "status";
+};
+
 const UserManagement = () => {
   const { data, error, isLoading, makeRequest } = useRequestData();
   const { data: delData, error: delError, isLoading: delIsLoading, makeRequest: delMakeRequest } = useRequestData();
-  const { data: editData, error: editError, isLoading: editIsLoading, makeRequest: editMakeRequest} = useRequestData();
+  const { data: editData, error: editError, isLoading: editIsLoading, makeRequest: editMakeRequest } = useRequestData();
 
   const [selectedUser, setSelectedUser] = useState<null | UserData>(null);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [handlingRequest, setHandlingRequest] = useState<boolean>(false);
+  const [searchOptions, setSearchOptions] = useState<SearchOptions>({ search: "", searchBy: "name", sortBy: "name" });
 
   async function handleUserEdit(e: FormEvent, userData: UserData) {
     setHandlingRequest(true);
     e.preventDefault();
     const form = e.target as HTMLFormElement;
-    
+
     const body = {
       name: form.username.value,
       status: form.status.value,
-      role: form.userrole.value
-    }
+      role: form.userrole.value,
+    };
 
-    const res = await editMakeRequest(`users/${userData.id}`, "PUT", undefined, body)
+    const res = await editMakeRequest(`users/${userData.id}`, "PUT", undefined, body);
 
     //LACKS AN UPDATE TO LIST
 
@@ -64,6 +71,15 @@ const UserManagement = () => {
   useEffect(() => {
     makeRequest("users/all");
   }, []);
+
+  function filterData(userData: UserData) {
+    if (searchOptions.search === "") {
+      return true;
+    }
+
+
+    return userData[searchOptions.searchBy].toLowerCase().match(searchOptions.search.toLowerCase());
+  }
 
   return (
     <>
@@ -100,13 +116,41 @@ const UserManagement = () => {
           </section>
         )}
       </Modal>
-      <Modal id="deleteUserModal" isOpen={showDeleteModal} onCloseModal={() => setShowDeleteModal(false)} backdropDismiss={!handlingRequest}>
+      <Modal
+        id="deleteUserModal"
+        isOpen={showDeleteModal}
+        onCloseModal={() => setShowDeleteModal(false)}
+        backdropDismiss={!handlingRequest}
+      >
         {selectedUser && <IonButton onClick={() => handleUserDelete(selectedUser)}>Are you sure?</IonButton>}
       </Modal>
 
+      <article className="searchOptions">
+        <section>
+          <label htmlFor="searchParams">Search </label>
+          <input
+            name="searchParams"
+            type="text"
+            placeholder="Search..."
+            onChange={(e) => {
+              setSearchOptions({ ...searchOptions, search: e.target.value });
+            }}
+          />
+        </section>
+        <section>
+          <label htmlFor="searchByParams">Search by </label>
+          <select name="searchByParams" id="" onChange={(e) => {
+              const value = e.target.value as "id" | "name" | "role" | "status"
+              setSearchOptions({ ...searchOptions, searchBy: value });
+            }}>
+            <option value="name">Name</option>
+            <option value="id">Id</option>
+          </select>
+        </section>
+      </article>
       <IonRow id="userRow">
         {data &&
-          data.map((userData: UserData) => (
+          data.filter(filterData) .map((userData: UserData) => (
             <UserColumn
               key={userData.id}
               userData={userData}
