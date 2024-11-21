@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
-const checkApiKey = require("../apiKeyCheck");
+const checkApiKey = require("../utils/apiKeyCheck");
 
 router.use(checkApiKey);
 
@@ -130,7 +130,6 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const { title, text } = req.body;
 
-  // Basic validation
   if (!title || !text) {
     return res.status(400).send("Missing required fields: title or text");
   }
@@ -149,7 +148,6 @@ router.post("/", async (req, res) => {
 
     const newID = newArticle.id;
 
-    // Fetch all profiles and increment news_count
     const { data: profiles, error: profileError } = await supabase
       .from("profile")
       .select("id, new_notifications, news_count");
@@ -228,7 +226,6 @@ router.delete("/:id", async (req, res) => {
   const articleID = Number(req.params.id);
 
   try {
-    // Step 1: Fetch the article to check if it exists
     const { data: existingArticle, error: fetchError } = await supabase
       .from("news")
       .select("*")
@@ -244,7 +241,6 @@ router.delete("/:id", async (req, res) => {
       return res.status(404).send("News article not found");
     }
 
-    // Step 2: Delete the article from the news table
     const { error: deleteError } = await supabase
       .from("news")
       .delete()
@@ -255,7 +251,6 @@ router.delete("/:id", async (req, res) => {
       return res.status(500).send("Error deleting news article");
     }
 
-    // Step 3: Fetch all user profiles to update their notifications
     const { data: profiles, error: profileError } = await supabase
       .from("profile")
       .select("id, new_notifications, news_count");
@@ -265,7 +260,6 @@ router.delete("/:id", async (req, res) => {
       return res.status(500).send("Error fetching profiles");
     }
 
-    // Step 4: Iterate over profiles and update only those that have the article ID
     for (const profile of profiles) {
       const currentNotifications = profile.new_notifications || [];
       const notificationsBeforeRemoval = [...currentNotifications];
@@ -274,14 +268,12 @@ router.delete("/:id", async (req, res) => {
         articleID
       );
 
-      // Check if the ID was removed (i.e., there was a change)
       if (
         notificationsBeforeRemoval.length !== updatedNotifications.length ||
         notificationsBeforeRemoval.some(
           (item, index) => item !== updatedNotifications[index]
         )
       ) {
-        // Decrement the news_count if the ID was found and removed
         const updatedNewsCount = Math.max((profile.news_count || 0) - 1, 0);
 
         const { error: updateError } = await supabase
@@ -301,7 +293,6 @@ router.delete("/:id", async (req, res) => {
       }
     }
 
-    // Step 5: Send success response
     res.status(204).send("News Deleted!");
   } catch (error) {
     console.error("Error during delete operation:", error);
