@@ -181,17 +181,14 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
             {t("pages.settings.accounts.submit")}
           </IonButton>
         </div>
-        <IonButton
-          onClick={() => setShowLogoutModal(true)}
-        >
-          {t("pages.settings.accounts.logout.header")}
-        </IonButton>
-        <IonButton
-          color="danger"
-          onClick={() => setShowDeleteModal(true)}
-        >
-          {t("pages.settings.accounts.delete.header")}
-        </IonButton>
+        <div className="buttonContainer">
+          <IonButton color="medium" onClick={() => setShowLogoutModal(true)}>
+            {t("pages.settings.accounts.logout.header")}
+          </IonButton>
+          <IonButton color="danger" onClick={() => setShowDeleteModal(true)}>
+            {t("pages.settings.accounts.delete.header")}
+          </IonButton>
+        </div>
         <IonToast
           isOpen={showToast}
           onDidDismiss={() => setShowToast(false)}
