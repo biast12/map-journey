@@ -68,7 +68,13 @@
       "index": {
         "card_title": "Indstillinger",
         "account": "Konto",
-        "general": "Generelt"
+        "general": "Generelt",
+        "Logout": {
+          "header": "Log ud",
+          "message": "Er du sikker på, at du vil logge ud?",
+          "yes": "Ja",
+          "cancel": "Annuller"
+        }
       },
       "accounts": {
         "card_title": "Konto",
@@ -80,13 +86,6 @@
         "successful": "Konto opdateret succesfuldt",
         "failed": "Kontoopdatering mislykkedes! Tjek indtastningerne",
         "error_page_message": "Kunne ikke hente brugere, prøv igen senere",
-        "Logout": {
-          "header": "Log ud",
-          "message": "Er du sikker på, at du vil logge ud?",
-
-          "yes": "Ja",
-          "cancel": "Annuller"
-        },
         "Delete": {
           "header": "Slet",
           "message": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",

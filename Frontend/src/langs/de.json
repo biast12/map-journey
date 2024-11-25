@@ -68,7 +68,14 @@
       "index": {
         "card_title": "Einstellungen",
         "account": "Konto",
-        "general": "Allgemein"
+        "general": "Allgemein",
+        "Logout": {
+          "header": "Abmelden",
+          "message": "Sind Sie sicher, dass Sie sich abmelden möchten?",
+
+          "yes": "Ja",
+          "cancel": "Abbrechen"
+        }
       },
       "accounts": {
         "card_title": "Konto",
@@ -80,13 +87,6 @@
         "successful": "Konto erfolgreich aktualisiert",
         "failed": "Kontoaktualisierung fehlgeschlagen! Überprüfen Sie die Eingaben",
         "error_page_message": "Benutzer konnten nicht abgerufen werden, bitte versuchen Sie es später erneut",
-        "Logout": {
-          "header": "Abmelden",
-          "message": "Sind Sie sicher, dass Sie sich abmelden möchten?",
-
-          "yes": "Ja",
-          "cancel": "Abbrechen"
-        },
         "Delete": {
           "header": "Löschen",
           "message": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",

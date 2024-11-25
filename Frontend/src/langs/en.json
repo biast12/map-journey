@@ -68,7 +68,13 @@
       "index": {
         "card_title": "Settings",
         "account": "Account",
-        "general": "General"
+        "general": "General",
+        "logout": {
+          "header": "Logout",
+          "message": "Are you sure you want to logout?",
+          "yes": "Yes",
+          "cancel": "Cancel"
+        }
       },
       "accounts": {
         "card_title": "Account",
@@ -80,13 +86,6 @@
         "successful": "Account updated successfully",
         "failed": "Account update failed! Check the inputs",
         "error_page_message": "Failed to get users, please try again later",
-        "logout": {
-          "header": "Logout",
-          "message": "Are you sure you want to logout?",
-
-          "yes": "Yes",
-          "cancel": "Cancel"
-        },
         "delete": {
           "header": "Delete Account",
           "message": "Are you sure you want to delete your account? This action cannot be undone.",
