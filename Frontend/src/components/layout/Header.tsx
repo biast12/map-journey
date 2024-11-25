@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   IonHeader,
   IonToolbar,
@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
-import { useAuth, useNotificationsStatus } from "../../hooks/ProviderContext";
+import { useAuth } from "../../hooks/ProviderContext";
 
 /* Components */
 import Loader from "../Loader";
@@ -26,20 +26,24 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   const { t } = useTranslation();
   const { makeRequest, data, error, isLoading } = useRequestData();
   const { userID, loading } = useAuth();
-  const { notificationsStatus, loading: settingsLoading } =
-    useNotificationsStatus();
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
 
   useEffect(() => {
     if (userID && !loading) {
       makeRequest(`users/${userID}`);
     }
-  }, [userID, loading, notificationsStatus, settingsLoading]);
+  }, [userID, loading, isNotificationModalOpen]);
+
+  const handleOpenNotificationModal = () => {
+    setIsNotificationModalOpen(true);
+    openNotificationModal();
+  };
 
   return (
     <>
       {isLoading && <Loader />}
       {!isLoading && error && (
-        <Error message={t("modals.header.error_page_message")} />
+        <Error message={t("header.error_page_message")} />
       )}
       <IonHeader>
         <IonToolbar>
@@ -47,14 +51,12 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
             <IonImg src="/icons/webp/logo1.webp" alt="Logo" />
           </IonButton>
           <div className="IonButtonContainer">
-            {notificationsStatus && (
-              <IonButton fill="clear" onClick={openNotificationModal}>
-                <IonIcon aria-hidden="true" icon={notifications} />
-                {data && data.news_count >= 1 && (
-                  <IonBadge color="danger">{data.news_count}</IonBadge>
-                )}
-              </IonButton>
-            )}
+            <IonButton fill="clear" onClick={handleOpenNotificationModal}>
+              <IonIcon aria-hidden="true" icon={notifications} />
+              {data && data.news_count >= 1 && (
+                <IonBadge color="danger">{data.news_count}</IonBadge>
+              )}
+            </IonButton>
             {data && data.role === "admin" && (
               <IonButton routerLink="/admin" fill="clear">
                 <IonIcon aria-hidden="true" icon={shieldHalf} />

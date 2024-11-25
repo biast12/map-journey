@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import {
   IonHeader,
   IonToolbar,
@@ -8,6 +9,8 @@ import {
   IonIcon,
   IonInput,
   IonToast,
+  IonModal,
+  IonAlert,
 } from "@ionic/react";
 import { pencilSharp, close } from "ionicons/icons";
 import { useTranslation } from "react-i18next";
@@ -15,6 +18,7 @@ import { useTranslation } from "react-i18next";
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
 import useImageHandler from "../../hooks/useImageHandler";
+import { useAuth } from "../../hooks/ProviderContext";
 
 /* Components */
 import Loader from "../../components/Loader";
@@ -33,20 +37,21 @@ interface UserDataProps {
 
 const Account: React.FC<UserDataProps> = ({ userData }) => {
   const { t } = useTranslation();
+  const history = useHistory();
 
   /* States */
-  const [username, setUsername] = useState(userData.name || "");
-  const [email, setEmail] = useState(userData.email || "");
+  const [username, setUsername] = useState(userData.name);
+  const [email, setEmail] = useState(userData.email);
   const [password, setPassword] = useState("");
-  const [avatar, setAvatar] = useState(
-    userData.avatar ||
-      "https://ionicframework.com/docs/img/demos/card-media.png"
-  );
+  const [avatar, setAvatar] = useState(userData.avatar);
   const [showToast, setShowToast] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   /* Hooks */
   const { makeRequest, isLoading, error } = useRequestData();
   const { takePhoto, photoUrl, handleUpload, removeImage } = useImageHandler();
+  const { clearAuthToken } = useAuth();
 
   useEffect(() => {
     if (photoUrl) {
@@ -97,6 +102,29 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
       );
     } else {
       console.error("Error updating user data");
+    }
+  };
+
+  const handleLogout = async () => {
+    await clearAuthToken();
+    history.push("/");
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await makeRequest(`users/${userData.id}`, "DELETE");
+      if (
+        !(
+          userData.avatar ===
+          "https://ezjagphpkkbghjkxczwk.supabase.co/storage/v1/object/sign/assets/ProfileG5.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvUHJvZmlsZUc1LnBuZyIsImlhdCI6MTczMDc5NjI5NCwiZXhwIjoxNzYyMzMyMjk0fQ.GBRbr_PMqO19m21c43HGX_L5NKxBdcpo6a6UQdwkXLA&t=2024-11-05T08%3A44%3A54.995Z"
+        )
+      ) {
+        await removeImage(userData.avatar);
+      }
+      await clearAuthToken();
+      history.push("/");
+    } catch (error) {
+      console.error("Error deleting account:", error);
     }
   };
 
@@ -153,12 +181,72 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
             {t("pages.settings.accounts.submit")}
           </IonButton>
         </div>
+        <div className="buttonContainer">
+          <IonButton color="medium" onClick={() => setShowLogoutModal(true)}>
+            {t("pages.settings.accounts.logout.header")}
+          </IonButton>
+          <IonButton color="danger" onClick={() => setShowDeleteModal(true)}>
+            {t("pages.settings.accounts.delete.header")}
+          </IonButton>
+        </div>
         <IonToast
           isOpen={showToast}
           onDidDismiss={() => setShowToast(false)}
           message={t("pages.settings.accounts.successful")}
           duration={2000}
         />
+        <IonModal
+          isOpen={showLogoutModal}
+          onDidDismiss={() => setShowLogoutModal(false)}
+        >
+          <IonAlert
+            isOpen={showLogoutModal}
+            onDidDismiss={() => setShowLogoutModal(false)}
+            header={t("pages.settings.accounts.logout.header")}
+            message={t("pages.settings.accounts.logout.message")}
+            buttons={[
+              {
+                text: t("pages.settings.accounts.logout.cancel"),
+                role: t(
+                  "pages.settings.accounts.logout.cancel"
+                ).toLocaleLowerCase(),
+                handler: () => {
+                  setShowLogoutModal(false);
+                },
+              },
+              {
+                text: t("pages.settings.accounts.logout.header"),
+                handler: handleLogout,
+              },
+            ]}
+          />
+        </IonModal>
+        <IonModal
+          isOpen={showDeleteModal}
+          onDidDismiss={() => setShowDeleteModal(false)}
+        >
+          <IonAlert
+            isOpen={showDeleteModal}
+            onDidDismiss={() => setShowDeleteModal(false)}
+            header={t("pages.settings.accounts.delete.header")}
+            message={t("pages.settings.accounts.delete.message")}
+            buttons={[
+              {
+                text: t("pages.settings.accounts.logout.cancel"),
+                role: t(
+                  "pages.settings.accounts.logout.cancel"
+                ).toLocaleLowerCase(),
+                handler: () => {
+                  setShowDeleteModal(false);
+                },
+              },
+              {
+                text: t("pages.settings.accounts.logout.header"),
+                handler: handleDeleteAccount,
+              },
+            ]}
+          />
+        </IonModal>
       </IonContent>
     </>
   );

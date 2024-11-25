@@ -1,6 +1,5 @@
 {
   "lang": "English",
-  "flag": "🇬🇧",
   "header": {
     "error_page_message": "Failed fetching user! Please try again later"
   },
@@ -80,7 +79,20 @@
         "submit": "Save",
         "successful": "Account updated successfully",
         "failed": "Account update failed! Check the inputs",
-        "error_page_message": "Failed to get users, please try again later"
+        "error_page_message": "Failed to get users, please try again later",
+        "logout": {
+          "header": "Logout",
+          "message": "Are you sure you want to logout?",
+
+          "yes": "Yes",
+          "cancel": "Cancel"
+        },
+        "delete": {
+          "header": "Delete Account",
+          "message": "Are you sure you want to delete your account? This action cannot be undone.",
+          "yes": "Yes",
+          "cancel": "Cancel"
+        }
       },
       "general": {
         "lang_missing_key": "Lang key missing",

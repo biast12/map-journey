@@ -15,7 +15,6 @@ import { useTranslation } from "react-i18next";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
-import useNotificationsStatus from "../../hooks/ProviderContext";
 import { changeLanguage } from "../../i18n";
 
 /* Components */
@@ -52,7 +51,6 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
 
   /* Hooks */
   const { makeRequest, error, isLoading } = useRequestData();
-  const { storeNotificationsStatusToken } = useNotificationsStatus();
 
   const themes: Themes = {
     default: "Default",
@@ -108,7 +106,6 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
     );
 
     if (!error) {
-      storeNotificationsStatusToken(updatedData.notification);
       changeLanguage(updatedData.language);
     } else {
       console.error("Error updating settings");
