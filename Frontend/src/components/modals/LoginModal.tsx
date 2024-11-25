@@ -8,7 +8,7 @@ import {
   IonToast,
   IonModal,
 } from "@ionic/react";
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
@@ -44,16 +44,17 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
       { "Content-Type": "application/json" },
       { email, password }
     );
-
-    if (!error && data) {
+  }
+  useEffect(() => {
+    if (data) {
       setLoginSuccess(true);
       toast.current?.present();
       storeAuthToken(data.user.id);
       closeLoginModal();
-    } else {
+    } else if (error) {
       setLoginSuccess(false);
     }
-  }
+  }, [error, data]);
 
   const openCreateUserModal = () => setCreateUserModal(true);
   const closeCreateUserModal = () => setCreateUserModal(false);
