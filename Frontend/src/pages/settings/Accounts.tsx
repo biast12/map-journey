@@ -12,7 +12,7 @@ import {
   IonModal,
   IonAlert,
 } from "@ionic/react";
-import { pencilSharp, close } from "ionicons/icons";
+import { pencilSharp, trashOutline, close } from "ionicons/icons";
 import { useTranslation } from "react-i18next";
 
 /* Hooks */
@@ -45,7 +45,6 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
   const [password, setPassword] = useState("");
   const [avatar, setAvatar] = useState(userData.avatar);
   const [showToast, setShowToast] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   /* Hooks */
@@ -103,11 +102,6 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
     } else {
       console.error("Error updating user data");
     }
-  };
-
-  const handleLogout = async () => {
-    await clearAuthToken();
-    history.push("/");
   };
 
   const handleDeleteAccount = async () => {
@@ -180,12 +174,8 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
             <IonIcon icon={pencilSharp}></IonIcon>
             {t("pages.settings.accounts.submit")}
           </IonButton>
-        </div>
-        <div className="buttonContainer">
-          <IonButton color="medium" onClick={() => setShowLogoutModal(true)}>
-            {t("pages.settings.accounts.logout.header")}
-          </IonButton>
           <IonButton color="danger" onClick={() => setShowDeleteModal(true)}>
+            <IonIcon icon={trashOutline}></IonIcon>
             {t("pages.settings.accounts.delete.header")}
           </IonButton>
         </div>
@@ -195,32 +185,6 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
           message={t("pages.settings.accounts.successful")}
           duration={2000}
         />
-        <IonModal
-          isOpen={showLogoutModal}
-          onDidDismiss={() => setShowLogoutModal(false)}
-        >
-          <IonAlert
-            isOpen={showLogoutModal}
-            onDidDismiss={() => setShowLogoutModal(false)}
-            header={t("pages.settings.accounts.logout.header")}
-            message={t("pages.settings.accounts.logout.message")}
-            buttons={[
-              {
-                text: t("pages.settings.accounts.logout.cancel"),
-                role: t(
-                  "pages.settings.accounts.logout.cancel"
-                ).toLocaleLowerCase(),
-                handler: () => {
-                  setShowLogoutModal(false);
-                },
-              },
-              {
-                text: t("pages.settings.accounts.logout.header"),
-                handler: handleLogout,
-              },
-            ]}
-          />
-        </IonModal>
         <IonModal
           isOpen={showDeleteModal}
           onDidDismiss={() => setShowDeleteModal(false)}
@@ -232,16 +196,16 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
             message={t("pages.settings.accounts.delete.message")}
             buttons={[
               {
-                text: t("pages.settings.accounts.logout.cancel"),
+                text: t("pages.settings.accounts.delete.cancel"),
                 role: t(
-                  "pages.settings.accounts.logout.cancel"
+                  "pages.settings.accounts.delete.cancel"
                 ).toLocaleLowerCase(),
                 handler: () => {
                   setShowDeleteModal(false);
                 },
               },
               {
-                text: t("pages.settings.accounts.logout.header"),
+                text: t("pages.settings.accounts.delete.header"),
                 handler: handleDeleteAccount,
               },
             ]}
