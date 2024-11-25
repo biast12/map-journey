@@ -267,7 +267,7 @@ router.delete("/:id/:pinid", async (req, res) => {
       return res.status(500).json({ error: "Error deleting pin" });
     }
 
-    res.status(204).send();
+    res.status(200).send("Pin deleted successfully");
   } catch (error) {
     console.error("Error during pin deletion:", error);
     res.status(500).json({ error: "Internal Server Error" });

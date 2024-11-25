@@ -17,7 +17,7 @@ function isValidUUID(uuid) {
 // Root route
 router.get("/", (req, res) => {
   res.json({
-    message: "Pins Route",
+    message: "reports Route",
     routes: {
       "/all": "Get all reports",
       "/:id": "Create a new report",
@@ -132,50 +132,78 @@ router.post("/:id", async (req, res) => {
     });
   }
 
-  let sanitizedReportedUserId = null;
-  let sanitizedReportedPinId = null;
+  if (!isValidUUID(profile_id)) {
+    return res.status(400).json({ message: "Invalid profile ID" });
+  }
+
+  const { data: reportingUser, error: reportingUserError } = await supabase
+    .from("profile")
+    .select("id")
+    .eq("id", profile_id)
+    .single();
+
+  if (reportingUserError || !reportingUser) {
+    return res.status(404).json({ message: "Reporting user not found" });
+  }
 
   if (reported_user_id) {
-    if (
-      typeof reported_user_id !== "string" ||
-      !isValidUUID(reported_user_id)
-    ) {
+    if (!isValidUUID(reported_user_id)) {
       return res
         .status(400)
         .json({ message: "reported_user_id must be a valid UUID" });
     }
-    sanitizedReportedUserId = reported_user_id;
+
+    const { data: reportedUser, error: reportedUserError } = await supabase
+      .from("profile")
+      .select("id")
+      .eq("id", reported_user_id)
+      .single();
+
+    if (reportedUserError || !reportedUser) {
+      return res.status(404).json({ message: "Reported user not found" });
+    }
   }
 
   if (reported_pin_id) {
-    if (typeof reported_pin_id !== "string" || 
-      !isValidUUID(reported_pin_id)) {
+    if (!isValidUUID(reported_pin_id)) {
       return res
         .status(400)
         .json({ message: "reported_pin_id must be a valid UUID" });
     }
-    sanitizedReportedPinId = reported_pin_id;
+
+    const { data: reportedPin, error: reportedPinError } = await supabase
+      .from("pins")
+      .select("id")
+      .eq("id", reported_pin_id)
+      .single();
+
+    if (reportedPinError || !reportedPin) {
+      return res.status(404).json({ message: "Reported pin not found" });
+    }
   }
 
   try {
     const { data: reportData, error: reportError } = await supabase
       .from("reports")
-      .insert([{
-        profile_id,
-        text,
-        reported_user_id: sanitizedReportedUserId,
-        reported_pin_id: sanitizedReportedPinId,
-        active: true,
-      }]);
+      .insert([
+        {
+          profile_id,
+          text,
+          reported_user_id: reported_user_id || null,
+          reported_pin_id: reported_pin_id || null,
+          active: true,
+        },
+      ]);
 
     if (reportError) throw reportError;
 
-    if (sanitizedReportedUserId) {
-      const { count: profileReportCount, error: profileCountError } = await supabase
-        .from("reports")
-        .select("*", { count: "exact" })
-        .eq("reported_user_id", sanitizedReportedUserId)
-        .eq("active", true);
+    if (reported_user_id) {
+      const { count: profileReportCount, error: profileCountError } =
+        await supabase
+          .from("reports")
+          .select("*", { count: "exact" })
+          .eq("reported_user_id", reported_user_id)
+          .eq("active", true);
 
       if (profileCountError) throw profileCountError;
 
@@ -183,7 +211,7 @@ router.post("/:id", async (req, res) => {
         const { data: profileData, error: profileError } = await supabase
           .from("profile")
           .select("status")
-          .eq("id", sanitizedReportedUserId)
+          .eq("id", reported_user_id)
           .single();
 
         if (profileError) throw profileError;
@@ -195,18 +223,18 @@ router.post("/:id", async (req, res) => {
           const { error: updateProfileError } = await supabase
             .from("profile")
             .update({ status: "reported" })
-            .eq("id", sanitizedReportedUserId);
+            .eq("id", reported_user_id);
 
           if (updateProfileError) throw updateProfileError;
         }
       }
     }
 
-    if (sanitizedReportedPinId) {
+    if (reported_pin_id) {
       const { count: pinReportCount, error: pinCountError } = await supabase
         .from("reports")
         .select("*", { count: "exact" })
-        .eq("reported_pin_id", sanitizedReportedPinId)
+        .eq("reported_pin_id", reported_pin_id)
         .eq("active", true);
 
       if (pinCountError) throw pinCountError;
@@ -215,7 +243,7 @@ router.post("/:id", async (req, res) => {
         const { data: pinData, error: pinError } = await supabase
           .from("pins")
           .select("status")
-          .eq("id", sanitizedReportedPinId)
+          .eq("id", reported_pin_id)
           .single();
 
         if (pinError) throw pinError;
@@ -224,7 +252,7 @@ router.post("/:id", async (req, res) => {
           const { error: updatePinError } = await supabase
             .from("pins")
             .update({ status: "reported" })
-            .eq("id", sanitizedReportedPinId);
+            .eq("id", reported_pin_id);
 
           if (updatePinError) throw updatePinError;
         }
@@ -232,7 +260,7 @@ router.post("/:id", async (req, res) => {
     }
     res
       .status(201)
-      .json({ message: "Report created successfully", data: reportData });
+      .json({ message: "Report created successfully" });
   } catch (error) {
     res
       .status(500)
