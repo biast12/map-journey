@@ -9,7 +9,7 @@ const Page = () => {
   
 
   return (
-    <IonContent>
+    <IonContent id="adminContent">
       <IonGrid>
         <h1>Dashboard</h1>
 
