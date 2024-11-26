@@ -158,7 +158,6 @@ function Map({ APIurl, pinID }: MapProps) {
       ],
       view: view,
     });
-    getBrowserLocation(map, view);
 
     let lastLogTime = 0;
 
@@ -207,9 +206,6 @@ function Map({ APIurl, pinID }: MapProps) {
 
     if (pinID && data) {
       const pin = data.find((pin: PinData) => pin.id === pinID);
-      console.log("Pin found:", pin);
-      console.log("Data:", data);
-      console.log("pinID:", pinID);
       if (pin) {
         setSelectedPin(pin);
         view.animate(
@@ -219,10 +215,12 @@ function Map({ APIurl, pinID }: MapProps) {
         );
         openShowPinModal();
       }
+    } else {
+      getBrowserLocation(view);
     }
   }, [data]);
 
-  const getBrowserLocation = async (map: OlMap, view: View) => {
+  const getBrowserLocation = async (view: View) => {
     try {
       const position = await Geolocation.getCurrentPosition();
       const { latitude, longitude } = position.coords;
