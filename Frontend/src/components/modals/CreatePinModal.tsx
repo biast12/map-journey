@@ -32,7 +32,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
   const [title, setTitle] = useState<string>("");
   const [location, setLocation] = useState<any>(null);
   const [coordinates, setCoordinates] = useState<Coordinate | null>(null);
-  const [comment, setComment] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [status, setStatus] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -40,7 +40,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
   const confirmButton = useRef<HTMLIonButtonElement>(null);
   const cancelButton = useRef<HTMLIonButtonElement>(null);
   const titleInput = useRef<HTMLIonInputElement>(null);
-  const commentInput = useRef<HTMLIonTextareaElement>(null);
+  const descriptionInput = useRef<HTMLIonInputElement>(null);
   const cameraButton = useRef<HTMLIonButtonElement>(null);
   const locationButton = useRef<HTMLIonButtonElement>(null);
 
@@ -52,7 +52,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
   useEffect(() => {
     const refs = [
       titleInput,
-      commentInput,
+      descriptionInput,
       cameraButton,
       locationButton,
       confirmButton,
@@ -67,7 +67,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
   }, [isSubmitting]);
 
   const handleConfirm = async () => {
-    if (!title || !photoUrl || !comment || !location || !coordinates) {
+    if (!title || !photoUrl || !description || !location || !coordinates) {
       console.error("All fields are required");
       return;
     }
@@ -82,7 +82,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
 
       const formData = new FormData();
       formData.append("title", title);
-      formData.append("description", comment);
+      formData.append("description", description);
       formData.append("location", location.address);
       formData.append("latitude", location.lat);
       formData.append("longitude", location.lon);
@@ -99,7 +99,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
   };
 
   const updateTitle = (event: any) => setTitle(event.detail.value);
-  const updateComment = (event: any) => setComment(event.detail.value);
+  const updateDescription = (event: any) => setDescription(event.detail.value);
 
   const getLocation = async (useCurrentLocation: boolean = true) => {
     if (!useCurrentLocation) return;
@@ -140,8 +140,9 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
       </IonCardHeader>
       <IonItem>
         <IonInput
-          onIonChange={updateTitle}
+          required
           ref={titleInput}
+          onIonChange={updateTitle}
           label={`${t("modals.create_pin.title")}:`}
           placeholder={t("modals.create_pin.title_placeholder")}
         />
@@ -166,6 +167,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
       <IonItem>
         <IonInput
           disabled
+          required
           value={location?.address}
           label={`${t("modals.create_pin.location")}:`}
         />
@@ -178,15 +180,16 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
         </IonButton>
       </IonItem>
       <IonItem>
-        <IonTextarea
-          ref={commentInput}
-          onIonChange={updateComment}
-          label={`${t("modals.create_pin.comment")}:`}
-          placeholder={t("modals.create_pin.comment_placeholder")}
+        <IonInput
+          required
+          ref={descriptionInput}
+          onIonChange={updateDescription}
+          label={`${t("modals.create_pin.description")}:`}
+          placeholder={t("modals.create_pin.description_placeholder")}
         />
       </IonItem>
       <IonItem>
-        <label>{`${t("modals.create_pin.visibility")}?`}</label>
+        <label>{`${t("modals.create_pin.visibility")}:`}</label>
         <IonToggle
           checked={status}
           onIonChange={(e) => setStatus(e.detail.checked)}

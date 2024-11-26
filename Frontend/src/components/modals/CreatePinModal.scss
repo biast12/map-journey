@@ -37,6 +37,23 @@ ion-item {
       --background: #48484a;
     }
   }
+
+  ion-label {
+    --color: #9e9e9e;
+  }
+
+  ion-toggle {
+    --background: #3a3a3c;
+    --handle-background: #0a84ff;
+    --handle-background-checked: #0a84ff;
+    --handle-background-focus: #0a84ff;
+    --handle-background-hover: #0a84ff;
+    --handle-background-pressed: #0a84ff;
+    --handle-border-radius: 1.5rem;
+    --handle-height: 1.2rem;
+    --handle-width: 1.3rem;
+    margin-left: 16px;
+  }
 }
 
 img {

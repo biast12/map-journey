@@ -14,8 +14,8 @@
       "title": "Titel",
       "title_placeholder": "Ihr Titel hier",
       "location": "Ort",
-      "comment": "Kommentare",
-      "comment_placeholder": "Ihr Kommentar hier",
+      "description": "Beschreibung",
+      "description_placeholder": "Ihre Beschreibung hier",
       "visibility": "Öffentlich",
       "submit": "Bestätigen"
     },

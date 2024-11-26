@@ -14,8 +14,8 @@
       "title": "Title",
       "title_placeholder": "Your title here",
       "location": "Location",
-      "comment": "Comments",
-      "comment_placeholder": "Your title here",
+      "description": "Description",
+      "description_placeholder": "Your description here",
       "visibility": "Public",
       "submit": "Confirm"
     },

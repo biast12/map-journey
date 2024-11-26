@@ -1,4 +1,4 @@
-import { useRef, useState, FormEvent } from "react";
+import { useRef, useState, FormEvent, useEffect } from "react";
 import {
   IonCard,
   IonCardHeader,
@@ -42,16 +42,18 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
       { "Content-Type": "application/json" },
       { name, email, password }
     );
+  }
 
-    if (!error && data) {
+  useEffect(() => {
+    if (data) {
       setCreateSuccess(true);
       toast.current?.present();
       closeCreateUserModal();
       closeLoginModal();
-    } else {
+    } else if (error) {
       setCreateSuccess(false);
     }
-  }
+  }, [error, data]);
 
   return (
     <>
