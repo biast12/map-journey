@@ -33,18 +33,17 @@ import Error from "./Error";
 
 interface MapProps {
   APIurl: string;
+  pinID?: string | null;
 }
 
 interface PinData {
-  id: number;
+  id: string;
   longitude: number;
   latitude: number;
   [key: string]: any; // Add other properties as needed
 }
 
 const debug = true; // Set this to false to disable logging
-
-const iconSrc: string = "http://localhost:8100/icons/webp/ping1.webp"; // Replace with the correct URL to the pin icon
 
 // Predefined styles for clustering
 const distanceBetweenPinsBeforeClustering = 20; // Distance between pins before clustering
@@ -68,7 +67,7 @@ function createStyle(size: number = 0.3) {
     image: new Icon({
       anchor: [0.5, 0.96],
       crossOrigin: "anonymous",
-      src: iconSrc,
+      src: "http://localhost:8100/icons/webp/ping1.webp",
       scale: size,
     }),
   });
@@ -101,7 +100,7 @@ function createClusterStyle(feature: FeatureLike): Style {
   return style;
 }
 
-function Map({ APIurl }: MapProps) {
+function Map({ APIurl, pinID }: MapProps) {
   const { t } = useTranslation();
   const points: Feature[] = [];
 
@@ -205,6 +204,22 @@ function Map({ APIurl }: MapProps) {
         }
       });
     });
+
+    if (pinID && data) {
+      const pin = data.find((pin: PinData) => pin.id === pinID);
+      console.log("Pin found:", pin);
+      console.log("Data:", data);
+      console.log("pinID:", pinID);
+      if (pin) {
+        setSelectedPin(pin);
+        view.animate(
+          { center: fromLonLat([pin.longitude, pin.latitude]) },
+          { zoom: 19 },
+          { duration: 10000 }
+        );
+        openShowPinModal();
+      }
+    }
   }, [data]);
 
   const getBrowserLocation = async (map: OlMap, view: View) => {

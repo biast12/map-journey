@@ -39,15 +39,24 @@ export const Routes = () => {
     "/settings|/settings/general|/settings/account"
   );
 
+  const isGlobalmapPath = location.pathname.includes("/globalmap");
+
   return (
     <>
       <Route exact path="/*">
-        {!isSettingsPath && <Redirect to="/globalmap" />}
+        {(!isSettingsPath || !isGlobalmapPath) && <Redirect to="/globalmap" />}
       </Route>
       <Route
         exact
         path="/globalmap"
-        render={() => userID && !loading && <GlobalMap userID={userID} />}
+        render={() => {
+          const params = new URLSearchParams(location.search);
+          const pinId = params.get("pin");
+          console.log(pinId);
+          return (
+            userID && !loading && <GlobalMap userID={userID} pinId={pinId} />
+          );
+        }}
       />
       <Route
         exact
@@ -75,4 +84,5 @@ export const Routes = () => {
     </>
   );
 };
+
 export default Routes;
