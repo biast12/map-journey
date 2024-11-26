@@ -1,6 +1,6 @@
 "use client";
 import { FormEvent, useEffect, useState } from "react";
-import { IonButton, IonRow } from "@ionic/react";
+import { IonAlert, IonButton, IonRow } from "@ionic/react";
 
 import useRequestData from "../../hooks/useRequestData";
 import UserColumn from "./UserColumn";
@@ -50,8 +50,7 @@ const UserManagement = () => {
     };
 
     const res = await editMakeRequest(`users/${userData.id}`, "PUT", undefined, body);
-
-    //LACKS AN UPDATE TO LIST
+    makeRequest("users/all");
 
     setShowEditModal(false);
     setSelectedUser(null);
@@ -115,14 +114,14 @@ const UserManagement = () => {
           </section>
         )}
       </Modal>
-      <Modal
-        id="deleteUserModal"
+      <IonAlert
         isOpen={showDeleteModal}
-        onCloseModal={() => setShowDeleteModal(false)}
+        onDidDismiss={() => setShowDeleteModal(false)}
         backdropDismiss={!handlingRequest}
-      >
-        {selectedUser && <IonButton onClick={() => handleUserDelete(selectedUser)}>Are you sure?</IonButton>}
-      </Modal>
+        header="Are you sure?"
+        message="Deleting is a permanent action!"
+        buttons={["Cancel", {text: "Confirm", handler: () => handleUserDelete(selectedUser!)}]}
+      />
 
       <article className="searchOptions">
         <section>
@@ -138,10 +137,14 @@ const UserManagement = () => {
         </section>
         <section>
           <label htmlFor="searchByParams">Search by </label>
-          <select name="searchByParams" id="" onChange={(e) => {
-              const value = e.target.value as "id" | "name" | "role" | "status"
+          <select
+            name="searchByParams"
+            id=""
+            onChange={(e) => {
+              const value = e.target.value as "id" | "name" | "role" | "status";
               setSearchOptions({ ...searchOptions, searchBy: value });
-            }}>
+            }}
+          >
             <option value="name">Name</option>
             <option value="id">Id</option>
           </select>
@@ -149,7 +152,7 @@ const UserManagement = () => {
       </article>
       <IonRow id="userRow">
         {data &&
-          data.filter(filterData) .map((userData: UserData) => (
+          data.filter(filterData).map((userData: UserData) => (
             <UserColumn
               key={userData.id}
               userData={userData}

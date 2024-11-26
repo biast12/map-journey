@@ -36,8 +36,8 @@ const UserColumn: React.FC<UserColumnProps> = ({ userData, onEditUserClick, onDe
           <p>Status: {userData.status}</p>
         </div>
       </section>
-      <IonButton onClick={(e) => onEditUserClick(e, userData)}><IonIcon aria-hidden="true" icon={createOutline} /></IonButton>
-      <IonButton onClick={(e) => onDeleteUserClick(e, userData)}><IonIcon aria-hidden="true" icon={trashBin} /></IonButton>
+      <IonButton color="warning" onClick={(e) => onEditUserClick(e, userData)}><IonIcon aria-hidden="true" icon={createOutline} /></IonButton>
+      <IonButton color="danger" onClick={(e) => onDeleteUserClick(e, userData)}><IonIcon aria-hidden="true" icon={trashBin} /></IonButton>
     </IonCol>
   );
 };

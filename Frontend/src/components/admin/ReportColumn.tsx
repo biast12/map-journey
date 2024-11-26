@@ -1,5 +1,6 @@
 import { IonButton, IonCol } from "@ionic/react";
 import "./ReportColumn.scss";
+import { MouseEvent } from "react";
 
 type ReportUser = {
   id: string;
@@ -30,25 +31,25 @@ interface ReportData {
   reported_pin?: ReportPin;
 }
 
-const ReportColumn = ({ reportData }: { reportData: ReportData }) => {
+const ReportColumn = ({ reportData, onManageClick }: { reportData: ReportData, onManageClick: (e: MouseEvent)=>void }) => {
   const date = new Date(reportData.date);
 
   return (
-    <IonCol class="reportColumn">
+    <IonCol class="reportColumn" size="12">
       <section className="reportCon">
         <div className="reportId">
           <p>Id: {reportData.id}</p>
         </div>
         <div className="reportInfo">
-          <p>{reportData.reporting_user.name}</p>
+          <p>Reporting User: {reportData.reporting_user.name}</p>
           <p>Date: {date.toLocaleString()}</p>
-          <p>Active: {reportData.active}</p>
+          <p>Active: {String(reportData.active)}</p>
         </div>
       </section>
       <section className="reportText">
-        <p>{reportData.text}</p>
+        <p>Report text: {reportData.text}</p>
       </section>
-      <IonButton>Manage</IonButton>
+      <IonButton onClick={onManageClick}>Manage</IonButton>
     </IonCol>
   );
 };
