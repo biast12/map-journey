@@ -240,8 +240,9 @@ function Map({ APIurl }: MapProps) {
             className="close-button"
             onClick={closeShowPinModal}
             fill="clear"
+            shape="round"
           >
-            <IonIcon icon={close} />
+            <IonIcon slot="icon-only" icon={close} />
           </IonButton>
           <ShowPinModal pinData={selectedPin} />
         </div>

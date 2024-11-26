@@ -16,7 +16,7 @@ ion-card {
     }
 
     ion-card-subtitle {
-      margin-bottom: 1rem;
+      margin-bottom: 10px;
       color: #9e9e9e;
       font-size: 1rem;
       text-align: center;
@@ -34,6 +34,7 @@ ion-card {
       gap: 1rem;
 
       & img {
+        margin: 4px 0;
         width: 40px;
         height: 40px;
         border-radius: 50%;
@@ -45,6 +46,10 @@ ion-card {
         text-align: center;
         font-weight: 500;
         color: #ffffff;
+      }
+
+      & ion-button {
+        margin: auto;
       }
     }
   }

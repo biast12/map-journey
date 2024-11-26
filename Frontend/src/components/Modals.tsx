@@ -44,8 +44,9 @@ const Modals: React.FC<ModalsProps> = ({
             className="close-button"
             onClick={closeCreatePinModal}
             fill="clear"
+            shape="round"
           >
-            <IonIcon icon={close} />
+            <IonIcon slot="icon-only" icon={close} />
           </IonButton>
           <CreatePinModal onClose={closeCreatePinModal} />
         </div>
@@ -59,8 +60,9 @@ const Modals: React.FC<ModalsProps> = ({
             className="close-button"
             onClick={closeNotificationModal}
             fill="clear"
+            shape="round"
           >
-            <IonIcon icon={close} />
+            <IonIcon slot="icon-only" icon={close} />
           </IonButton>
           <NotificationModal />
         </div>
