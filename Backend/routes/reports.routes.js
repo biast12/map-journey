@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
 const checkApiKey = require("../utils/apiKeyCheck");
+const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
@@ -27,7 +28,7 @@ router.get("/", (req, res) => {
 });
 
 // Get all reports
-router.get("/all", async (req, res) => {
+router.get("/all:id", checkUserRole("admin"), async (req, res) => {
   try {
     const { data: reports, error: reportsError } = await supabase
       .from("reports")
@@ -114,7 +115,7 @@ router.get("/all", async (req, res) => {
 });
 
 // make a report
-router.post("/:id", async (req, res) => {
+router.post("/:id", checkUserRole("user"), async (req, res) => {
   const { text, reported_user_id, reported_pin_id } = req.body;
   const profile_id = req.params.id;
 
@@ -269,7 +270,7 @@ router.post("/:id", async (req, res) => {
 });
 
 // Delete a report by ID
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", checkUserRole("admin"), async (req, res) => {
   const { id } = req.params;
 
   try {

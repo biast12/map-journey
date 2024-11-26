@@ -3,6 +3,7 @@ const router = express.Router();
 const supabase = require("../supabaseClient");
 const checkApiKey = require("../utils/apiKeyCheck");
 const generateUniqueId = require("../utils/uuid-generator");
+const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
@@ -21,7 +22,7 @@ router.get("/", (req, res) => {
 });
 
 // Get all pins
-router.get("/all/:id", async (req, res) => {
+router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
 
   try {
@@ -66,7 +67,7 @@ router.get("/all/:id", async (req, res) => {
 });
 
 // Get pins by user ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
 
   try {
@@ -111,7 +112,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new pin
-router.post("/:id", async (req, res) => {
+router.post("/:id", checkUserRole("user"), async (req, res) => {
   const profile_id = req.params.id;
   const {
     title,
@@ -170,7 +171,7 @@ router.post("/:id", async (req, res) => {
 });
 
 // Update a pin by User ID and Pin ID
-router.put("/:id/:pinid", async (req, res) => {
+router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
   const pinID = req.params.pinid;
   const {
@@ -228,7 +229,7 @@ router.put("/:id/:pinid", async (req, res) => {
 });
 
 // Delete a pin by User ID and Pin ID
-router.delete("/:id/:pinid", async (req, res) => {
+router.delete("/:id/:pinid", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
   const pinID = req.params.pinid;
 

@@ -3,8 +3,10 @@ const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
 const checkApiKey = require("../utils/apiKeyCheck");
+const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
+
 
 // Root route
 router.get("/", (req, res) => {
@@ -17,8 +19,9 @@ router.get("/", (req, res) => {
   });
 });
 
+
 // Get a user's settings by Profile ID or Settings ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", checkUserRole("user"), async (req, res) => {
   const id = req.params.id;
 
   try {
@@ -77,9 +80,8 @@ router.get("/:id", async (req, res) => {
 });
 
 
-
 // Update a user's settings by Settings ID
-router.put("/:id", async (req, res) => {
+router.put("/:id", checkUserRole("user"), async (req, res) => {
   const id = req.params.id;
   const { maptheme, language, notification } = req.body;
 

@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const checkApiKey = require("../utils/apiKeyCheck");
 const generateUniqueId = require("../utils/uuid-generator");
+const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
@@ -24,7 +25,7 @@ router.get("/", (req, res) => {
 });
 
 // Get all users
-router.get("/all", async (req, res) => {
+router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   try {
     const { data: users, error } = await supabase.from("profile").select(`
         id, name, email, settings_id, avatar, banner, new_notifications, status, role, news_count
@@ -39,7 +40,7 @@ router.get("/all", async (req, res) => {
 });
 
 // Get a user by ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
 
   try {
@@ -81,7 +82,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new user and default settings
-router.post("/", async (req, res) => {
+router.post("/:id", checkUserRole("admin"), async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -171,7 +172,7 @@ router.post("/", async (req, res) => {
 });
 
 // Update a user by User ID
-router.put("/:id", async (req, res) => {
+router.put("/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
   const { name, email, password, avatar } = req.body;
 
@@ -205,7 +206,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete a user by User ID
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", checkUserRole("admin"), async (req, res) => {
   const userID = req.params.id;
 
   try {
@@ -297,7 +298,6 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // Login route
 router.post("/login", async (req, res) => {
