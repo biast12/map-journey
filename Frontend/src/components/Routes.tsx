@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Route, Redirect, useLocation } from "react-router-dom";
+import { Route, Redirect, Switch, useLocation } from "react-router-dom";
 
 /* Hooks */
 import useRequestData from "../hooks/useRequestData";
@@ -35,19 +35,18 @@ export const Routes = () => {
     }
   }, [data, isLoading]);
 
-  const isSettingsPath = location.pathname.match(
-    "/settings|/settings/general|/settings/account"
-  );
-
   return (
-    <>
-      <Route exact path="/*">
-        {!isSettingsPath && <Redirect to="/globalmap" />}
-      </Route>
+    <Switch>
       <Route
         exact
         path="/globalmap"
-        render={() => userID && !loading && <GlobalMap userID={userID} />}
+        render={() => {
+          const params = new URLSearchParams(location.search);
+          const pinId = params.get("pin");
+          return (
+            userID && !loading && <GlobalMap userID={userID} pinId={pinId} />
+          );
+        }}
       />
       <Route
         exact
@@ -72,7 +71,11 @@ export const Routes = () => {
       />
       <Route exact path="/error" component={ErrorPage} />
       <Route exact path="/error/:status" component={ErrorPage} />
-    </>
+      <Route path="*">
+        <Redirect to="/globalmap" />
+      </Route>
+    </Switch>
   );
 };
+
 export default Routes;
