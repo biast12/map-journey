@@ -22,7 +22,6 @@ router.get("/", (req, res) => {
 });
 
 // Get all public pins
-// Get all public pins
 router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
 

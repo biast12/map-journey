@@ -15,11 +15,11 @@ router.get("/", (req, res) => {
     message: "User Route",
     routes: {
       "/all": "Get all users and their data",
-      "/:id": "Get a user by ID",
+      "/:id": "Get a user by User ID",
       "/": "Create a new user and default settings",
+      "/login": "Login route",
       "/:id": "Update a user by User ID",
       "/:id": "Delete a user by User ID",
-      "/login": "Login route",
     },
   });
 });
@@ -39,7 +39,7 @@ router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   }
 });
 
-// Get a user by ID
+// Get a user by User ID
 router.get("/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
 
@@ -168,6 +168,47 @@ router.post("/:id", async (req, res) => {
   } catch (error) {
     console.error("Error during profile creation:", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Login route
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
+  try {
+    const { data: user, error } = await supabase
+      .from("profile")
+      .select("*")
+      .eq("email", email)
+      .single();
+
+    if (error || !user) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    const { password: hashedPassword } = user;
+    const isPasswordValid = await bcrypt.compare(password, hashedPassword);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    res.status(200).json({
+      message: "Login successful",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).json({ error: "Server error, please try again later." });
   }
 });
 
@@ -320,47 +361,6 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
   } catch (error) {
     console.error("Error during user deletion:", error);
     res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// Login route
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ error: "Email and password are required" });
-  }
-
-  try {
-    const { data: user, error } = await supabase
-      .from("profile")
-      .select("*")
-      .eq("email", email)
-      .single();
-
-    if (error || !user) {
-      return res.status(401).json({ error: "Invalid email or password" });
-    }
-
-    const { password: hashedPassword } = user;
-    const isPasswordValid = await bcrypt.compare(password, hashedPassword);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid email or password" });
-    }
-
-    res.status(200).json({
-      message: "Login successful",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
-  } catch (error) {
-    console.error("Error during login:", error);
-    res.status(500).json({ error: "Server error, please try again later." });
   }
 });
 
