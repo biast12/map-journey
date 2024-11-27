@@ -7,9 +7,9 @@ router.use(checkApiKey);
 
 // Helper function to compress notification IDs into the desired format
 const compressNotificationIDs = (ids) => {
-  if (ids.length === 0) return [];
+  if (!ids || ids.length === 0) return [];
 
-  const sortedIds = [...new Set(ids)].sort((a, b) => a - b);
+  const sortedIds = [...new Set(ids.map(Number))].sort((a, b) => a - b);
   const compressed = [];
   let start = sortedIds[0];
   let end = sortedIds[0];
@@ -29,7 +29,7 @@ const compressNotificationIDs = (ids) => {
 
 // Helper function to remove the notification ID from the user's notifications
 const removeNotificationID = (currentNotifications, idToRemove) => {
-  const notifications = currentNotifications.flatMap((item) => {
+  const notifications = (currentNotifications || []).flatMap((item) => {
     if (item.includes("-")) {
       const [start, end] = item.split("-").map(Number);
       return Array.from({ length: end - start + 1 }, (_, i) => start + i);
@@ -37,31 +37,22 @@ const removeNotificationID = (currentNotifications, idToRemove) => {
     return [Number(item)];
   });
 
-  const updatedNotifications = notifications.filter((id) => id !== idToRemove);
-
-  const compressedNotifications = compressNotificationIDs(updatedNotifications);
-
-  return compressedNotifications;
+  const updatedNotifications = notifications.filter((id) => id !== Number(idToRemove));
+  return compressNotificationIDs(updatedNotifications);
 };
 
 // Function to add a new notification ID to the user's new_notifications array
 const addNotificationID = (currentNotifications, newID) => {
-  const notifications = currentNotifications.length
-    ? currentNotifications.flatMap((item) => {
-        if (item.includes("-")) {
-          const [start, end] = item.split("-").map(Number);
-          return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-        }
-        return [Number(item)];
-      })
-    : [];
+  const notifications = (currentNotifications || []).flatMap((item) => {
+    if (item.includes("-")) {
+      const [start, end] = item.split("-").map(Number);
+      return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    }
+    return [Number(item)];
+  });
 
   notifications.push(Number(newID));
-
-  const uniqueNotifications = [
-    ...new Set(notifications.filter((id) => !isNaN(id))),
-  ].sort((a, b) => a - b);
-
+  const uniqueNotifications = [...new Set(notifications)].sort((a, b) => a - b);
   return compressNotificationIDs(uniqueNotifications);
 };
 
