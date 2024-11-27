@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const checkApiKey = require("../utils/apiKeyCheck");
 const generateUniqueId = require("../utils/uuid-generator");
+const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
@@ -24,7 +25,7 @@ router.get("/", (req, res) => {
 });
 
 // Get all users
-router.get("/all", async (req, res) => {
+router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   try {
     const { data: users, error } = await supabase.from("profile").select(`
         id, name, email, settings_id, avatar, banner, new_notifications, status, role, news_count
@@ -39,7 +40,7 @@ router.get("/all", async (req, res) => {
 });
 
 // Get a user by ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
 
   try {
@@ -81,7 +82,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new user and default settings
-router.post("/", async (req, res) => {
+router.post("/:id", checkUserRole("admin"), async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -171,17 +172,44 @@ router.post("/", async (req, res) => {
 });
 
 // Update a user by User ID
-router.put("/:id", async (req, res) => {
+router.put("/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
-  const { name, email, password, avatar } = req.body;
-
-  const updatedFields = {};
-  if (avatar) updatedFields.avatar = avatar;
-  if (name) updatedFields.name = name;
-  if (email) updatedFields.email = email;
-  if (password) updatedFields.password = await bcrypt.hash(password, 10);
+  const { name, email, password, avatar, status } = req.body;
 
   try {
+    const { data: currentUser, error: fetchError } = await supabase
+      .from("profile")
+      .select("status")
+      .eq("id", userID)
+      .single();
+
+    if (fetchError) {
+      console.error("Error fetching user status:", fetchError);
+      return res.status(500).json({ error: "Error fetching user status" });
+    }
+
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (currentUser.status === "reported") {
+      return res.status(403).json({ error: "Cannot update user with reported status" });
+    }
+
+    const updatedFields = {};
+    if (avatar) updatedFields.avatar = avatar;
+    if (name) updatedFields.name = name;
+    if (email) updatedFields.email = email;
+    if (password) updatedFields.password = await bcrypt.hash(password, 10);
+
+    if (status) {
+      const allowedStatuses = ["public", "private"];
+      if (!allowedStatuses.includes(status)) {
+        return res.status(400).json({ error: "Invalid status value. Allowed values are 'public' or 'private'." });
+      }
+      updatedFields.status = status;
+    }
+
     const { data, error } = await supabase
       .from("profile")
       .update(updatedFields)
@@ -193,10 +221,6 @@ router.put("/:id", async (req, res) => {
       return res.status(500).json({ error: "Error updating user" });
     }
 
-    if (!data) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
     res.status(200).json({ message: "User updated successfully", user: data });
   } catch (error) {
     console.error("Error during user update:", error);
@@ -204,12 +228,12 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+
 // Delete a user by User ID
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", checkUserRole("admin"), async (req, res) => {
   const userID = req.params.id;
 
   try {
-    // Step 1: Fetch the user's settings ID
     const { data: profile, error: fetchProfileError } = await supabase
       .from("profile")
       .select("settings_id")
@@ -238,7 +262,6 @@ router.delete("/:id", async (req, res) => {
       return res.status(500).json({ error: "Error fetching user pins" });
     }
 
-    // Step 3: Delete reports related to the user's pins
     if (pins.length > 0) {
       const pinIds = pins.map((pin) => pin.id);
       const { error: deletePinReportsError } = await supabase
@@ -252,7 +275,6 @@ router.delete("/:id", async (req, res) => {
       }
     }
 
-    // Step 4: Delete reports where the user is reported_user_id or profile_id
     const { error: deleteUserReportsError } = await supabase
       .from("reports")
       .delete()
@@ -263,7 +285,6 @@ router.delete("/:id", async (req, res) => {
       return res.status(500).json({ error: "Error deleting user reports" });
     }
 
-    // Step 5: Delete the user's pins
     const { error: deletePinsError } = await supabase
       .from("pins")
       .delete()
@@ -274,7 +295,6 @@ router.delete("/:id", async (req, res) => {
       return res.status(500).json({ error: "Error deleting user pins" });
     }
 
-    // Step 6: Delete user settings (if exists)
     if (settings_id) {
       const { error: deleteSettingsError } = await supabase
         .from("settings")
@@ -287,7 +307,6 @@ router.delete("/:id", async (req, res) => {
       }
     }
 
-    // Step 7: Delete the user profile
     const { error: deleteProfileError } = await supabase
       .from("profile")
       .delete()

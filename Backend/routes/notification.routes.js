@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
 const checkApiKey = require("../utils/apiKeyCheck");
+const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
@@ -73,7 +74,7 @@ router.get("/", (req, res) => {
 });
 
 // Get all news articles
-router.get("/all", async (req, res) => {
+router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   try {
     const { data: newsArticles, error } = await supabase
       .from("news")
@@ -92,8 +93,8 @@ router.get("/all", async (req, res) => {
 });
 
 // Get a specific news article by ID
-router.get("/:id", async (req, res) => {
-  const articleID = req.params.id;
+router.get("/:id/:artid", checkUserRole("user"), async (req, res) => {
+  const articleID = req.params.artid;
 
   try {
     const { data: newsArticle, error } = await supabase
@@ -118,7 +119,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new news article
-router.post("/", async (req, res) => {
+router.post("/:id", checkUserRole("amin"), async (req, res) => {
   const { title, text } = req.body;
 
   if (!title || !text) {
@@ -178,8 +179,8 @@ router.post("/", async (req, res) => {
 });
 
 // Update a news article by ID
-router.put("/:id", async (req, res) => {
-  const articleID = req.params.id;
+router.put("/:id/:artid", checkUserRole("admin"), async (req, res) => {
+  const articleID = req.params.artid;
   const { title, text } = req.body;
 
   if (!title && !text) {
@@ -213,8 +214,8 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete a news article by ID and remove its ID from all user notifications
-router.delete("/:id", async (req, res) => {
-  const articleID = Number(req.params.id);
+router.delete("/:id/:artid", checkUserRole("admin"), async (req, res) => {
+  const articleID = Number(req.params.artid);
 
   try {
     const { data: existingArticle, error: fetchError } = await supabase
@@ -292,9 +293,9 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Mark a news article as read
-router.post("/:id", async (req, res) => {
+router.post("/read/:id/:artid", checkUserRole("user"), async (req, res) => {
   const userId = req.params.id;
-  const { articleId } = req.body;
+  const articleId = req.params.artid;
 
   if (!articleId) {
     return res.status(400).send("Missing article ID");
@@ -343,7 +344,7 @@ router.post("/:id", async (req, res) => {
 });
 
 // Mark all notifications as read
-router.post("/readall/:id", async (req, res) => {
+router.post("/readall/:id", checkUserRole("user"), async (req, res) => {
   const userId = req.params.id;
 
   try {

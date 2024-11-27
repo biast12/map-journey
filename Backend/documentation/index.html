@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Map-journey's API Documentation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 2rem 1rem;
+      }
+      h1 {
+        color: #000;
+      }
+      h2 {
+        color: #000;
+        margin: 0;
+        font-size: xx-large;
+      }
+      h3 {
+        color: #222;
+        margin: 0;
+      }
+      p {
+        margin: 0;
+      }
+      pre {
+        background: rgb(250, 250, 250);
+        padding: 1rem;
+        border-radius: 0.6rem;
+        overflow-x: auto;
+      }
+      code {
+        margin: 0;
+        padding: 0;
+        font-family: monospace;
+        color: #d6336c;
+      }
+      ul {
+        margin-bottom: 1rem;
+      }
+      article {
+        background: #e8e8e8;
+        padding: 1rem;
+        border-radius: 1rem;
+        margin: 4rem 0;
+      }
+      section {
+        box-sizing: border-box;
+        margin-top: 4rem;
+      }
+      section:first-of-type {
+        margin-top: 1.6rem;
+      }
+      div {
+        margin-bottom: 0.8rem;
+        border-bottom: 1px solid #b3b3b3;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Map-journey's API Documentation</h1>
+    <p>Welcome to Map-journey's API documentation. Below are the available API routes:</p>
+    <span>NOTE: all api calls need the api key</span>
+
+    <!-- USERS SECTION -->
+    <article id="users">
+      <h2>Users</h2>
+      <p>Manage user accounts and settings.</p>
+      <section>
+        <div>
+          <h3>GET /users</h3>
+          <p>Retrieve basic information about the user routes.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /users/</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "User Route",
+  "routes": {
+    "/all/:id": "Get all users",
+    "/:id": "Get a user by ID",
+    "/:id": "Create a new user",
+    "/:id": "Update a user by User ID",
+    "/:id": "Delete a user by User ID",
+    "/login": "Login route"
+  }
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>GET /users/all</h3>
+          <p>Retrieve a list of all users with their basic data. You must provide: params= <code>userID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /users/all/00000000-000-0000-0000-000000000000</code></pre>
+        <p>Example response:</p>
+        <pre><code>[
+  {
+    "id": "user1",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "settings_id": "00000000-000-0000-0000-000000000000",
+    "avatar": "url_to_avatar",
+    "banner": "url_to_banner",
+    "new_notifications": [ array of IDs ],
+    "status": "active",
+    "role": "user",
+    "news_count": 0
+  },
+  {
+    "id": "user2",
+    "name": "Jane Smith",
+    "email": "jane.smith@example.com",
+    "settings_id": "00000000-000-0000-0000-000000000000",
+    "avatar": "url_to_avatar",
+    "banner": "url_to_banner",
+    "new_notifications": [ array of IDs ],
+    "status": "offline",
+    "role": "admin",
+    "news_count": 5
+  }
+]</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>GET /users/:id</h3>
+          <p>Retrieve a specific user. You must provide: params= <code>userID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /users/00000000-000-0000-0000-000000000000</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "id": "user1",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "settings_id": "00000000-000-0000-0000-000000000000",
+  "avatar": "url_to_avatar",
+  "banner": "url_to_banner",
+  "new_notifications": [ array of IDs ],
+  "status": "public",
+  "role": "user",
+  "news_count": 0,
+  "settings": {
+    "id": "00000000-000-0000-0000-000000000000",
+    "maptheme": "default",
+    "language": "en",
+    "notification": true
+  }
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>POST /users/:id</h3>
+          <p>
+            Create a new user. You must provide: params= <code>userID</code>. body= <code>name</code>,
+            <code>email</code>, <code>password</code>.
+          </p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /users/all/00000000-000-0000-0000-000000000000
+{
+  "name": "Alice Doe",
+  "email": "alice.doe@example.com",
+  "password": "password123"
+}</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "Profile created successfully"
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>PUT /users/:id</h3>
+          <p>
+            edit a user. You must provide: params= <code>userID</code>. body= <code>name</code>, <code>email</code>,
+            <code>password</code>, <code>avatar</code>.
+          </p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>PUT /users/00000000-000-0000-0000-000000000000
+{
+  "name": "Alice Doe",
+  "email": "alice.doe@example.com",
+  "password": "password123",
+  "avatar": "file"
+}</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "User updated successfully"
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>DELETE /users/:id</h3>
+          <p>delete a specific user. You must provide: params= <code>userID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>DELETE /users/00000000-000-0000-0000-000000000000</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "User and related data deleted successfully"
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>POST /users/login</h3>
+          <p>
+            User login. You need to provide <code>email</code> and
+            <code>password</code>.
+          </p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>{
+  "email": "alice.doe@example.com",
+  "password": "password123"
+}</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+   "message": "Login successful",
+   "user": {
+      "id": 00000000-000-0000-0000-000000000000,
+      "name": alice,
+      "email": alice.doe@example.com,
+   },
+}</code></pre>
+      </section>
+      <section>
+        <h3>Common Errors</h3>
+        <ul>
+          <li>
+            <strong>400 Bad Request:</strong> Missing required fields (name,
+            email, password).
+          </li>
+          <li>
+            <strong>401 Unauthorized:</strong> Request Unauthorized.
+          </li>
+          <li>
+            <strong>404 Not Found:</strong> User not found by the specified ID.
+          </li>
+          <li>
+            <strong>500 Internal Server Error:</strong> If an unexpected error
+            occurs while processing the request (e.g., database error).
+          </li>
+        </ul>
+      </section>
+    </article>
+
+    <!-- NOTIFICATIONS SECTION -->
+    <article id="notifications">
+      <h2>Notifications</h2>
+      <p>Manage user notifications.</p>
+      <section>
+        <div>
+          <h3>GET /notification</h3>
+          <p>Retrieve basic information about the notification routes.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /notification/</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "Notification Route",
+  "routes": {
+    "/all/:id": "Get all news articles",
+    "/:id/:artid": "Get a specific news article by ID",
+    "/:id": "Create a new news article",
+    "/:id/:artid": "Update a news article by ID",
+    "/:id/:artid": "Delete a news article by ID",
+    "/:id/:artid": "Mark a news article as read",
+    "/readall/:id": "Mark all notifications as read"
+  }
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>GET /notification/all/:id</h3>
+          <p>get all notifications. You must provide: params= <code>userID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /notification/all/00000000-000-0000-0000-000000000000</code></pre>
+        <p>Example response:</p>
+        <pre>
+<code>[
+  {
+    "id": 61,
+    "date": "2024-11-25T11:20:10.142793",
+    "title": "The News",
+    "text": "This is the News"
+  },
+  {
+    "id": 62,
+    "date": "2024-11-26T11:20:10.142793",
+    "title": "The Better News",
+    "text": "This is the Better News"
+  }
+]</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>GET /notification/:id/:artid</h3>
+          <p>Get a specific news article by ID. You must provide: params= <code>userID</code>, <code>newsID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /notification/00000000-000-0000-0000-000000000000/618334</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "id": 618334,
+  "date": "2024-11-25T11:20:10.142793",
+  "title": "The News",
+  "text": "This is the News"
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>POST /notification/:id</h3>
+          <p>
+            Create a new news article. You must provide: params= <code>userID</code>. body= <code>title</code>,
+            <code>text</code>.
+          </p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>POST /notification/00000000-000-0000-0000-000000000000
+{
+  "title": "The news title",
+  "text": "The news text"
+}
+        </code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "id": 618334,
+  "date": "2024-11-25T11:20:10.142793",
+  "title": "The News",
+  "text": "This is the News"
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>PUT /notification/:id/:artid</h3>
+          <p>
+            Update a news article by ID. You must provide: params= <code>userID</code>, <code>newsID</code>. body= <code>title</code>,
+            <code>text</code>.
+          </p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>PUT /notification/00000000-000-0000-0000-000000000000/5374455
+{
+  "title": "The edited News",
+  "text": "This is the edited News"
+}</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "id": 5374455,
+  "date": "2024-11-25T11:20:10.142793",
+  "title": "The edited News",
+  "text": "This is the edited News"
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>DELETE /notification/:id/:artid</h3>
+          <p>Delete a news article by ID. You must provide: params= <code>userID</code>, <code>newsID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>DELETE /notification/00000000-000-0000-0000-000000000000/618334</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "News Deleted!"
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>POST /notification/read/:id/:artid</h3>
+          <p>
+            Mark a news article as read. You must provide: params= <code>userID</code>, <code>newsID</code>.
+          </p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>POST /notification/read/00000000-000-0000-0000-000000000000/5545439</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+"message": "Notification marked as read",
+"updatedNotifications": []
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>POST /notification/readall/:id</h3>
+          <p>Mark all notifications as read. You must provide: params= <code>userID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>POST /notification/readall/00000000-000-0000-0000-000000000000</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+"message": "All notifications marked as read",
+"updatedNotifications": []
+}</code></pre>
+      </section>
+      <section>
+        <h3>Common Errors</h3>
+        <ul>
+          <li>
+            <strong>400 Bad Request:</strong> Missing required fields.
+          </li>
+          <li>
+            <strong>401 Unauthorized:</strong> Request Unauthorized.
+          </li>
+          <li>
+            <strong>404 Not Found:</strong> User not found by the specified ID.
+          </li>
+          <li>
+            <strong>500 Internal Server Error:</strong> If an unexpected error
+            occurs while processing the request (e.g., database error).
+          </li>
+        </ul>
+      </section>
+    </article>
+
+    <!-- PINS SECTION -->
+    <article id="pins">
+      <h2>Pins</h2>
+      <p>Manage user pins or posts.</p>
+      <section>
+        <div>
+          <h3>GET /pins</h3>
+          <p>Retrieve basic information about the pin routes.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /pins/</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "Pins Route",
+  "routes": {
+    "/all/:id": "Get all pins data by user ID",
+    "/:id": "Get pins by user ID",
+    "/:id": "Create a new pin",
+    "/:id/:pinid": "Update a pin by User ID and Pin ID",
+    "/:id/:pinid": "Delete a pin by User ID and Pin ID"
+  }
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>GET /pins/all/:id</h3>
+          <p>get all pins. You must provide: params= <code>userID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /pins/all/00000000-000-0000-0000-000000000000</code></pre>
+        <p>Example response:</p>
+        <pre><code>[
+  {
+    "profile_id": "00000000-000-0000-0000-000000000000",
+    "title": "Route Test Pin 1",
+    "description": "Route Test Pin 1",
+    "imgurls": "url to the img",
+    "date": "0000-00-00T09:07:53.424315+00:00",
+    "groups": null,
+    "location": "jfkajsdlkajf, 2, Lasawe, 1234, Region Midtjylland, Danmark",
+    "longitude": 10.00101020031040,
+    "latitude": 12.584375894378574,
+    "status": "public",
+    "id": "00000000-000-0000-0000-000000000000",
+    "profile": {
+      "id": "00000000-000-0000-0000-000000000000",
+      "name": "Mathias",
+      "avatar": "url to the img
+    },
+    "reported": false
+  },
+  {
+    "profile_id": "00000000-000-0000-0000-000000000000",
+    "title": "Route Test Pin 2",
+    "description": "Route Test Pin 2",
+    "imgurls": "url to the img",
+    "date": "0000-00-00T09:07:53.424315+00:00",
+    "groups": ["family", "fun"],
+    "location": "jfkajsdlkajf, 2, Lasawe, 1234, Region Midtjylland, Danmark",
+    "longitude": 15.00101020031040,
+    "latitude": 10.584375894378574,
+    "status": "offline",
+    "id": "00000000-000-0000-0000-000000000000",
+    "profile": {
+      "id": "00000000-000-0000-0000-000000000000",
+      "name": "Madi",
+      "avatar": "url to the img
+    },
+    "reported": false
+  }
+]</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>GET /pins/:id</h3>
+          <p>Get pins by user ID. You must provide: params= <code>userID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /pins/00000000-000-0000-0000-000000000000</code></pre>
+        <p>Example response:</p>
+        <pre><code>[
+  {
+    "profile_id": "00000000-000-0000-0000-000000000000",
+    "title": "Route Test Pin 1",
+    "description": "Route Test Pin 1",
+    "imgurls": "url to the img",
+    "date": "0000-00-00T09:07:53.424315+00:00",
+    "groups": null,
+    "location": "jfkajsdlkajf, 2, Lasawe, 1234, Region Midtjylland, Danmark",
+    "longitude": 10.00101020031040,
+    "latitude": 12.584375894378574,
+    "status": "public",
+    "id": "00000000-000-0000-0000-000000000000",
+    "profile": {
+      "id": "00000000-000-0000-0000-000000000000",
+      "name": "Mathias",
+      "avatar": "url to the img
+    },
+    "reported": false
+  }
+]</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>POST /pins/:id</h3>
+          <p>Create a new pin. You must provide: params= <code>userID</code>. body= <code>title</code>, <code>description</code>, <code>location</code>, 
+            <code>longitude</code>, <code>latitude</code>, <code>imgurls</code>, 
+            You can provide <code>groups</code>, <code>status</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>POST /pins/00000000-000-0000-0000-000000000000
+{
+  "title": "The pins title",
+  "description": "The pins description",
+  "location": "name of location",
+  "longitude": 12.34567890123456,
+  "latitude": 12.34567890123456,
+  "imgurls": "urls for imgs",
+  "groups": "optional !",
+  "status": "optional !"
+}</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "Pin created successfully"
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>PUT /pins/:id/:pinid</h3>
+          <p>Edit a pin. You must provide: params= <code>userID</code>, <code>pinID</code>. You can provide: body= <code>title</code>, <code>description</code>, <code>location</code>, 
+            <code>longitude</code>, <code>latitude</code>, <code>imgurls</code>, <code>groups</code>, <code>status</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>PUT /pins/00000000-000-0000-0000-000000000000/00000000-000-0000-0000-000000000000
+{
+  "title": "The pins title",
+  "description": "The pins description",
+  "location": "name of location",
+  "longitude": 12.34567890123456,
+  "latitude": 12.34567890123456,
+  "imgurls": "urls for imgs",
+  "groups": "fun",
+  "status": "public"
+}</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "Pin updated successfully"
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>DELETE /pins/:id/:pinid</h3>
+          <p>Delete a pin. You must provide: params= <code>userID</code>, <code>pinID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>DELETE /pins/00000000-000-0000-0000-000000000000/00000000-000-0000-0000-000000000000</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "Pin deleted successfully"
+}</code></pre>
+      </section>
+      <section>
+        <h3>Common Errors</h3>
+        <ul>
+          <li>
+            <strong>400 Bad Request:</strong> Missing required fields.
+          </li>
+          <li>
+            <strong>401 Unauthorized:</strong> Request Unauthorized.
+          </li>
+          <li>
+            <strong>403 Unauthorized:</strong>Unauthorized to delete this pin.
+          </li>
+          <li>
+            <strong>404 Not Found:</strong> User not found by the specified ID.
+          </li>
+          <li>
+            <strong>500 Internal Server Error:</strong> If an unexpected error
+            occurs while processing the request (e.g., database error).
+          </li>
+        </ul>
+      </section>
+    </article>
+
+    <!-- REPORTS SECTION -->
+    <article id="reports">
+      <h2>Reports</h2>
+      <p>Manage user reports.</p>
+
+      <section>
+        <div>
+          <h3>GET /reports</h3>
+          <p>Retrieve basic information about the reports routes.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /reports/</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "reports Route",
+  "routes": {
+    "/all/:id": "Get all reports",
+    "/:id": "Create a new report",
+    "/:id": "Delete a report by ID"
+  }
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>GET /reports/all/:id</h3>
+          <p>Get all reports. You must provide: params= <code>userID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /reports/all/00000000-000-0000-0000-000000000000</code></pre>
+        <p>Example response:</p>
+        <pre><code>[
+  {
+    "id": 578394,
+    "reporting_user": {
+      "id": "00000000-000-0000-0000-000000000000",
+      "name": "name",
+      "email": "the@mail.com",
+      "avatar": "url to img"
+    },
+    "text": "the report text",
+    "date": "1234-56-78T09:57:23.312734",
+    "reported_user": {
+      "id": "00000000-000-0000-0000-000000000000",
+      "name": "name",
+      "email": "the@mail.com",
+      "avatar": "url to img"
+    },
+    "reported_pin": null,
+    "active": false
+  },
+  {
+    "id": 754389,
+    "reporting_user": {
+      "id": "00000000-000-0000-0000-000000000000",
+      "name": "name",
+      "email": "the@mail.com",
+      "avatar": "url to img"
+    },
+    "text": "text report text",
+    "date": "1234-56-78T12:35:58.047498",
+    "reported_user": null,
+    "reported_pin": {
+      "id": "00000000-000-0000-0000-000000000000",
+      "profile_id": "00000000-000-0000-0000-000000000000",
+      "title": "the pin title",
+      "description": "the pin description",
+      "imgurls": "the pins img url",
+      "date": "1234-56-78T11:49:26.660432+00:00",
+      "location": "jhjsadsd, 53, fsdfdd, 1234, Central Denmark Region, Denmark",
+      "longitude": 12.34567890123456,
+      "latitude": 12.34567890123456
+    },
+    "active": true
+  }
+]</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>POST /reports/:id</h3>
+          <p>Make a report. You must provide: params= <code>userID</code>. body= <code>text</code> and <code>reported_user_id</code> or <code>reported_pin_id</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>POST /reports/00000000-000-0000-0000-000000000000
+{
+  "text": "i dont like this user",
+  "reported_user_id": 00000000-000-0000-0000-000000000000
+}</code></pre>
+        <p>or</p>
+        <pre><code>POST /reports/00000000-000-0000-0000-000000000000
+{
+  "text": "i dont like this pin",
+  "reported_pin_id": 00000000-000-0000-0000-000000000000
+}</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "Report created successfully"
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>DELETE /reports/:id</h3>
+          <p>Delete a report. You must provide: params= <code>userID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>DELETE /reports/00000000-000-0000-0000-000000000000</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "Report created successfully"
+}</code></pre>
+      </section>
+      <section>
+        <h3>Common Errors</h3>
+        <ul>
+          <li>
+            <strong>400 Bad Request:</strong> Missing required fields.
+          </li>
+          <li>
+            <strong>401 Unauthorized:</strong> Request Unauthorized.
+          </li>
+          <li>
+            <strong>404 Not Found:</strong> User not found by the specified ID.
+          </li>
+          <li>
+            <strong>500 Internal Server Error:</strong> If an unexpected error
+            occurs while processing the request (e.g., database error).
+          </li>
+        </ul>
+      </section>
+    </article>
+
+    <!-- SETTINGS SECTION -->
+    <article id="settings">
+      <h2>Settings</h2>
+      <p>Manage user settings.</p>
+
+      <section>
+        <div>
+          <h3>GET /settings</h3>
+          <p>Retrieve basic information about the settings routes.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /settings/</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "settings Route",
+  "routes": {
+    "/:id": "Get a user's settings by Settings ID",
+    "/:id": "Update a user's settings by Settings ID"
+  }
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>GET /settings/:id</h3>
+          <p>Get a user's settings. You must provide: params= <code>userID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>GET /settings/00000000-000-0000-0000-000000000000</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "maptheme": "default",
+  "language": "en",
+  "notification": true,
+  "id": "00000000-000-0000-0000-000000000000"
+}</code></pre>
+      </section>
+      <section>
+        <div>
+          <h3>PUT /settings/:id</h3>
+          <p>edit a user's settings. You must provide: params= <code>userID</code>. You can provide: body= <code>maptheme</code>, <code>language</code>, <code>notification</code>, <code>status</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>PUT /settings/00000000-000-0000-0000-000000000000
+{
+  "maptheme": "dark",
+  "language": "dk",
+  "notification": "false"
+}</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "Settings updated successfully"
+}</code></pre>
+      </section>
+      <section>
+        <h3>Common Errors</h3>
+        <ul>
+          <li>
+            <strong>400 Bad Request:</strong> Missing required fields.
+          </li>
+          <li>
+            <strong>401 Unauthorized:</strong> Request Unauthorized.
+          </li>
+          <li>
+            <strong>404 Not Found:</strong> User not found by the specified ID.
+          </li>
+          <li>
+            <strong>500 Internal Server Error:</strong> If an unexpected error
+            occurs while processing the request (e.g., database error).
+          </li>
+        </ul>
+      </section>
+    </article>
+  </body>
+</html>
