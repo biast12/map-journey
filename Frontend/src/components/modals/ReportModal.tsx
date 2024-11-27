@@ -33,7 +33,7 @@ const ReportModal = ({
   const toast = useRef<HTMLIonToastElement>(null);
   const { t } = useTranslation();
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { userID } = useAuth();
+  const { userID, role } = useAuth();
   const [text, setText] = useState("");
 
   async function handleReport(formEvent: FormEvent) {
@@ -44,6 +44,7 @@ const ReportModal = ({
       [reportedType === "user" ? "reported_user_id" : "reported_pin_id"]:
         reported_id,
     };
+    role === "admin" && console.log("Payload:", payload);
 
     makeRequest(
       `reports/${userID}`,
@@ -58,6 +59,7 @@ const ReportModal = ({
       setReportSuccess(true);
       toast.current?.present();
       closeReportModal();
+      role === "admin" && console.log("Reported successfully");
     } else if (error) {
       setReportSuccess(false);
     }

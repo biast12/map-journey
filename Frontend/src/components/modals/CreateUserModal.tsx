@@ -10,6 +10,7 @@ import {
 } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import useRequestData from "../../hooks/useRequestData";
+import useAuth from "../../hooks/ProviderContext";
 import "./CreateUserModal.scss";
 import Loader from "../../components/Loader";
 import Error from "../../components/Error";
@@ -27,6 +28,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   const toast = useRef<HTMLIonToastElement>(null);
   const { t } = useTranslation();
   const { makeRequest, isLoading, data, error } = useRequestData();
+  const { role } = useAuth();
 
   async function handleCreateUser(formEvent: FormEvent) {
     formEvent.preventDefault();
@@ -35,6 +37,8 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
     const name = formData.get("name");
     const email = formData.get("email");
     const password = formData.get("password");
+
+    role === "admin" && console.log("formData: ", formData);
 
     await makeRequest(
       "users",
@@ -50,6 +54,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
       toast.current?.present();
       closeCreateUserModal();
       closeLoginModal();
+      role === "admin" && console.log("User created successfully");
     } else if (error) {
       setCreateSuccess(false);
     }

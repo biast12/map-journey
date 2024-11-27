@@ -18,12 +18,13 @@ import { useTranslation } from "react-i18next";
 
 const Settings: React.FC = () => {
   const history = useHistory();
-  const { clearAuthToken } = useAuth();
+  const { clearAuthToken, clearRoleToken } = useAuth();
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLogout = async () => {
     await clearAuthToken();
+    await clearRoleToken();
     history.push("/");
   };
   const { t } = useTranslation();

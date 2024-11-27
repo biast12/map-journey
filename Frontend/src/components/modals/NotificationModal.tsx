@@ -24,7 +24,7 @@ const NotificationModal: React.FC = () => {
     error: errorReset,
     isLoading: isLoadingReset,
   } = useRequestData();
-  const { userID, loading } = useAuth();
+  const { userID, role, loading } = useAuth();
 
   useEffect(() => {
     makeRequest(`notification/all`);
@@ -33,6 +33,7 @@ const NotificationModal: React.FC = () => {
   useEffect(() => {
     if (userID && !loading) {
       makeRequestReset(`notification/readall/${userID}`, "POST");
+      role === "admin" && console.log("All notifications are not read");
     }
   }, [userID, loading]);
 

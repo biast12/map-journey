@@ -26,7 +26,7 @@ interface ShowPinModalProps {
 const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
   if (!pinData) return null;
   const { t } = useTranslation();
-  const { userID } = useAuth();
+  const { userID, role } = useAuth();
   const [reportModal, setReportModal] = useState(false);
   const openReportModal = () => setReportModal(true);
   const closeReportModal = () => setReportModal(false);
@@ -38,14 +38,14 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
     if (navigator.clipboard) {
       try {
         await navigator.clipboard.writeText(url);
-        console.log("Link copied to clipboard");
+        role === "admin" && console.log("Link copied to clipboard");
       } catch (err) {
         console.error("Error copying link to clipboard", err);
       }
     } else {
       Clipboard.copy(url)
         .then(() => {
-          console.log("Link copied to clipboard");
+          role === "admin" && console.log("Link copied to clipboard");
         })
         .catch((err) => {
           console.error("Error copying link to clipboard", err);

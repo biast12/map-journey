@@ -28,6 +28,7 @@ import { close } from "ionicons/icons";
 import { createStringXY } from "ol/coordinate.js";
 import { Geolocation } from "@capacitor/geolocation";
 import useRequestData from "../hooks/useRequestData";
+import useAuth from "../hooks/ProviderContext";
 import Loader from "./Loader";
 import Error from "./Error";
 
@@ -40,10 +41,8 @@ interface PinData {
   id: string;
   longitude: number;
   latitude: number;
-  [key: string]: any; // Add other properties as needed
+  [key: string]: any;
 }
-
-const debug = true; // Set this to false to disable logging
 
 // Predefined styles for clustering
 const distanceBetweenPinsBeforeClustering = 20; // Distance between pins before clustering
@@ -110,6 +109,7 @@ function Map({ APIurl, pinID }: MapProps) {
 
   /* Hooks */
   const { makeRequest, data, error, isLoading } = useRequestData();
+  const { role } = useAuth();
 
   /* Functions */
   const openShowPinModal = () => setShowPinModal(true);
@@ -146,7 +146,7 @@ function Map({ APIurl, pinID }: MapProps) {
 
     const map = new OlMap({
       target: "map",
-      controls: defaultControls().extend([mousePositionControl]),
+      controls: role !== "admin" ? defaultControls().extend([mousePositionControl]) : defaultControls(),
       layers: [
         new TileLayer({
           source: new OSM(),
@@ -163,7 +163,7 @@ function Map({ APIurl, pinID }: MapProps) {
 
     // Add pointermove event listener to log mouse position
     map.on("pointermove", (event) => {
-      if (!debug) return; // Check if debug is true
+      if (role !== "admin") return;
       const currentTime = Date.now();
       if (currentTime - lastLogTime >= 1000) {
         lastLogTime = currentTime;
