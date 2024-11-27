@@ -33,7 +33,7 @@ const NotificationModal: React.FC = () => {
   useEffect(() => {
     if (userID && !loading) {
       makeRequestReset(`notification/readall/${userID}`, "POST");
-      role === "admin" && console.log("All notifications are not read");
+      role === "admin" && console.log("All notifications are now read");
     }
   }, [userID, loading]);
 
