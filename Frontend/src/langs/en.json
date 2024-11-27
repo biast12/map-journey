@@ -60,6 +60,21 @@
     "pin": {
       "img_alt": "User avatar",
       "report": "Report pin"
+    },
+    "warning": {
+      "card_title": "Warning",
+      "card_title_banned": "Banned",
+      "warning": "This is a warning, your account has been reported and is at risk at being banned. please don't continue to violate the terms of service.",
+      "reported": "Your account has been labled as reported, your pins will be private until the issue is resolved.",
+      "banned": "Your account has been banned, you can no longer use the service.",
+      "support": "Please contact support for more information.",
+      "close": "Close",
+      "delete": {
+        "header": "Delete Account",
+        "message": "Are you sure you want to delete your account? This action cannot be undone.",
+        "yes": "Yes",
+        "cancel": "Cancel"
+      }
     }
   },
   "pages": {

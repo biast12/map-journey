@@ -6,6 +6,7 @@ import {
   IonImg,
   IonIcon,
   IonBadge,
+  IonModal,
 } from "@ionic/react";
 import { notifications, settings, shieldHalf } from "ionicons/icons";
 import { useTranslation } from "react-i18next";
@@ -15,6 +16,7 @@ import useRequestData from "../../hooks/useRequestData";
 import { useAuth } from "../../hooks/ProviderContext";
 
 /* Components */
+import WarningModal from "../modals/WarningModal";
 import Loader from "../Loader";
 import Error from "../Error";
 
@@ -22,17 +24,38 @@ interface HeaderProps {
   openNotificationModal: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
+const Header: React.FC<HeaderProps> = ({
+  openNotificationModal,
+}) => {
   const { t } = useTranslation();
   const { makeRequest, data, error, isLoading } = useRequestData();
   const { userID, role, loading } = useAuth();
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  const [hasWarningModalOpened, setHasWarningModalOpened] = useState(false);
+  const [showWarningModal, setShowWarningModal] = useState(false);
+
+  const openWarningModal = () => setShowWarningModal(true);
+  const closeWarningModal = () => setShowWarningModal(false);
 
   useEffect(() => {
     if (userID && !loading) {
       makeRequest(`users/${userID}`);
     }
   }, [userID, loading, isNotificationModalOpen]);
+
+  useEffect(() => {
+    if (
+      data &&
+      (data.status === "warning" ||
+        data.status === "reported" ||
+        data.status === "banned") &&
+      !loading &&
+      !hasWarningModalOpened
+    ) {
+      openWarningModal();
+      setHasWarningModalOpened(true);
+    }
+  }, [data, isLoading, hasWarningModalOpened]);
 
   const handleOpenNotificationModal = () => {
     setIsNotificationModalOpen(true);
@@ -70,6 +93,11 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
           </div>
         </IonToolbar>
       </IonHeader>
+      <IonModal isOpen={showWarningModal} backdropDismiss={false}>
+        <div className="modal-content">
+          <WarningModal data={data} closeWarningModal={closeWarningModal} />
+        </div>
+      </IonModal>
     </>
   );
 };

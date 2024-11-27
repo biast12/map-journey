@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import {
   IonHeader,
   IonToolbar,
@@ -18,6 +17,7 @@ import { useTranslation } from "react-i18next";
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
 import useImageHandler from "../../hooks/useImageHandler";
+import handleDeleteAccount from "../../hooks/useDeleteAccount";
 import { useAuth } from "../../hooks/ProviderContext";
 
 /* Components */
@@ -37,7 +37,6 @@ interface UserDataProps {
 
 const Account: React.FC<UserDataProps> = ({ userData }) => {
   const { t } = useTranslation();
-  const history = useHistory();
 
   /* States */
   const [username, setUsername] = useState(userData.name);
@@ -50,7 +49,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
   /* Hooks */
   const { makeRequest, isLoading, error } = useRequestData();
   const { takePhoto, photoUrl, handleUpload, removeImage } = useImageHandler();
-  const { role, clearAuthToken, clearRoleToken } = useAuth();
+  const { role } = useAuth();
 
   useEffect(() => {
     if (photoUrl) {
@@ -101,25 +100,6 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
       );
     } else {
       console.error("Error updating user data");
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    try {
-      await makeRequest(`users/${userData.id}`, "DELETE");
-      if (
-        !(
-          userData.avatar ===
-          "https://ezjagphpkkbghjkxczwk.supabase.co/storage/v1/object/sign/assets/ProfileG5.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvUHJvZmlsZUc1LnBuZyIsImlhdCI6MTczMDc5NjI5NCwiZXhwIjoxNzYyMzMyMjk0fQ.GBRbr_PMqO19m21c43HGX_L5NKxBdcpo6a6UQdwkXLA&t=2024-11-05T08%3A44%3A54.995Z"
-        )
-      ) {
-        await removeImage(userData.avatar);
-      }
-      await clearAuthToken();
-      await clearRoleToken();
-      history.push("/");
-    } catch (error) {
-      console.error("Error deleting account:", error);
     }
   };
 
@@ -207,7 +187,11 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
               },
               {
                 text: t("pages.settings.accounts.delete.header"),
-                handler: handleDeleteAccount,
+                handler: () => {
+                  handleDeleteAccount({
+                    data: { id: userData.id, avatar: userData.avatar },
+                  });
+                },
               },
             ]}
           />

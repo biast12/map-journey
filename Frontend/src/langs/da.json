@@ -10,15 +10,15 @@
   },
   "modals": {
     "create_pin": {
-  "card_title": "Kortlæg din Rejse",
-  "title": "Titel",
-  "title_placeholder": "Din titel her",
-  "location": "Placering",
-  "description": "Beskrivelse",
-  "description_placeholder": "Din beskrivelse her",
-  "visibility": "Offentlig",
-  "submit": "Bekræft"
-},
+      "card_title": "Kortlæg din Rejse",
+      "title": "Titel",
+      "title_placeholder": "Din titel her",
+      "location": "Placering",
+      "description": "Beskrivelse",
+      "description_placeholder": "Din beskrivelse her",
+      "visibility": "Offentlig",
+      "submit": "Bekræft"
+    },
     "create_user": {
       "card_title": "Opret Bruger",
       "username": "Brugernavn",
@@ -60,6 +60,21 @@
     "pin": {
       "img_alt": "Bruger avatar",
       "report": "Rapporter pin"
+    },
+    "warning": {
+      "card_title": "Advarsel",
+      "card_title_banned": "Banned",
+      "warning": "Dette er en advarsel, din konto er blevet rapporteret og er i fare for at blive bannet. Venligst undlad at fortsætte med at overtræde servicevilkårene.",
+      "reported": "Din konto er blevet markeret som rapporteret, dine pins vil være private, indtil problemet er løst.",
+      "banned": "Din konto er blevet bannet, du kan ikke længere bruge tjenesten.",
+      "support": "Kontakt venligst support for mere information.",
+      "close": "Luk",
+      "delete": {
+        "header": "Slet Konto",
+        "message": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
+        "yes": "Ja",
+        "cancel": "Annuller"
+      }
     }
   },
   "pages": {
