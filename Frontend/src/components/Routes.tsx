@@ -19,7 +19,7 @@ import ErrorPage from "../pages/ErrorPage";
 
 export const Routes = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { userID, role, loading } = useAuth();
+  const { userID, role, loading, storeAuthToken, storeRoleToken } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -32,6 +32,8 @@ export const Routes = () => {
     if (data && !isLoading) {
       changeLanguage(data.settings.language);
       role === "admin" && setDebugMode(true);
+      storeAuthToken(data.id);
+      storeRoleToken(data.role);
     }
   }, [data, isLoading]);
 

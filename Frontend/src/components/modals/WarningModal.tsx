@@ -31,7 +31,7 @@ const WarningModal: React.FC<WarningModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { userID } = useAuth();
-  const { makeRequest, error } = useRequestData();
+  const { makeRequest } = useRequestData();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -40,10 +40,6 @@ const WarningModal: React.FC<WarningModalProps> = ({
       makeRequest(`users/seen/${userID}`);
     }
   }, []);
-
-  if (error) {
-    console.error("Failed to update user status");
-  }
 
   return (
     <IonCard>
@@ -59,10 +55,10 @@ const WarningModal: React.FC<WarningModalProps> = ({
           {data.status === "warning"
             ? t("modals.warning.warning")
             : data.status === "reported"
-            ? t("modals.warning.reported")
-            : data.status === "banned"
-            ? t("modals.warning.banned")
-            : null}
+              ? t("modals.warning.reported")
+              : data.status === "banned"
+                ? t("modals.warning.banned")
+                : null}
         </p>
         <p>{t("modals.warning.support")}</p>
       </IonCardContent>

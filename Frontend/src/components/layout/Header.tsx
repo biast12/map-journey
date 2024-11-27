@@ -24,9 +24,7 @@ interface HeaderProps {
   openNotificationModal: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({
-  openNotificationModal,
-}) => {
+const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   const { t } = useTranslation();
   const { makeRequest, data, error, isLoading } = useRequestData();
   const { userID, role, loading } = useAuth();
@@ -55,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({
       openWarningModal();
       setHasWarningModalOpened(true);
     }
-  }, [data, isLoading, hasWarningModalOpened]);
+  }, [data, isLoading]);
 
   const handleOpenNotificationModal = () => {
     setIsNotificationModalOpen(true);

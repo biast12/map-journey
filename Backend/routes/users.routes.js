@@ -82,7 +82,7 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
 });
 
 // Create a new user and default settings
-router.post("/:id", checkUserRole("admin"), async (req, res) => {
+router.post("/", async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
