@@ -27,7 +27,7 @@ const NotificationModal: React.FC = () => {
   const { userID, role, loading } = useAuth();
 
   useEffect(() => {
-    makeRequest(`notification/all`);
+    makeRequest(`notification/all/${userID}`);
   }, []);
 
   useEffect(() => {

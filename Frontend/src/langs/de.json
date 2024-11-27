@@ -60,6 +60,21 @@
     "pin": {
       "img_alt": "Benutzeravatar",
       "report": "Pin melden"
+    },
+    "warning": {
+      "card_title": "Warnung",
+      "card_title_banned": "Gesperrt",
+      "warning": "Dies ist eine Warnung, Ihr Konto wurde gemeldet und ist in Gefahr, gesperrt zu werden. Bitte verstoßen Sie nicht weiter gegen die Nutzungsbedingungen.",
+      "reported": "Ihr Konto wurde als gemeldet markiert, Ihre Pins werden privat sein, bis das Problem gelöst ist.",
+      "banned": "Ihr Konto wurde gesperrt, Sie können den Dienst nicht mehr nutzen.",
+      "support": "Bitte kontaktieren Sie den Support für weitere Informationen.",
+      "close": "Schließen",
+      "delete": {
+        "header": "Konto löschen",
+        "message": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "yes": "Ja",
+        "cancel": "Abbrechen"
+      }
     }
   },
   "pages": {
