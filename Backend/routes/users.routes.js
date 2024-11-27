@@ -82,7 +82,7 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
 });
 
 // Create a new user and default settings
-router.post("/:id", checkUserRole("admin"), async (req, res) => {
+router.post("/:id", async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -192,7 +192,7 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    if (currentUser.status === "reported") {
+    if (currentUser.status === "banned") {
       return res.status(403).json({ error: "Cannot update user with reported status" });
     }
 
@@ -228,9 +228,8 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
   }
 });
 
-
 // Delete a user by User ID
-router.delete("/:id", checkUserRole("admin"), async (req, res) => {
+router.delete("/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
 
   try {
@@ -323,7 +322,6 @@ router.delete("/:id", checkUserRole("admin"), async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // Login route
 router.post("/login", async (req, res) => {

@@ -32,8 +32,6 @@
         overflow-x: auto;
       }
       code {
-        margin: 0;
-        padding: 0;
         font-family: monospace;
         color: #d6336c;
       }
@@ -43,6 +41,7 @@
       article {
         background: #e8e8e8;
         padding: 1rem;
+        margin: 1rem 0;
         border-radius: 1rem;
         margin: 4rem 0;
       }
@@ -50,8 +49,31 @@
         box-sizing: border-box;
         margin-top: 4rem;
       }
-      section:first-of-type {
-        margin-top: 1.6rem;
+      nav {
+        position: fixed;
+        right: 2rem;
+        top: 2rem;
+        width: 20%;
+        background: #f9f9f9;
+        padding: 1rem;
+        border-radius: 1rem;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      nav ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      nav ul li {
+        margin-bottom: 0.5rem;
+      }
+      nav a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        cursor: pointer; /* Ensure it looks clickable */
+      }
+      nav a:hover {
+        color: #d6336c;
       }
       div {
         margin-bottom: 0.8rem;
@@ -64,8 +86,19 @@
     <p>Welcome to Map-journey's API documentation. Below are the available API routes:</p>
     <span>NOTE: all api calls need the api key</span>
 
+    <nav>
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="#user-endpoints" class="smooth-link">User Endpoints</a></li>
+        <li><a href="#notification-endpoints" class="smooth-link">Notification Endpoints</a></li>
+        <li><a href="#pin-endpoints" class="smooth-link">Pin Endpoints</a></li>
+        <li><a href="#report-endpoints" class="smooth-link">Report Endpoints</a></li>
+        <li><a href="#setting-endpoints" class="smooth-link">Setting Endpoints</a></li>
+      </ul>
+    </nav>
+
     <!-- USERS SECTION -->
-    <article id="users">
+    <article id="user-endpoints">
       <h2>Users</h2>
       <p>Manage user accounts and settings.</p>
       <section>
@@ -248,7 +281,7 @@
     </article>
 
     <!-- NOTIFICATIONS SECTION -->
-    <article id="notifications">
+    <article id="notification-endpoints">
       <h2>Notifications</h2>
       <p>Manage user notifications.</p>
       <section>
@@ -417,7 +450,7 @@
     </article>
 
     <!-- PINS SECTION -->
-    <article id="pins">
+    <article id="pin-endpoints">
       <h2>Pins</h2>
       <p>Manage user pins or posts.</p>
       <section>
@@ -601,7 +634,7 @@
     </article>
 
     <!-- REPORTS SECTION -->
-    <article id="reports">
+    <article id="report-endpoints">
       <h2>Reports</h2>
       <p>Manage user reports.</p>
 
@@ -678,6 +711,22 @@
       </section>
       <section>
         <div>
+          <h3>POST /reports/seen/:id</h3>
+          <p>give a user private status. You must provide: params= <code>userID</code>.</p>
+        </div>
+        <p>Example request:</p>
+        <pre><code>DELETE /reports/seen/00000000-000-0000-0000-000000000000</code></pre>
+        <p>Example response:</p>
+        <pre><code>{
+  "message": "User status updated from 'warning' to 'private'.",
+  "userProfile": {
+    "id": "0470e387-3c55-4adf-af27-9fb7f99d82ac",
+    "status": "private"
+  }
+}</code></pre>
+      </section>
+      <section>
+        <div>
           <h3>POST /reports/:id</h3>
           <p>Make a report. You must provide: params= <code>userID</code>. body= <code>text</code> and <code>reported_user_id</code> or <code>reported_pin_id</code>.</p>
         </div>
@@ -700,14 +749,17 @@
       </section>
       <section>
         <div>
-          <h3>DELETE /reports/:id</h3>
-          <p>Delete a report. You must provide: params= <code>userID</code>.</p>
+          <h3>POST /reports/:id/:rpid</h3>
+          <p>give a user a warning / delete pin. You must provide: params= <code>userID</code>, <code>reportID</code>. body= <code>dismiss / warn / ban</code></p>
         </div>
         <p>Example request:</p>
-        <pre><code>DELETE /reports/00000000-000-0000-0000-000000000000</code></pre>
+        <pre><code>POST /reports/00000000-000-0000-0000-000000000000/00000000
+{
+  "action": "warn"
+}</code></pre>
         <p>Example response:</p>
         <pre><code>{
-  "message": "Report created successfully"
+  "message": "User has ben given a warning"
 }</code></pre>
       </section>
       <section>
@@ -731,7 +783,7 @@
     </article>
 
     <!-- SETTINGS SECTION -->
-    <article id="settings">
+    <article id="setting-endpoints">
       <h2>Settings</h2>
       <p>Manage user settings.</p>
 
@@ -802,5 +854,20 @@
         </ul>
       </section>
     </article>
+
+    <script>
+      document.querySelectorAll('.smooth-link').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+
+          const targetID = this.getAttribute('href').substring(1);
+          const targetSection = document.getElementById(targetID);
+
+          targetSection.scrollIntoView({
+            behavior: 'smooth'
+          });
+        });
+      });
+    </script>
   </body>
 </html>

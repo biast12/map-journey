@@ -1,8 +1,8 @@
-// checkUserRole.js
 const supabase = require("../supabaseClient");
 
 const checkUserRole = (requiredRole) => {
   return async (req, res, next) => {
+    // Use req.params.id to fetch user role
     const userID = req.params.id;
 
     if (!userID) {
@@ -21,14 +21,15 @@ const checkUserRole = (requiredRole) => {
         return res.status(401).send("Unauthorized: User not found");
       }
 
-      if (user.role !== requiredRole && user.role !== "admin") {
-        return res.status(403).send("Forbidden: Insufficient permissions");
+      if (user.role === "admin" || (user.role === "user" && requiredRole === "user")) {
+        return next();
       }
 
-      next();
+      return res.status(403).send("Forbidden: Insufficient permissions");
+
     } catch (err) {
       console.error("Authorization error:", err);
-      res.status(500).send("Server error during authorization");
+      return res.status(500).send("Server error during authorization");
     }
   };
 };
