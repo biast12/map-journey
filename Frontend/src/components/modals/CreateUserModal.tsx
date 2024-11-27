@@ -1,4 +1,4 @@
-import { useRef, useState, FormEvent } from "react";
+import { useRef, useState, FormEvent, useEffect } from "react";
 import {
   IonCard,
   IonCardHeader,
@@ -10,6 +10,7 @@ import {
 } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import useRequestData from "../../hooks/useRequestData";
+import useAuth from "../../hooks/ProviderContext";
 import "./CreateUserModal.scss";
 import Loader from "../../components/Loader";
 import Error from "../../components/Error";
@@ -27,6 +28,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   const toast = useRef<HTMLIonToastElement>(null);
   const { t } = useTranslation();
   const { makeRequest, isLoading, data, error } = useRequestData();
+  const { role } = useAuth();
 
   async function handleCreateUser(formEvent: FormEvent) {
     formEvent.preventDefault();
@@ -36,22 +38,27 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
     const email = formData.get("email");
     const password = formData.get("password");
 
+    role === "admin" && console.log("formData: ", formData);
+
     await makeRequest(
       "users",
       "POST",
       { "Content-Type": "application/json" },
       { name, email, password }
     );
+  }
 
-    if (!error && data) {
+  useEffect(() => {
+    if (data) {
       setCreateSuccess(true);
       toast.current?.present();
       closeCreateUserModal();
       closeLoginModal();
-    } else {
+      role === "admin" && console.log("User created successfully");
+    } else if (error) {
       setCreateSuccess(false);
     }
-  }
+  }, [error, data]);
 
   return (
     <>

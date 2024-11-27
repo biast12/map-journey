@@ -251,6 +251,7 @@ router.delete("/:id", checkUserRole("admin"), async (req, res) => {
 
     const { settings_id } = profile;
 
+    // Step 2: Fetch all the user's pins
     const { data: pins, error: fetchPinsError } = await supabase
       .from("pins")
       .select("id")
@@ -323,6 +324,7 @@ router.delete("/:id", checkUserRole("admin"), async (req, res) => {
   }
 });
 
+
 // Login route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -355,6 +357,7 @@ router.post("/login", async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {

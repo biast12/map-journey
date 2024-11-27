@@ -50,7 +50,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
   /* Hooks */
   const { makeRequest, isLoading, error } = useRequestData();
   const { takePhoto, photoUrl, handleUpload, removeImage } = useImageHandler();
-  const { clearAuthToken } = useAuth();
+  const { role, clearAuthToken, clearRoleToken } = useAuth();
 
   useEffect(() => {
     if (photoUrl) {
@@ -85,7 +85,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
       updatedData = { ...updatedData, password };
     }
 
-    console.log("Updated data:", updatedData);
+    role === "admin" && console.log("Updated data:", updatedData);
 
     await makeRequest(
       `users/${userData.id}`,
@@ -116,6 +116,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
         await removeImage(userData.avatar);
       }
       await clearAuthToken();
+      await clearRoleToken();
       history.push("/");
     } catch (error) {
       console.error("Error deleting account:", error);

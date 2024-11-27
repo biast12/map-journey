@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Route, Redirect, useLocation } from "react-router-dom";
+import { Route, Redirect, Switch, useLocation } from "react-router-dom";
 
 /* Hooks */
 import useRequestData from "../hooks/useRequestData";
@@ -19,7 +19,7 @@ import ErrorPage from "../pages/ErrorPage";
 
 export const Routes = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { userID, loading } = useAuth();
+  const { userID, role, loading } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -31,23 +31,22 @@ export const Routes = () => {
   useEffect(() => {
     if (data && !isLoading) {
       changeLanguage(data.settings.language);
-      data.role === "admin" && setDebugMode(true);
+      role === "admin" && setDebugMode(true);
     }
   }, [data, isLoading]);
 
-  const isSettingsPath = location.pathname.match(
-    "/settings|/settings/general|/settings/account"
-  );
-
   return (
-    <>
-      <Route exact path="/*">
-        {!isSettingsPath && <Redirect to="/globalmap" />}
-      </Route>
+    <Switch>
       <Route
         exact
         path="/globalmap"
-        render={() => userID && !loading && <GlobalMap userID={userID} />}
+        render={() => {
+          const params = new URLSearchParams(location.search);
+          const pinId = params.get("pin");
+          return (
+            userID && !loading && <GlobalMap userID={userID} pinId={pinId} />
+          );
+        }}
       />
       <Route
         exact
@@ -57,7 +56,7 @@ export const Routes = () => {
       <Route
         exact
         path="/admin"
-        render={() => data && data.role === "admin" && <Admin />}
+        render={() => role === "admin" && <Admin />}
       />
       <Route exact path="/settings" render={() => userID && <Settings />} />
       <Route
@@ -72,7 +71,11 @@ export const Routes = () => {
       />
       <Route exact path="/error" component={ErrorPage} />
       <Route exact path="/error/:status" component={ErrorPage} />
-    </>
+      <Route path="*">
+        <Redirect to="/globalmap" />
+      </Route>
+    </Switch>
   );
 };
+
 export default Routes;

@@ -9,7 +9,7 @@ import {
   IonLabel,
   IonToast,
 } from "@ionic/react";
-import { useRef, useState, FormEvent } from "react";
+import { useRef, useState, FormEvent, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import "./ReportModal.scss";
 
@@ -33,7 +33,7 @@ const ReportModal = ({
   const toast = useRef<HTMLIonToastElement>(null);
   const { t } = useTranslation();
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { userID } = useAuth();
+  const { userID, role } = useAuth();
   const [text, setText] = useState("");
 
   async function handleReport(formEvent: FormEvent) {
@@ -44,6 +44,7 @@ const ReportModal = ({
       [reportedType === "user" ? "reported_user_id" : "reported_pin_id"]:
         reported_id,
     };
+    role === "admin" && console.log("Payload:", payload);
 
     makeRequest(
       `reports/${userID}`,
@@ -51,15 +52,18 @@ const ReportModal = ({
       { "Content-Type": "application/json" },
       payload
     );
+  }
 
-    if (!error && !isLoading) {
+  useEffect(() => {
+    if (data) {
       setReportSuccess(true);
       toast.current?.present();
       closeReportModal();
-    } else {
+      role === "admin" && console.log("Reported successfully");
+    } else if (error) {
       setReportSuccess(false);
     }
-  }
+  }, [error, data]);
 
   return (
     <>
@@ -78,9 +82,9 @@ const ReportModal = ({
             <IonItem>
               <IonLabel position="stacked">{t("modals.report.text")}</IonLabel>
               <IonInput
+                required
                 value={text}
                 onIonChange={(e) => setText(e.detail.value!)}
-                required
               />
             </IonItem>
             {reportSuccess === false && (

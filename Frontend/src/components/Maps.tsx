@@ -28,23 +28,21 @@ import { close } from "ionicons/icons";
 import { createStringXY } from "ol/coordinate.js";
 import { Geolocation } from "@capacitor/geolocation";
 import useRequestData from "../hooks/useRequestData";
+import useAuth from "../hooks/ProviderContext";
 import Loader from "./Loader";
 import Error from "./Error";
 
 interface MapProps {
   APIurl: string;
+  pinID?: string | null;
 }
 
 interface PinData {
-  id: number;
+  id: string;
   longitude: number;
   latitude: number;
-  [key: string]: any; // Add other properties as needed
+  [key: string]: any;
 }
-
-const debug = true; // Set this to false to disable logging
-
-const iconSrc: string = "http://localhost:8100/icons/webp/ping1.webp"; // Replace with the correct URL to the pin icon
 
 // Predefined styles for clustering
 const distanceBetweenPinsBeforeClustering = 20; // Distance between pins before clustering
@@ -68,7 +66,7 @@ function createStyle(size: number = 0.3) {
     image: new Icon({
       anchor: [0.5, 0.96],
       crossOrigin: "anonymous",
-      src: iconSrc,
+      src: "http://localhost:8100/icons/webp/ping1.webp",
       scale: size,
     }),
   });
@@ -101,7 +99,7 @@ function createClusterStyle(feature: FeatureLike): Style {
   return style;
 }
 
-function Map({ APIurl }: MapProps) {
+function Map({ APIurl, pinID }: MapProps) {
   const { t } = useTranslation();
   const points: Feature[] = [];
 
@@ -111,6 +109,7 @@ function Map({ APIurl }: MapProps) {
 
   /* Hooks */
   const { makeRequest, data, error, isLoading } = useRequestData();
+  const { role } = useAuth();
 
   /* Functions */
   const openShowPinModal = () => setShowPinModal(true);
@@ -147,7 +146,7 @@ function Map({ APIurl }: MapProps) {
 
     const map = new OlMap({
       target: "map",
-      controls: defaultControls().extend([mousePositionControl]),
+      controls: role !== "admin" ? defaultControls().extend([mousePositionControl]) : defaultControls(),
       layers: [
         new TileLayer({
           source: new OSM(),
@@ -159,13 +158,12 @@ function Map({ APIurl }: MapProps) {
       ],
       view: view,
     });
-    getBrowserLocation(map, view);
 
     let lastLogTime = 0;
 
     // Add pointermove event listener to log mouse position
     map.on("pointermove", (event) => {
-      if (!debug) return; // Check if debug is true
+      if (role !== "admin") return;
       const currentTime = Date.now();
       if (currentTime - lastLogTime >= 1000) {
         lastLogTime = currentTime;
@@ -205,9 +203,24 @@ function Map({ APIurl }: MapProps) {
         }
       });
     });
+
+    if (pinID && data) {
+      const pin = data.find((pin: PinData) => pin.id === pinID);
+      if (pin) {
+        setSelectedPin(pin);
+        view.animate(
+          { center: fromLonLat([pin.longitude, pin.latitude]) },
+          { zoom: 19 },
+          { duration: 10000 }
+        );
+        openShowPinModal();
+      }
+    } else {
+      getBrowserLocation(view);
+    }
   }, [data]);
 
-  const getBrowserLocation = async (map: OlMap, view: View) => {
+  const getBrowserLocation = async (view: View) => {
     try {
       const position = await Geolocation.getCurrentPosition();
       const { latitude, longitude } = position.coords;
@@ -240,8 +253,9 @@ function Map({ APIurl }: MapProps) {
             className="close-button"
             onClick={closeShowPinModal}
             fill="clear"
+            shape="round"
           >
-            <IonIcon icon={close} />
+            <IonIcon slot="icon-only" icon={close} />
           </IonButton>
           <ShowPinModal pinData={selectedPin} />
         </div>

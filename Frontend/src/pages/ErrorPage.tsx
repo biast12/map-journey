@@ -1,5 +1,6 @@
 import { RouteComponentProps } from "react-router";
 import { useTranslation } from "react-i18next";
+import useAuth from "../hooks/ProviderContext";
 import "./ErrorPage.scss";
 
 interface ErrorPageProps
@@ -9,7 +10,8 @@ interface ErrorPageProps
 
 const ErrorPage: React.FunctionComponent<ErrorPageProps> = ({ match }) => {
   const { t } = useTranslation();
-  console.log(match);
+  const { role } = useAuth();
+  role === "admin" && console.log(match);
   return (
     <div id="errorContainer">
       <h1>
