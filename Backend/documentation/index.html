@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>API Documentation</title>
+    <title>Map-journey's API Documentation</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -60,8 +60,8 @@
     </style>
   </head>
   <body>
-    <h1>API Documentation</h1>
-    <p>Welcome to the API documentation. Below are the available API routes:</p>
+    <h1>Map-journey's API Documentation</h1>
+    <p>Welcome to Map-journey's API documentation. Below are the available API routes:</p>
     <span>NOTE: all api calls need the api key</span>
 
     <!-- USERS SECTION -->
@@ -91,7 +91,7 @@
       <section>
         <div>
           <h3>GET /users/all</h3>
-          <p>Retrieve a list of all users with their basic data.</p>
+          <p>Retrieve a list of all users with their basic data. You must provide: params= <code>userID</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>GET /users/all/00000000-000-0000-0000-000000000000</code></pre>
@@ -126,7 +126,7 @@
       <section>
         <div>
           <h3>GET /users/:id</h3>
-          <p>Retrieve a specific user by their ID.</p>
+          <p>Retrieve a specific user. You must provide: params= <code>userID</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>GET /users/00000000-000-0000-0000-000000000000</code></pre>
@@ -154,8 +154,8 @@
         <div>
           <h3>POST /users/:id</h3>
           <p>
-            Create a new user. You must provide <code>name</code>,
-            <code>email</code>, and <code>password</code>.
+            Create a new user. You must provide: params= <code>userID</code>. body= <code>name</code>,
+            <code>email</code>, <code>password</code>.
           </p>
         </div>
         <p>Example request:</p>
@@ -174,8 +174,8 @@
         <div>
           <h3>PUT /users/:id</h3>
           <p>
-            edit a user. You can provide <code>name</code>, <code>email</code>,
-            <code>password</code>, and <code>avatar</code>.
+            edit a user. You must provide: params= <code>userID</code>. body= <code>name</code>, <code>email</code>,
+            <code>password</code>, <code>avatar</code>.
           </p>
         </div>
         <p>Example request:</p>
@@ -194,7 +194,7 @@
       <section>
         <div>
           <h3>DELETE /users/:id</h3>
-          <p>delete a specific user by their ID.</p>
+          <p>delete a specific user. You must provide: params= <code>userID</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>DELETE /users/00000000-000-0000-0000-000000000000</code></pre>
@@ -275,7 +275,7 @@
       <section>
         <div>
           <h3>GET /notification/all/:id</h3>
-          <p>get all notifications</p>
+          <p>get all notifications. You must provide: params= <code>userID</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>GET /notification/all/00000000-000-0000-0000-000000000000</code></pre>
@@ -299,7 +299,7 @@
       <section>
         <div>
           <h3>GET /notification/:id/:artid</h3>
-          <p>Get a specific news article by ID.</p>
+          <p>Get a specific news article by ID. You must provide: params= <code>userID</code>, <code>newsID</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>GET /notification/00000000-000-0000-0000-000000000000/618334</code></pre>
@@ -315,7 +315,7 @@
         <div>
           <h3>POST /notification/:id</h3>
           <p>
-            Create a new news article. You must provide <code>title</code> and
+            Create a new news article. You must provide: params= <code>userID</code>. body= <code>title</code>,
             <code>text</code>.
           </p>
         </div>
@@ -338,7 +338,7 @@
         <div>
           <h3>PUT /notification/:id/:artid</h3>
           <p>
-            Update a news article by ID. You can provide <code>title</code> and
+            Update a news article by ID. You must provide: params= <code>userID</code>, <code>newsID</code>. body= <code>title</code>,
             <code>text</code>.
           </p>
         </div>
@@ -359,7 +359,7 @@
       <section>
         <div>
           <h3>DELETE /notification/:id/:artid</h3>
-          <p>Delete a news article by ID</p>
+          <p>Delete a news article by ID. You must provide: params= <code>userID</code>, <code>newsID</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>DELETE /notification/00000000-000-0000-0000-000000000000/618334</code></pre>
@@ -372,7 +372,7 @@
         <div>
           <h3>POST /notification/read/:id/:artid</h3>
           <p>
-            Mark a news article as read.
+            Mark a news article as read. You must provide: params= <code>userID</code>, <code>newsID</code>.
           </p>
         </div>
         <p>Example request:</p>
@@ -386,7 +386,7 @@
       <section>
         <div>
           <h3>POST /notification/readall/:id</h3>
-          <p>Mark all notifications as read</p>
+          <p>Mark all notifications as read. You must provide: params= <code>userID</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>POST /notification/readall/00000000-000-0000-0000-000000000000</code></pre>
@@ -442,7 +442,7 @@
       <section>
         <div>
           <h3>GET /pins/all/:id</h3>
-          <p>get all pins</p>
+          <p>get all pins. You must provide: params= <code>userID</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>GET /pins/all/00000000-000-0000-0000-000000000000</code></pre>
@@ -491,7 +491,7 @@
       <section>
         <div>
           <h3>GET /pins/:id</h3>
-          <p>Get pins by user ID</p>
+          <p>Get pins by user ID. You must provide: params= <code>userID</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>GET /pins/00000000-000-0000-0000-000000000000</code></pre>
@@ -521,9 +521,9 @@
       <section>
         <div>
           <h3>POST /pins/:id</h3>
-          <p>Create a new pin. You must provide <code>title</code>, <code>description</code>, <code>location</code>, 
-            <code>longitude</code>, <code>latitude</code> and <code>imgurls</code>, 
-            You can provide <code>groups</code> and <code>status</code>.</p>
+          <p>Create a new pin. You must provide: params= <code>userID</code>. body= <code>title</code>, <code>description</code>, <code>location</code>, 
+            <code>longitude</code>, <code>latitude</code>, <code>imgurls</code>, 
+            You can provide <code>groups</code>, <code>status</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>POST /pins/00000000-000-0000-0000-000000000000
@@ -545,8 +545,8 @@
       <section>
         <div>
           <h3>PUT /pins/:id/:pinid</h3>
-          <p>Edit a pin. You can provide <code>title</code>, <code>description</code>, <code>location</code>, 
-            <code>longitude</code>, <code>latitude</code>, <code>imgurls</code>, <code>groups</code> and <code>status</code>.</p>
+          <p>Edit a pin. You must provide: params= <code>userID</code>, <code>pinID</code>. You can provide: body= <code>title</code>, <code>description</code>, <code>location</code>, 
+            <code>longitude</code>, <code>latitude</code>, <code>imgurls</code>, <code>groups</code>, <code>status</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>PUT /pins/00000000-000-0000-0000-000000000000/00000000-000-0000-0000-000000000000
@@ -568,7 +568,7 @@
       <section>
         <div>
           <h3>DELETE /pins/:id/:pinid</h3>
-          <p>Delete a pin.</p>
+          <p>Delete a pin. You must provide: params= <code>userID</code>, <code>pinID</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>DELETE /pins/00000000-000-0000-0000-000000000000/00000000-000-0000-0000-000000000000</code></pre>
@@ -625,7 +625,7 @@
       <section>
         <div>
           <h3>GET /reports/all/:id</h3>
-          <p>Get all reports.</p>
+          <p>Get all reports. You must provide: params= <code>userID</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>GET /reports/all/00000000-000-0000-0000-000000000000</code></pre>
@@ -679,7 +679,7 @@
       <section>
         <div>
           <h3>POST /reports/:id</h3>
-          <p>Make a report. You must provide <code>text</code> and <code>reported_user_id</code> or <code>reported_pin_id</code>.</p>
+          <p>Make a report. You must provide: params= <code>userID</code>. body= <code>text</code> and <code>reported_user_id</code> or <code>reported_pin_id</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>POST /reports/00000000-000-0000-0000-000000000000
@@ -701,7 +701,7 @@
       <section>
         <div>
           <h3>DELETE /reports/:id</h3>
-          <p>Delete a report.</p>
+          <p>Delete a report. You must provide: params= <code>userID</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>DELETE /reports/00000000-000-0000-0000-000000000000</code></pre>
@@ -754,7 +754,7 @@
       <section>
         <div>
           <h3>GET /settings/:id</h3>
-          <p>Get a user's settings</p>
+          <p>Get a user's settings. You must provide: params= <code>userID</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>GET /settings/00000000-000-0000-0000-000000000000</code></pre>
@@ -769,7 +769,7 @@
       <section>
         <div>
           <h3>PUT /settings/:id</h3>
-          <p>edit a user's settings You can provide <code>maptheme</code>, <code>language</code> and <code>notification</code>.</p>
+          <p>edit a user's settings. You must provide: params= <code>userID</code>. You can provide: body= <code>maptheme</code>, <code>language</code>, <code>notification</code>, <code>status</code>.</p>
         </div>
         <p>Example request:</p>
         <pre><code>PUT /settings/00000000-000-0000-0000-000000000000
