@@ -1,10 +1,12 @@
-import { IonRow } from "@ionic/react";
+import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
 import useRequestData from "../../hooks/useRequestData";
 import { useEffect, useState } from "react";
 import ReportColumn from "./ReportColumn";
 
 import "./ReportManagement.scss";
 import Modal from "../Modal";
+import ReportUserDisplay from "./ReportDisplays/ReportUserDisplay";
+import ReportPinDisplay from "./ReportDisplays/ReportPinDisplay";
 
 type ReportUser = {
   id: string;
@@ -40,6 +42,14 @@ const ReportManagement = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedReport, setSelectedReport] = useState<null | ReportData>(null);
 
+  function handleReportAction(reportData: ReportData, body: {[key: string]: any}) {
+
+    makeRequest(`reports/${reportData.id}`, "PUT", undefined, body);
+
+    setSelectedReport(null);
+    setShowModal(false);
+  }
+
   useEffect(() => {
     makeRequest("reports/all");
   }, []);
@@ -52,18 +62,39 @@ const ReportManagement = () => {
     <>
       <Modal isOpen={showModal} onCloseModal={() => setShowModal(false)}>
         {selectedReport && (
-          <div id="reportModal">
-            <p>Id: {selectedReport.id}</p>
-            <p>Date: {new Date(selectedReport.date).toLocaleString()}</p>
-            <p>Reporting User: {selectedReport.reporting_user.name}</p>
-            {selectedReport.reported_user && <p>Reported User: {selectedReport.reported_user.name}</p>}
-            {selectedReport.reported_pin && <p>Reported User: {selectedReport.reported_pin.title}</p>}
-          </div>
+          <IonGrid id="reportModalGrid">
+            <IonRow>
+              <IonCol id="reportModalTop" size="12">
+                <p>Id: {selectedReport.id}</p>
+                <p>Date: {new Date(selectedReport.date).toUTCString()}</p>
+              </IonCol>
+            </IonRow>
+            <IonRow id="reportModalContent">
+              <ReportUserDisplay header="Reporting User:" reportUser={selectedReport.reporting_user} />
+              {selectedReport.reported_user ? (
+                <ReportUserDisplay header="Reported User:" reportUser={selectedReport.reported_user} />
+              ) : (
+                selectedReport.reported_pin && <ReportPinDisplay reportPin={selectedReport.reported_pin} />
+              )}
+              <IonCol size="12">Reasoning: {selectedReport.text}</IonCol>
+            </IonRow>
+            <IonRow id="reportButtonsRow">
+              <IonCol size="4" className="reportButtons">
+                <IonButton color={"success"}>Dismiss</IonButton>
+              </IonCol>
+              <IonCol size="4" className="reportButtons">
+                <IonButton color={"warning"}>Warn</IonButton>
+              </IonCol>
+              <IonCol size="4" className="reportButtons">
+                <IonButton color={"danger"}>Ban</IonButton>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
         )}
       </Modal>
       <IonRow id="reportsRow">
         {data &&
-          data.map((reportData: ReportData) => (
+          data.sort((a: ReportData, b: ReportData)=>new Date(b.date).getTime()-new Date(a.date).getTime()).map((reportData: ReportData) => (
             <ReportColumn
               key={reportData.id}
               reportData={reportData}

@@ -31,7 +31,13 @@ interface ReportData {
   reported_pin?: ReportPin;
 }
 
-const ReportColumn = ({ reportData, onManageClick }: { reportData: ReportData, onManageClick: (e: MouseEvent)=>void }) => {
+const ReportColumn = ({
+  reportData,
+  onManageClick,
+}: {
+  reportData: ReportData;
+  onManageClick: (e: MouseEvent) => void;
+}) => {
   const date = new Date(reportData.date);
 
   return (
@@ -39,16 +45,16 @@ const ReportColumn = ({ reportData, onManageClick }: { reportData: ReportData, o
       <section className="reportCon">
         <div className="reportId">
           <p>Id: {reportData.id}</p>
+          <p>Date: {date.toUTCString()}</p>
         </div>
         <div className="reportInfo">
-          <p>Reporting User: {reportData.reporting_user.name}</p>
-          <p>Date: {date.toLocaleString()}</p>
-          <p>Active: {String(reportData.active)}</p>
+          <p>Active: {reportData.active ? "True" : "False"}</p>
+          <p>Type: {reportData.reported_user ? "User" : "Pin"}</p>
+          <p>Reporter: {reportData.reporting_user.name}</p>
+          <p>Text: {reportData.text}</p>
         </div>
       </section>
-      <section className="reportText">
-        <p>Report text: {reportData.text}</p>
-      </section>
+      <section className="reportText"></section>
       <IonButton onClick={onManageClick}>Manage</IonButton>
     </IonCol>
   );
