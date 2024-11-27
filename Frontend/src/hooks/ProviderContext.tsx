@@ -3,9 +3,12 @@ import { Preferences } from "@capacitor/preferences";
 
 interface ProviderContextProps {
   userID: string | null;
+  role: string | null;
   loading: boolean;
   storeAuthToken: (token: string) => Promise<void>;
   clearAuthToken: () => Promise<void>;
+  storeRoleToken: (token: string) => Promise<void>;
+  clearRoleToken: () => Promise<void>;
 }
 
 const ProviderContext = createContext<ProviderContextProps | undefined>(
@@ -16,6 +19,7 @@ export const ProviderContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [userID, setUserID] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   /* Auth */
@@ -47,11 +51,42 @@ export const ProviderContextProvider: React.FC<{
     }
   };
 
+  /* Role */
+  const storeRoleToken = async (token: string) => {
+    try {
+      await Preferences.set({ key: "roleToken", value: token });
+      setRole(token);
+    } catch (error) {
+      console.error("Failed to store role token", error);
+    }
+  };
+
+  const clearRoleToken = async () => {
+    try {
+      await Preferences.remove({ key: "roleToken" });
+      setRole(null);
+    } catch (error) {
+      console.error("Failed to clear role token", error);
+    }
+  };
+
+  const getRoleToken = async () => {
+    try {
+      const { value } = await Preferences.get({ key: "roleToken" });
+      return value;
+    } catch (error) {
+      console.error("Failed to get role token", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     async function initialize() {
       try {
         const authToken = await getAuthToken();
         if (authToken) setUserID(authToken);
+        const roleToken = await getRoleToken();
+        if (roleToken) setRole(roleToken);
       } catch (error) {
         console.error("Failed to initialize tokens", error);
       } finally {
@@ -64,9 +99,12 @@ export const ProviderContextProvider: React.FC<{
 
   const contextValue = {
     userID,
+    role,
     loading,
     storeAuthToken,
     clearAuthToken,
+    storeRoleToken,
+    clearRoleToken,
   };
 
   return (

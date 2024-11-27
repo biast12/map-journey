@@ -25,7 +25,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   const { t } = useTranslation();
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { userID, loading } = useAuth();
+  const { userID, role, loading } = useAuth();
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
                 <IonBadge color="danger">{data.news_count}</IonBadge>
               )}
             </IonButton>
-            {data && data.role === "admin" && (
+            {role === "admin" && (
               <IonButton routerLink="/admin" fill="clear">
                 <IonIcon aria-hidden="true" icon={shieldHalf} />
               </IonButton>

@@ -29,7 +29,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
   const toast = useRef<HTMLIonToastElement>(null);
   const { t } = useTranslation();
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { storeAuthToken } = useAuth();
+  const { storeAuthToken, storeRoleToken } = useAuth();
 
   async function handleLogin(formEvent: FormEvent) {
     formEvent.preventDefault();
@@ -50,6 +50,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
       setLoginSuccess(true);
       toast.current?.present();
       storeAuthToken(data.user.id);
+      storeRoleToken(data.user.role);
       closeLoginModal();
     } else if (error) {
       setLoginSuccess(false);

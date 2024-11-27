@@ -12,6 +12,7 @@ import { isPlatform } from "@ionic/react";
 import { useEffect, useState } from "react";
 import Compressor from "compressorjs";
 import useSupabaseClient from "./useSupabaseClient";
+import useAuth from "./ProviderContext";
 
 export interface UserPhoto {
   filePath: string;
@@ -20,6 +21,8 @@ export interface UserPhoto {
 
 const PHOTO_PREF_REF = "photos";
 export const usePhotoGallery = () => {
+  const { role } = useAuth();
+
   const [photo, setPhoto] = useState<UserPhoto>();
   const [blob, setBlob] = useState<Blob>();
 
@@ -39,7 +42,7 @@ export const usePhotoGallery = () => {
       quality: 100,
     });
 
-    console.log("takePhoto", photo);
+    role === "admin" && console.log("takePhoto", photo);
 
     const imageUrl = photo.path || photo.webPath;
     const newPath = Capacitor.convertFileSrc(imageUrl!);
@@ -120,7 +123,7 @@ export const usePhotoGallery = () => {
     const response = await fetch(path);
     const blob = await response.blob();
 
-    console.log("uncompressed blob", blob);
+    role === "admin" && console.log("uncompressed blob", blob);
 
     const time = new Date().getTime();
     const fileName = `userImage-${time}.jpg`;
@@ -131,7 +134,7 @@ export const usePhotoGallery = () => {
         convertTypes: ["image/jpeg", "image/png"],
         convertSize: 10000,
         success: async (compressedResult: Blob) => {
-          console.log("compressed blob", compressedResult);
+          role === "admin" && console.log("compressed blob", compressedResult);
           const savedFileImage = await checkCompressedImage(
             fileName,
             compressedResult
@@ -147,16 +150,16 @@ export const usePhotoGallery = () => {
   }
 
   async function checkCompressedImage(fileName: string, image: Blob) {
-    console.log("Blob", image);
+    role === "admin" && console.log("Blob", image);
     setBlob(image);
     const base64 = await base64FromBlob(image);
-    console.log("Base64", base64);
+    role === "admin" && console.log("Base64", base64);
     const savedFileImage = await savePhoto(
       { webPath: base64 } as Photo,
       fileName
     );
     savedFileImage.webViewPath = base64;
-    console.log("savedFileImage", savedFileImage);
+    role === "admin" && console.log("savedFileImage", savedFileImage);
     setPhoto(savedFileImage);
     return savedFileImage;
   }
@@ -167,7 +170,7 @@ export const usePhotoGallery = () => {
     image: Blob,
     fileType: string
   ) {
-    console.log("upload image", image);
+    role === "admin" && console.log("upload image", image);
 
     const { data, error } = await useSupabaseClient.storage
       .from(toStorage)
@@ -182,7 +185,7 @@ export const usePhotoGallery = () => {
       return null;
     }
 
-    console.log("Uploaded image:", data);
+    role === "admin" && console.log("Uploaded image:", data);
     return data;
   }
 
