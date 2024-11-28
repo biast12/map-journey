@@ -1,4 +1,4 @@
-import { useRef, useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import {
   IonCard,
   IonCardHeader,
@@ -6,14 +6,15 @@ import {
   IonButton,
   IonInput,
   IonInputPasswordToggle,
-  IonToast,
 } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
+import profanityFilter from "../../utils/profanityFilter";
 import "./CreateUserModal.scss";
-import Loader from "../../components/Loader";
-import Error from "../../components/Error";
+import Loader from "../Loader";
+import Error from "../Error";
+import Toast, { showToastMessage } from "../Toast";
 
 interface CreateUserProps {
   closeCreateUserModal: () => void;
@@ -25,10 +26,16 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   closeLoginModal,
 }) => {
   const [createSuccess, setCreateSuccess] = useState<boolean | null>(null);
-  const toast = useRef<HTMLIonToastElement>(null);
+
   const { t } = useTranslation();
   const { makeRequest, isLoading, data, error } = useRequestData();
-  const { role } = useAuth();
+  const {
+    role,
+    storeAuthToken,
+    storeRoleToken,
+    clearAuthToken,
+    clearRoleToken,
+  } = useAuth();
 
   async function handleCreateUser(formEvent: FormEvent) {
     formEvent.preventDefault();
@@ -37,6 +44,16 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
     const name = formData.get("name");
     const email = formData.get("email");
     const password = formData.get("password");
+
+    if (!name || !email || !password) {
+      showToastMessage(t("required_fields"));
+      return;
+    }
+
+    if (profanityFilter(name as string)) {
+      showToastMessage(t("profanityFilter"));
+      return;
+    }
 
     role === "admin" && console.log("formData: ", formData);
 
@@ -51,12 +68,15 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   useEffect(() => {
     if (data) {
       setCreateSuccess(true);
-      toast.current?.present();
+      storeAuthToken(data.id);
+      storeRoleToken(data.role);
       closeCreateUserModal();
       closeLoginModal();
-      role === "admin" && console.log("User created successfully");
     } else if (error) {
       setCreateSuccess(false);
+      showToastMessage("User creation failed");
+      clearAuthToken();
+      clearRoleToken();
     }
   }, [error, data]);
 
@@ -120,12 +140,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
         >
           {t("modals.create_user.close")}
         </IonButton>
-        <IonToast
-          ref={toast}
-          message="User created successfully"
-          position="bottom"
-          duration={1500}
-        ></IonToast>
+        <Toast />
       </IonCard>
     </>
   );

@@ -8,7 +8,6 @@ import {
   IonImg,
   IonInput,
   IonItem,
-  IonTextarea,
   IonToggle,
 } from "@ionic/react";
 import { camera, locationSharp } from "ionicons/icons";
@@ -20,6 +19,8 @@ import { useTranslation } from "react-i18next";
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
 import useImageHandler from "../../hooks/useImageHandler";
+import profanityFilter from "../../utils/profanityFilter";
+import Toast, { showToastMessage } from "../Toast";
 
 interface CreatePinModalProps {
   onClose: () => void;
@@ -68,7 +69,12 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
 
   const handleConfirm = async () => {
     if (!title || !photoUrl || !description || !location || !coordinates) {
-      console.error("All fields are required");
+      showToastMessage(t("required_fields"));
+      return;
+    }
+
+    if (profanityFilter(title) || profanityFilter(description)) {
+      showToastMessage(t("profanityFilter"));
       return;
     }
 
@@ -202,6 +208,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
           {t("modals.create_pin.submit")}
         </IonButton>
       </div>
+      <Toast />
     </IonCard>
   );
 };

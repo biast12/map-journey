@@ -1,5 +1,7 @@
 {
   "lang": "English",
+  "required_fields": "All fields are required.",
+  "profanityFilter": "Your input contains inappropriate language.",
   "header": {
     "error_page_message": "Failed fetching user! Please try again later"
   },
@@ -96,9 +98,11 @@
         "username": "Username",
         "email": "Email",
         "password": "Password",
+        "required_fields": "Username and Email fields are required",
         "submit": "Save",
         "successful": "Account updated successfully",
         "failed": "Account update failed! Check the inputs",
+        "error_fetch": "Error updating user data",
         "error_page_message": "Failed to get users, please try again later",
         "delete": {
           "header": "Delete Account",

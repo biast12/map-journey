@@ -1,5 +1,7 @@
 {
   "lang": "Deutsch",
+  "required_fields": "Alle Felder sind erforderlich.",
+  "profanityFilter": "Ihre Eingabe enthält unangemessene Sprache.",
   "header": {
     "error_page_message": "Benutzer konnte nicht abgerufen werden! Bitte versuchen Sie es später erneut"
   },
@@ -97,9 +99,11 @@
         "username": "Benutzername",
         "email": "E-Mail",
         "password": "Passwort",
+        "required_fields": "Benutzername und E-Mail-Felder sind erforderlich",
         "submit": "Speichern",
         "successful": "Konto erfolgreich aktualisiert",
         "failed": "Kontoaktualisierung fehlgeschlagen! Überprüfen Sie die Eingaben",
+        "error_fetch": "Fehler beim Aktualisieren der Benutzerdaten",
         "error_page_message": "Benutzer konnten nicht abgerufen werden, bitte versuchen Sie es später erneut",
         "Delete": {
           "header": "Löschen",

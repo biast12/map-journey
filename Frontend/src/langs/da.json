@@ -1,5 +1,7 @@
 {
   "lang": "Dansk",
+  "required_fields": "Alle felter er påkrævet.",
+  "profanityFilter": "Din indtastning indeholder upassende sprog.",
   "header": {
     "error_page_message": "Kunne ikke hente bruger! Prøv igen senere"
   },
@@ -96,9 +98,11 @@
         "username": "Brugernavn",
         "email": "Email",
         "password": "Adgangskode",
+        "required_fields": "Brugernavn og e-mail felter er påkrævet",
         "submit": "Gem",
         "successful": "Konto opdateret succesfuldt",
         "failed": "Kontoopdatering mislykkedes! Tjek indtastningerne",
+        "error_fetch": "Fejl ved opdatering af brugerdata",
         "error_page_message": "Kunne ikke hente brugere, prøv igen senere",
         "Delete": {
           "header": "Slet",

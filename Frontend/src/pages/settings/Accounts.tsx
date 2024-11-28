@@ -7,7 +7,6 @@ import {
   IonButton,
   IonIcon,
   IonInput,
-  IonToast,
   IonModal,
   IonAlert,
 } from "@ionic/react";
@@ -23,6 +22,7 @@ import { useAuth } from "../../hooks/ProviderContext";
 /* Components */
 import Loader from "../../components/Loader";
 import Error from "../../components/Error";
+import Toast, { showToastMessage } from "../../components/Toast";
 
 import "./Accounts.scss";
 
@@ -43,7 +43,6 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
   const [email, setEmail] = useState(userData.email);
   const [password, setPassword] = useState("");
   const [avatar, setAvatar] = useState(userData.avatar);
-  const [showToast, setShowToast] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   /* Hooks */
@@ -80,6 +79,11 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
       email: email,
     };
 
+    if (!updatedData.name || !updatedData.email) {
+      showToastMessage(t("pages.settings.accounts.required_fields"));
+      return;
+    }
+
     if (password) {
       updatedData = { ...updatedData, password };
     }
@@ -94,12 +98,12 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
     );
 
     if (!error) {
-      setShowToast(true);
+      showToastMessage(t("pages.settings.accounts.successful"));
       await removeImage(userData.avatar).catch((error) =>
         console.error("Error removing old image:", error)
       );
     } else {
-      console.error("Error updating user data");
+      showToastMessage(t("pages.settings.accounts.error_fetch"));
     }
   };
 
@@ -160,12 +164,6 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
             {t("pages.settings.accounts.delete.header")}
           </IonButton>
         </div>
-        <IonToast
-          isOpen={showToast}
-          onDidDismiss={() => setShowToast(false)}
-          message={t("pages.settings.accounts.successful")}
-          duration={2000}
-        />
         <IonModal
           isOpen={showDeleteModal}
           onDidDismiss={() => setShowDeleteModal(false)}
@@ -196,6 +194,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
             ]}
           />
         </IonModal>
+        <Toast />
       </IonContent>
     </>
   );
