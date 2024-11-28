@@ -139,6 +139,7 @@ router.post("/", async (req, res) => {
         email,
         password: hashedPassword,
         settings_id: settingsData.id,
+        new_notifications: [],
       },
     ]);
 

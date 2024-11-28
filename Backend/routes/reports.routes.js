@@ -189,53 +189,33 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
     .eq("id", profile_id)
     .single();
 
-  if (reportingUser.status === "banned") {
-    return res
-      .status(403)
-      .json({ message: "You are banned and cannot create a report." });
-  }
-
   if (reportingUserError || !reportingUser) {
     return res.status(404).json({ message: "Reporting user not found" });
   }
 
-  if (reported_user_id) {
-    if (!isValidUUID(reported_user_id)) {
-      return res
-        .status(400)
-        .json({ message: "reported_user_id must be a valid UUID" });
-    }
-
-    const { data: reportedUser, error: reportedUserError } = await supabase
-      .from("profile")
-      .select("id")
-      .eq("id", reported_user_id)
-      .single();
-
-    if (reportedUserError || !reportedUser) {
-      return res.status(404).json({ message: "Reported user not found" });
-    }
-  }
-
-  if (reported_pin_id) {
-    if (!isValidUUID(reported_pin_id)) {
-      return res
-        .status(400)
-        .json({ message: "reported_pin_id must be a valid UUID" });
-    }
-
-    const { data: reportedPin, error: reportedPinError } = await supabase
-      .from("pins")
-      .select("id")
-      .eq("id", reported_pin_id)
-      .single();
-
-    if (reportedPinError || !reportedPin) {
-      return res.status(404).json({ message: "Reported pin not found" });
-    }
+  if (reportingUser.status === "banned") {
+    return res.status(403).json({ message: "You are banned and cannot create a report." });
   }
 
   try {
+    const { data: existingReports, error: reportFetchError } = await supabase
+      .from("reports")
+      .select("*")
+      .eq("profile_id", profile_id);
+
+    if (reportFetchError) {
+      console.error("Error checking existing report:", reportFetchError);
+      return res.status(500).json({ message: "Error checking existing report" });
+    }
+
+    const isDuplicateReport = existingReports.some(report => 
+      report.reported_user_id === reported_user_id || report.reported_pin_id === reported_pin_id
+    );
+
+    if (isDuplicateReport) {
+      return res.status(403).json({ message: "You can't report this user or pin again." });
+    }
+
     const { data: reportData, error: reportError } = await supabase
       .from("reports")
       .insert([
@@ -250,72 +230,10 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
 
     if (reportError) throw reportError;
 
-    if (reported_user_id) {
-      const { count: profileReportCount, error: profileCountError } =
-        await supabase
-          .from("reports")
-          .select("*", { count: "exact" })
-          .eq("reported_user_id", reported_user_id)
-          .eq("active", true);
-
-      if (profileCountError) throw profileCountError;
-
-      if (profileReportCount >= Maxnumber) {
-        const { data: profileData, error: profileError } = await supabase
-          .from("profile")
-          .select("status")
-          .eq("id", reported_user_id)
-          .single();
-
-        if (profileError) throw profileError;
-
-        if (
-          profileData.status !== "offline" &&
-          profileData.status !== "reported"
-        ) {
-          const { error: updateProfileError } = await supabase
-            .from("profile")
-            .update({ status: "reported" })
-            .eq("id", reported_user_id);
-
-          if (updateProfileError) throw updateProfileError;
-        }
-      }
-    }
-
-    if (reported_pin_id) {
-      const { count: pinReportCount, error: pinCountError } = await supabase
-        .from("reports")
-        .select("*", { count: "exact" })
-        .eq("reported_pin_id", reported_pin_id)
-        .eq("active", true);
-
-      if (pinCountError) throw pinCountError;
-
-      if (pinReportCount >= Maxnumber) {
-        const { data: pinData, error: pinError } = await supabase
-          .from("pins")
-          .select("status")
-          .eq("id", reported_pin_id)
-          .single();
-
-        if (pinError) throw pinError;
-
-        if (pinData.status !== "offline" && pinData.status !== "reported") {
-          const { error: updatePinError } = await supabase
-            .from("pins")
-            .update({ status: "reported" })
-            .eq("id", reported_pin_id);
-
-          if (updatePinError) throw updatePinError;
-        }
-      }
-    }
     res.status(201).json({ message: "Report created successfully" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to create report", error: error.message });
+    console.error("Error during report creation:", error);
+    res.status(500).json({ message: "Failed to create report", error: error.message });
   }
 });
 
