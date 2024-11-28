@@ -2,27 +2,11 @@ const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
 const bcrypt = require("bcrypt");
-const crypto = require("crypto");
 const checkApiKey = require("../utils/apiKeyCheck");
 const generateUniqueId = require("../utils/uuid-generator");
 const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
-
-// Root route
-router.get("/", (req, res) => {
-  res.json({
-    message: "User Route",
-    routes: {
-      "/all": "Get all users and their data",
-      "/:id": "Get a user by User ID",
-      "/": "Create a new user and default settings",
-      "/login": "Login route",
-      "/:id": "Update a user by User ID",
-      "/:id": "Delete a user by User ID",
-    },
-  });
-});
 
 // Get all users
 router.get("/all/:id", checkUserRole("user"), async (req, res) => {
@@ -82,7 +66,7 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
 });
 
 // Create a new user and default settings
-router.post("/:id", async (req, res) => {
+router.post("/", async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -255,6 +239,73 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
       .from("profile")
       .update(updatedFields)
       .eq("id", userID)
+      .single();
+
+    if (error) {
+      console.error("Error updating user:", error);
+      return res.status(500).json({ error: "Error updating user" });
+    }
+
+    res.status(200).json({ message: "User updated successfully", user: data });
+  } catch (error) {
+    console.error("Error during user update:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Admin Update a user by User ID
+router.put("/:id/:userid", checkUserRole("admin"), async (req, res) => {
+  const userID = req.params.userid;
+  const { name, email, password, avatar, status, role } = req.body;
+
+  try {
+    const { data: currentUser, error: fetchError } = await supabase
+      .from("profile")
+      .select("status, role")
+      .eq("id", userID)
+      .single();
+
+    if (fetchError) {
+      console.error("Error fetching user status:", fetchError);
+      return res.status(500).json({ error: "Error fetching user status" });
+    }
+
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (currentUser.status === "banned") {
+      return res.status(403).json({ error: "Cannot update a banned user" });
+    }
+
+    const updatedFields = {};
+    if (avatar) updatedFields.avatar = avatar;
+    if (name) updatedFields.name = name;
+    if (email) updatedFields.email = email;
+    if (password) updatedFields.password = await bcrypt.hash(password, 10);
+
+    if (status) {
+      const allowedStatuses = ["public", "private"];
+      if (!allowedStatuses.includes(status)) {
+        return res.status(400).json({ error: "Invalid status value. Allowed values are 'public' or 'private'." });
+      }
+      updatedFields.status = status;
+    }
+
+    if (role) {
+      const allowedRoles = ["user", "admin"];
+      if (!allowedRoles.includes(role)) {
+        return res.status(400).json({ error: "Invalid role value. Allowed values are 'user' or 'admin'." });
+      }
+      updatedFields.role = role;
+    }
+
+    // Update the user in the database
+    const { data, error } = await supabase
+      .from("profile")
+      .update(updatedFields)
+      .eq("id", userID)
+      .select()
       .single();
 
     if (error) {

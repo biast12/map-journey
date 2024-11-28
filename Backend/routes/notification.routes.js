@@ -57,20 +57,6 @@ const addNotificationID = (currentNotifications, newID) => {
   return compressNotificationIDs(uniqueNotifications);
 };
 
-// Root route
-router.get("/", (req, res) => {
-  res.json({
-    message: "Notification Route",
-    routes: {
-      "/all": "Get all news articles",
-      "/": "Create a new news article",
-      "/:id": "Update a news article by ID",
-      "/:id": "Delete a news article by ID",
-      "/readall/:id": "Mark all notifications as read",
-    },
-  });
-});
-
 // Get all news articles
 router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   try {

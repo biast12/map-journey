@@ -34,26 +34,6 @@
       <p>Manage user accounts and settings.</p>
       <section>
         <div>
-          <h3>GET /users</h3>
-          <p>Retrieve basic information about the user routes.</p>
-        </div>
-        <p>Example request:</p>
-        <pre><code>GET /users/</code></pre>
-        <p>Example response:</p>
-        <pre><code>{
-  "message": "User Route",
-  "routes": {
-    "/all/:id": "Get all users",
-    "/:id": "Get a user by User ID",
-    "/:id": "Create a new user",
-    "/login": "Login route"
-    "/:id": "Update a user by User ID",
-    "/:id": "Delete a user by User ID",
-  }
-}</code></pre>
-      </section>
-      <section>
-        <div>
           <h3>GET /users/all</h3>
           <p>Retrieve a list of all users with their basic data. You must
             provide: params= <code>userID</code>.</p>
@@ -222,25 +202,6 @@
       <p>Manage user notifications.</p>
       <section>
         <div>
-          <h3>GET /notification</h3>
-          <p>Retrieve basic information about the notification routes.</p>
-        </div>
-        <p>Example request:</p>
-        <pre><code>GET /notification/</code></pre>
-        <p>Example response:</p>
-        <pre><code>{
-  "message": "Notification Route",
-  "routes": {
-    "/all/:id": "Get all news articles",
-    "/:id": "Create a new news article",
-    "/:id/:artid": "Update a news article by ID",
-    "/:id/:artid": "Delete a news article by ID",
-    "/readall/:id": "Mark all notifications as read"
-  }
-}</code></pre>
-      </section>
-      <section>
-        <div>
           <h3>GET /notification/all/:id</h3>
           <p>get all notifications. You must provide: params=
             <code>userID</code>.</p>
@@ -362,25 +323,6 @@
     <article id="pin-endpoints">
       <h2>Pins</h2>
       <p>Manage user pins or posts.</p>
-      <section>
-        <div>
-          <h3>GET /pins</h3>
-          <p>Retrieve basic information about the pin routes.</p>
-        </div>
-        <p>Example request:</p>
-        <pre><code>GET /pins/</code></pre>
-        <p>Example response:</p>
-        <pre><code>{
-  "message": "Pins Route",
-  "routes": {
-    "/all/:id": "Get all pins data by user ID",
-    "/:id": "Get pins by user ID",
-    "/:id": "Create a new pin",
-    "/:id/:pinid": "Update a pin by User ID and Pin ID",
-    "/:id/:pinid": "Delete a pin by User ID and Pin ID"
-  }
-}</code></pre>
-      </section>
       <section>
         <div>
           <h3>GET /pins/all/:id</h3>
@@ -556,23 +498,6 @@
 
       <section>
         <div>
-          <h3>GET /reports</h3>
-          <p>Retrieve basic information about the reports routes.</p>
-        </div>
-        <p>Example request:</p>
-        <pre><code>GET /reports/</code></pre>
-        <p>Example response:</p>
-        <pre><code>{
-  "message": "reports Route",
-  "routes": {
-    "/all/:id": "Get all reports",
-    "/:id": "Create a new report",
-    "/:id": "Delete a report by ID"
-  }
-}</code></pre>
-      </section>
-      <section>
-        <div>
           <h3>GET /reports/all/:id</h3>
           <p>Get all reports. You must provide: params= <code>userID</code>.</p>
         </div>
@@ -708,22 +633,6 @@
       <h2>Settings</h2>
       <p>Manage user settings.</p>
 
-      <section>
-        <div>
-          <h3>GET /settings</h3>
-          <p>Retrieve basic information about the settings routes.</p>
-        </div>
-        <p>Example request:</p>
-        <pre><code>GET /settings/</code></pre>
-        <p>Example response:</p>
-        <pre><code>{
-  "message": "settings Route",
-  "routes": {
-    "/:id": "Get a user's settings by Settings ID",
-    "/:id": "Update a user's settings by Settings ID"
-  }
-}</code></pre>
-      </section>
       <section>
         <div>
           <h3>GET /settings/:id</h3>

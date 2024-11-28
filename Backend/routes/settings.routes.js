@@ -7,19 +7,6 @@ const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
-
-// Root route
-router.get("/", (req, res) => {
-  res.json({
-    message: "Settings Route",
-    routes: {
-      "/:id": "Get a user's settings by Settings ID",
-      "/:id": "Update a user's settings by Settings ID",
-    },
-  });
-});
-
-
 // Get a user's settings by Profile ID or Settings ID
 router.get("/:id", checkUserRole("user"), async (req, res) => {
   const id = req.params.id;
@@ -78,7 +65,6 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // Update a user's settings by Settings ID
 router.put("/:id", checkUserRole("user"), async (req, res) => {
@@ -153,7 +139,5 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-
 
 module.exports = router;

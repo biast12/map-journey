@@ -15,18 +15,6 @@ function isValidUUID(uuid) {
   return uuidRegex.test(uuid);
 }
 
-// Root route
-router.get("/", (req, res) => {
-  res.json({
-    message: "reports Route",
-    routes: {
-      "/all": "Get all reports",
-      "/:id": "Create a new report",
-      "/:id": "Delete a report by ID",
-    },
-  });
-});
-
 // Get all reports
 router.get("/all/:id", checkUserRole("admin"), async (req, res) => {
   try {
@@ -331,6 +319,7 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
   }
 });
 
+// admin actions: dismiss / warn / ban
 router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
   const { rpid } = req.params;
   const { action } = req.body;
@@ -353,6 +342,51 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
     }
 
     const { reported_user_id, reported_pin_id } = report;
+
+    if (reported_pin_id) {
+      const { data: pin, error: pinFetchError } = await supabase
+        .from("pins")
+        .select("profile_id")
+        .eq("id", reported_pin_id)
+        .single();
+
+      if (pinFetchError) throw pinFetchError;
+
+      if (pin && pin.profile_id === reported_user_id) {
+        const { data: pinOwner, error: pinOwnerFetchError } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", pin.profile_id)
+          .single();
+
+        if (pinOwnerFetchError) throw pinOwnerFetchError;
+
+        if (pinOwner.role === "admin") {
+          return res
+            .status(403)
+            .json({
+              message: "Cannot perform actions on pins owned by admin users",
+            });
+        }
+      }
+    }
+
+    if (reported_user_id) {
+      // Check if the reported user is an admin
+      const { data: reportedUser, error: userFetchError } = await supabase
+        .from("users")
+        .select("role")
+        .eq("id", reported_user_id)
+        .single();
+
+      if (userFetchError) throw userFetchError;
+
+      if (reportedUser.role === "admin") {
+        return res
+          .status(403)
+          .json({ message: "Cannot perform actions on admin users" });
+      }
+    }
 
     switch (action) {
       case "dismiss":

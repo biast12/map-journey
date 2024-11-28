@@ -7,26 +7,11 @@ const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
-// Root route
-router.get("/", (req, res) => {
-  res.json({
-    message: "Pins Route",
-    routes: {
-      "/all/:id": "Get all pins data by user ID",
-      "/:id": "Get pins by user ID",
-      "/:id": "Create a new pin",
-      "/:id/:pinid": "Update a pin by User ID and Pin ID",
-      "/:id/:pinid": "Delete a pin by User ID and Pin ID",
-    },
-  });
-});
-
 // Get all public pins
 router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
 
   try {
-    // Fetch the user's profile to check if they are banned
     const { data: userProfile, error: userProfileError } = await supabase
       .from("profile")
       .select("status")
@@ -38,10 +23,8 @@ router.get("/all/:id", checkUserRole("user"), async (req, res) => {
       return res.status(500).json({ error: "Error fetching user profile" });
     }
 
-    // Check if the user is banned
     const isUserBanned = userProfile.status === "banned";
 
-    // Fetch only public pins
     const { data: pins, error } = await supabase
       .from("pins")
       .select(
@@ -66,9 +49,8 @@ router.get("/all/:id", checkUserRole("user"), async (req, res) => {
     for (let pin of pins) {
       if (!pin.profile) continue;
 
-      // If the user is banned, mark all pins as reported
       if (isUserBanned) {
-        pin.reported = true; // Mark as reported
+        pin.reported = true;
         filteredPins.push(pin);
       } else {
         const { data: reportData, error: reportError } = await supabase
@@ -82,7 +64,6 @@ router.get("/all/:id", checkUserRole("user"), async (req, res) => {
           return res.status(500).json({ error: "Error checking reports" });
         }
 
-        // Mark pin as reported if there are any reports for it
         pin.reported = reportData.length > 0 ? true : false;
         filteredPins.push(pin);
       }
@@ -94,8 +75,6 @@ router.get("/all/:id", checkUserRole("user"), async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-
 
 // Get pins by user ID
 router.get("/:id", checkUserRole("user"), async (req, res) => {
@@ -160,7 +139,6 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // Create a new pin
 router.post("/:id", checkUserRole("user"), async (req, res) => {
@@ -369,6 +347,5 @@ router.delete("/:id/:pinid", checkUserRole("user"), async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 module.exports = router;
