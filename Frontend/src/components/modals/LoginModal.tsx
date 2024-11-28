@@ -11,11 +11,10 @@ import { FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
-import { profanityFilter } from "../../utils/profanityFilter";
 import "./LoginModal.scss";
 import Error from "../Error";
 import Loader from "../Loader";
-import Toast from "../Toast";
+import Toast, { showToastMessage } from "../Toast";
 
 /* Modal */
 import CreateUserModal from "./CreateUserModal";
@@ -27,8 +26,6 @@ interface LoginProps {
 const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
   const [loginSuccess, setLoginSuccess] = useState<boolean | null>(null);
   const [createUserModal, setCreateUserModal] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
 
   const { t } = useTranslation();
   const { makeRequest, data, error, isLoading } = useRequestData();
@@ -43,8 +40,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
     const password = formData.get("password");
 
     if (!email || !password) {
-      setToastMessage("All fields are required");
-      setShowToast(true);
+      showToastMessage(t("required_fields"));
       return;
     }
 
@@ -58,8 +54,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
   useEffect(() => {
     if (data) {
       setLoginSuccess(true);
-      setToastMessage(t("modals.login.success"));
-      setShowToast(true);
+      showToastMessage(t("modals.login.success"));
       storeAuthToken(data.user.id);
       storeRoleToken(data.user.role);
       closeLoginModal();
@@ -129,11 +124,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
             />
           </div>
         </IonModal>
-        <Toast
-          showToast={showToast}
-          toastMessage={toastMessage}
-          setShowToast={setShowToast}
-        />
+        <Toast />
       </IonCard>
     </>
   );

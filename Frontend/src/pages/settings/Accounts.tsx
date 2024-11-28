@@ -22,7 +22,7 @@ import { useAuth } from "../../hooks/ProviderContext";
 /* Components */
 import Loader from "../../components/Loader";
 import Error from "../../components/Error";
-import Toast from "../../components/Toast";
+import Toast, { showToastMessage } from "../../components/Toast";
 
 import "./Accounts.scss";
 
@@ -44,8 +44,6 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
   const [password, setPassword] = useState("");
   const [avatar, setAvatar] = useState(userData.avatar);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
 
   /* Hooks */
   const { makeRequest, isLoading, error } = useRequestData();
@@ -82,8 +80,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
     };
 
     if (!updatedData.name || !updatedData.email) {
-      setToastMessage("Username and Email fields are required");
-      setShowToast(true);
+      showToastMessage(t("pages.settings.accounts.required_fields"));
       return;
     }
 
@@ -101,14 +98,12 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
     );
 
     if (!error) {
-      setToastMessage(t("pages.settings.accounts.successful"));
-      setShowToast(true);
+      showToastMessage(t("pages.settings.accounts.successful"));
       await removeImage(userData.avatar).catch((error) =>
         console.error("Error removing old image:", error)
       );
     } else {
-      setToastMessage("Error updating user data");
-      setShowToast(true);
+      showToastMessage(t("pages.settings.accounts.error_fetch"));
     }
   };
 
@@ -199,11 +194,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
             ]}
           />
         </IonModal>
-        <Toast
-          showToast={showToast}
-          toastMessage={toastMessage}
-          setShowToast={setShowToast}
-        />
+        <Toast />
       </IonContent>
     </>
   );

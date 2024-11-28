@@ -16,7 +16,7 @@ import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
 import Error from "../Error";
 import Loader from "../Loader";
-import Toast from "../Toast";
+import Toast, { showToastMessage } from "../Toast";
 
 interface ReportedProps {
   closeReportModal: () => void;
@@ -34,8 +34,6 @@ const ReportModal = ({
   /* States */
   const [text, setText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
 
   /* Refs */
   const confirmButton = useRef<HTMLIonButtonElement>(null);
@@ -74,8 +72,7 @@ const ReportModal = ({
         payload
       );
     } catch (error) {
-      setToastMessage(t("modals.report.failed", { type: reportedType }));
-      setShowToast(true);
+      showToastMessage(t("modals.report.failed", { type: reportedType }));
     } finally {
       role === "admin" && console.log("Report created successfully");
       setIsSubmitting(false);
@@ -84,13 +81,11 @@ const ReportModal = ({
 
   useEffect(() => {
     if (data) {
-      setToastMessage(t("modals.report.success"));
-      setShowToast(true);
+      showToastMessage(t("modals.report.success"));
       closeReportModal();
       role === "admin" && console.log("Reported successfully");
     } else if (error) {
-      setToastMessage(t("modals.report.failed", { type: reportedType }));
-      setShowToast(true);
+      showToastMessage(t("modals.report.failed", { type: reportedType }));
     }
   }, [error, data]);
 
@@ -130,11 +125,7 @@ const ReportModal = ({
             >
               {t("modals.report.close")}
             </IonButton>
-            <Toast
-              showToast={showToast}
-              toastMessage={toastMessage}
-              setShowToast={setShowToast}
-            />
+            <Toast />
           </form>
         </IonCardContent>
       </IonCard>

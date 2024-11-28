@@ -10,10 +10,11 @@ import {
 import { useTranslation } from "react-i18next";
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
+import profanityFilter from "../../utils/profanityFilter";
 import "./CreateUserModal.scss";
 import Loader from "../Loader";
 import Error from "../Error";
-import Toast from "../Toast";
+import Toast, { showToastMessage } from "../Toast";
 
 interface CreateUserProps {
   closeCreateUserModal: () => void;
@@ -25,12 +26,16 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   closeLoginModal,
 }) => {
   const [createSuccess, setCreateSuccess] = useState<boolean | null>(null);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
 
   const { t } = useTranslation();
   const { makeRequest, isLoading, data, error } = useRequestData();
-  const { role, storeAuthToken, storeRoleToken, clearAuthToken, clearRoleToken } = useAuth();
+  const {
+    role,
+    storeAuthToken,
+    storeRoleToken,
+    clearAuthToken,
+    clearRoleToken,
+  } = useAuth();
 
   async function handleCreateUser(formEvent: FormEvent) {
     formEvent.preventDefault();
@@ -39,6 +44,16 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
     const name = formData.get("name");
     const email = formData.get("email");
     const password = formData.get("password");
+
+    if (!name || !email || !password) {
+      showToastMessage(t("required_fields"));
+      return;
+    }
+
+    if (profanityFilter(name as string)) {
+      showToastMessage(t("profanityFilter"));
+      return;
+    }
 
     role === "admin" && console.log("formData: ", formData);
 
@@ -59,8 +74,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
       closeLoginModal();
     } else if (error) {
       setCreateSuccess(false);
-      setToastMessage("User creation failed");
-      setShowToast(true);
+      showToastMessage("User creation failed");
       clearAuthToken();
       clearRoleToken();
     }
@@ -126,11 +140,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
         >
           {t("modals.create_user.close")}
         </IonButton>
-        <Toast
-        showToast={showToast}
-        toastMessage={toastMessage}
-        setShowToast={setShowToast}
-      />
+        <Toast />
       </IonCard>
     </>
   );

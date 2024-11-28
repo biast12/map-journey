@@ -1,19 +1,19 @@
-import React from "react";
+import { useState } from "react";
 import { IonToast } from "@ionic/react";
 import { alertCircle } from "ionicons/icons";
 import "./Toast.scss";
 
-interface ToastProps {
-  showToast: boolean;
-  toastMessage: string;
-  setShowToast: (value: boolean) => void;
-}
+let showToastMessage: (message: string) => void;
 
-const Toast: React.FC<ToastProps> = ({
-  showToast,
-  toastMessage,
-  setShowToast,
-}) => {
+const Toast = () => {
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  showToastMessage = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
+  };
+
   return (
     <>
       <IonToast
@@ -37,4 +37,5 @@ const Toast: React.FC<ToastProps> = ({
   );
 };
 
+export { showToastMessage };
 export default Toast;
