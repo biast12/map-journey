@@ -164,7 +164,7 @@ router.post("/", async (req, res) => {
       return res.status(500).json({ error: "Error creating profile" });
     }
 
-    res.status(201).json({ message: "Profile created successfully" });
+    res.status(201).json({ message: "Profile created successfully", id: userId, role: "user" });
   } catch (error) {
     console.error("Error during profile creation:", error);
     res.status(500).json({ error: "Internal Server Error" });

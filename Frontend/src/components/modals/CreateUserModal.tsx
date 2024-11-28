@@ -1,4 +1,4 @@
-import { useRef, useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import {
   IonCard,
   IonCardHeader,
@@ -6,14 +6,14 @@ import {
   IonButton,
   IonInput,
   IonInputPasswordToggle,
-  IonToast,
 } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
 import "./CreateUserModal.scss";
-import Loader from "../../components/Loader";
-import Error from "../../components/Error";
+import Loader from "../Loader";
+import Error from "../Error";
+import Toast from "../Toast";
 
 interface CreateUserProps {
   closeCreateUserModal: () => void;
@@ -25,10 +25,12 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   closeLoginModal,
 }) => {
   const [createSuccess, setCreateSuccess] = useState<boolean | null>(null);
-  const toast = useRef<HTMLIonToastElement>(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
   const { t } = useTranslation();
   const { makeRequest, isLoading, data, error } = useRequestData();
-  const { role } = useAuth();
+  const { role, storeAuthToken, storeRoleToken, clearAuthToken, clearRoleToken } = useAuth();
 
   async function handleCreateUser(formEvent: FormEvent) {
     formEvent.preventDefault();
@@ -51,12 +53,16 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   useEffect(() => {
     if (data) {
       setCreateSuccess(true);
-      toast.current?.present();
+      storeAuthToken(data.id);
+      storeRoleToken(data.role);
       closeCreateUserModal();
       closeLoginModal();
-      role === "admin" && console.log("User created successfully");
     } else if (error) {
       setCreateSuccess(false);
+      setToastMessage("User creation failed");
+      setShowToast(true);
+      clearAuthToken();
+      clearRoleToken();
     }
   }, [error, data]);
 
@@ -120,12 +126,11 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
         >
           {t("modals.create_user.close")}
         </IonButton>
-        <IonToast
-          ref={toast}
-          message="User created successfully"
-          position="bottom"
-          duration={1500}
-        ></IonToast>
+        <Toast
+        showToast={showToast}
+        toastMessage={toastMessage}
+        setShowToast={setShowToast}
+      />
       </IonCard>
     </>
   );

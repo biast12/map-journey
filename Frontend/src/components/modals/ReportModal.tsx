@@ -7,16 +7,16 @@ import {
   IonInput,
   IonItem,
   IonLabel,
-  IonToast,
 } from "@ionic/react";
-import { useRef, useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import "./ReportModal.scss";
 
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
-import Error from "../../components/Error";
-import Loader from "../../components/Loader";
+import Error from "../Error";
+import Loader from "../Loader";
+import Toast from "../Toast";
 
 interface ReportedProps {
   closeReportModal: () => void;
@@ -29,15 +29,36 @@ const ReportModal = ({
   reported_id,
   reportedType,
 }: ReportedProps) => {
-  const [reportSuccess, setReportSuccess] = useState<boolean | null>(null);
-  const toast = useRef<HTMLIonToastElement>(null);
   const { t } = useTranslation();
+
+  /* States */
+  const [text, setText] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  /* Refs */
+  const confirmButton = useRef<HTMLIonButtonElement>(null);
+  const cancelButton = useRef<HTMLIonButtonElement>(null);
+  const textInput = useRef<HTMLIonInputElement>(null);
+
+  /* Hooks */
   const { makeRequest, data, error, isLoading } = useRequestData();
   const { userID, role } = useAuth();
-  const [text, setText] = useState("");
+
+  useEffect(() => {
+    const refs = [confirmButton, cancelButton, textInput];
+
+    refs.forEach((ref) => {
+      if (ref.current) {
+        ref.current.disabled = isSubmitting;
+      }
+    });
+  }, [isSubmitting]);
 
   async function handleReport(formEvent: FormEvent) {
     formEvent.preventDefault();
+    setIsSubmitting(true);
 
     const payload = {
       text,
@@ -45,23 +66,31 @@ const ReportModal = ({
         reported_id,
     };
     role === "admin" && console.log("Payload:", payload);
-
-    makeRequest(
-      `reports/${userID}`,
-      "POST",
-      { "Content-Type": "application/json" },
-      payload
-    );
+    try {
+      await makeRequest(
+        `reports/${userID}`,
+        "POST",
+        { "Content-Type": "application/json" },
+        payload
+      );
+    } catch (error) {
+      setToastMessage(t("modals.report.failed", { type: reportedType }));
+      setShowToast(true);
+    } finally {
+      role === "admin" && console.log("Report created successfully");
+      setIsSubmitting(false);
+    }
   }
 
   useEffect(() => {
     if (data) {
-      setReportSuccess(true);
-      toast.current?.present();
+      setToastMessage(t("modals.report.success"));
+      setShowToast(true);
       closeReportModal();
       role === "admin" && console.log("Reported successfully");
     } else if (error) {
-      setReportSuccess(false);
+      setToastMessage(t("modals.report.failed", { type: reportedType }));
+      setShowToast(true);
     }
   }, [error, data]);
 
@@ -83,19 +112,17 @@ const ReportModal = ({
               <IonLabel position="stacked">{t("modals.report.text")}</IonLabel>
               <IonInput
                 required
+                ref={textInput}
+                type="text"
                 value={text}
                 onIonChange={(e) => setText(e.detail.value!)}
               />
             </IonItem>
-            {reportSuccess === false && (
-              <p id="reportFailed">
-                {t("modals.report.failed", { type: reportedType })}
-              </p>
-            )}
-            <IonButton type="submit" expand="block">
+            <IonButton ref={confirmButton} type="submit" expand="block">
               {t("modals.report.submit")}
             </IonButton>
             <IonButton
+              ref={cancelButton}
               id="closeButton"
               expand="block"
               color="medium"
@@ -103,12 +130,11 @@ const ReportModal = ({
             >
               {t("modals.report.close")}
             </IonButton>
-            <IonToast
-              ref={toast}
-              message={t("modals.report.successful")}
-              position="bottom"
-              duration={1500}
-            ></IonToast>
+            <Toast
+              showToast={showToast}
+              toastMessage={toastMessage}
+              setShowToast={setShowToast}
+            />
           </form>
         </IonCardContent>
       </IonCard>

@@ -30,8 +30,6 @@ ion-card {
     &:focus-within {
       --background: #48484a;
     }
-
-    
   }
   .sc-ion-input-md-h {
     --padding-start: 1rem;
@@ -82,11 +80,4 @@ ion-card {
       cursor: not-allowed;
     }
   }
-
-  ion-toast {
-    --background: #0a84ff;
-    --color: #fff;
-    --border-radius: 6px;
-  }
-  
 }

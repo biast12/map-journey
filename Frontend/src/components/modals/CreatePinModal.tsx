@@ -8,7 +8,6 @@ import {
   IonImg,
   IonInput,
   IonItem,
-  IonTextarea,
   IonToggle,
 } from "@ionic/react";
 import { camera, locationSharp } from "ionicons/icons";
@@ -20,6 +19,8 @@ import { useTranslation } from "react-i18next";
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
 import useImageHandler from "../../hooks/useImageHandler";
+import { profanityFilter } from "../../utils/profanityFilter";
+import Toast from "../Toast";
 
 interface CreatePinModalProps {
   onClose: () => void;
@@ -35,6 +36,8 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
   const [description, setDescription] = useState<string>("");
   const [status, setStatus] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   /* Refs */
   const confirmButton = useRef<HTMLIonButtonElement>(null);
@@ -68,7 +71,14 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
 
   const handleConfirm = async () => {
     if (!title || !photoUrl || !description || !location || !coordinates) {
-      console.error("All fields are required");
+      setToastMessage("All fields are required");
+      setShowToast(true);
+      return;
+    }
+
+    if (profanityFilter(title) || profanityFilter(description)) {
+      setToastMessage("Your input contains inappropriate language.");
+      setShowToast(true);
       return;
     }
 
@@ -202,6 +212,11 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
           {t("modals.create_pin.submit")}
         </IonButton>
       </div>
+      <Toast
+        showToast={showToast}
+        toastMessage={toastMessage}
+        setShowToast={setShowToast}
+      />
     </IonCard>
   );
 };
