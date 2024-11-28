@@ -24,6 +24,8 @@ interface HeaderProps {
   openNotificationModal: () => void;
 }
 
+let getNewNotifications: () => string[] | null;
+
 const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   const { t } = useTranslation();
   const { makeRequest, data, error, isLoading } = useRequestData();
@@ -58,6 +60,10 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   const handleOpenNotificationModal = () => {
     setIsNotificationModalOpen(true);
     openNotificationModal();
+  };
+
+  getNewNotifications = () => {
+    return data && data.new_notifications ? data.new_notifications : null;
   };
 
   return (
@@ -100,4 +106,5 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   );
 };
 
+export { getNewNotifications };
 export default Header;
