@@ -3,6 +3,7 @@ import { IonContent, IonGrid, IonRow } from "@ionic/react";
 import "./Page.scss";
 import UserManagement from "../../components/admin/UserManagement";
 import ReportManagement from "../../components/admin/ReportManagement";
+import NotificationManagement from "../../components/admin/NotificationManagement";
 
 
 const Page = () => {
@@ -10,7 +11,7 @@ const Page = () => {
 
   return (
     <IonContent id="adminContent">
-      <IonGrid>
+      <IonGrid fixed >
         <h1>Dashboard</h1>
 
         <h3>Users</h3>
@@ -20,9 +21,7 @@ const Page = () => {
         <ReportManagement />
 
         <h3>News</h3>
-        <IonRow id="newsRow">
-          
-        </IonRow>
+        <NotificationManagement />
       </IonGrid>
     </IonContent>
   );

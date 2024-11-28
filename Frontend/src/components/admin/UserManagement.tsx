@@ -7,6 +7,7 @@ import UserColumn from "./UserColumn";
 import Modal from "../Modal";
 
 import "./UserManagement.scss";
+import useAuth from "../../hooks/ProviderContext";
 
 type UserData = {
   avatar: string;
@@ -38,6 +39,8 @@ const UserManagement = () => {
   const [handlingRequest, setHandlingRequest] = useState<boolean>(false);
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({ search: "", searchBy: "name", sortBy: "name" });
 
+  const {userID} = useAuth();
+
   async function handleUserEdit(e: FormEvent, userData: UserData) {
     setHandlingRequest(true);
     e.preventDefault();
@@ -46,11 +49,11 @@ const UserManagement = () => {
     const body = {
       name: form.username.value,
       status: form.status.value,
-      role: form.userrole.value,
+      role: userID === userData.id ? undefined : form.userrole.value,
     };
 
-    const res = await editMakeRequest(`users/${userData.id}`, "PUT", undefined, body);
-    makeRequest("users/all");
+    const res = await editMakeRequest(`users/${userID}/${userData.id}`, "PUT", undefined, body);
+    makeRequest("users/all/"+userID);
 
     setShowEditModal(false);
     setSelectedUser(null);
@@ -60,7 +63,7 @@ const UserManagement = () => {
     setHandlingRequest(true);
 
     const res = await delMakeRequest(`users/${userData.id}`, "DELETE");
-    makeRequest("users/all");
+    makeRequest("users/all/"+userID);
 
     setShowDeleteModal(false);
     setSelectedUser(null);
@@ -68,7 +71,7 @@ const UserManagement = () => {
   }
 
   useEffect(() => {
-    makeRequest("users/all");
+    makeRequest("users/all/"+userID);
   }, []);
 
   function filterData(userData: UserData) {

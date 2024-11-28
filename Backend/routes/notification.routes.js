@@ -1,15 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
-const checkApiKey = require("../apiKeyCheck");
+const checkApiKey = require("../utils/apiKeyCheck");
+const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
 // Helper function to compress notification IDs into the desired format
 const compressNotificationIDs = (ids) => {
-  if (ids.length === 0) return [];
+  if (!ids || ids.length === 0) return [];
 
-  const sortedIds = [...new Set(ids)].sort((a, b) => a - b);
+  const sortedIds = [...new Set(ids.map(Number))].sort((a, b) => a - b);
   const compressed = [];
   let start = sortedIds[0];
   let end = sortedIds[0];
@@ -29,7 +30,7 @@ const compressNotificationIDs = (ids) => {
 
 // Helper function to remove the notification ID from the user's notifications
 const removeNotificationID = (currentNotifications, idToRemove) => {
-  const notifications = currentNotifications.flatMap((item) => {
+  const notifications = (currentNotifications || []).flatMap((item) => {
     if (item.includes("-")) {
       const [start, end] = item.split("-").map(Number);
       return Array.from({ length: end - start + 1 }, (_, i) => start + i);
@@ -37,31 +38,22 @@ const removeNotificationID = (currentNotifications, idToRemove) => {
     return [Number(item)];
   });
 
-  const updatedNotifications = notifications.filter((id) => id !== idToRemove);
-
-  const compressedNotifications = compressNotificationIDs(updatedNotifications);
-
-  return compressedNotifications;
+  const updatedNotifications = notifications.filter((id) => id !== Number(idToRemove));
+  return compressNotificationIDs(updatedNotifications);
 };
 
 // Function to add a new notification ID to the user's new_notifications array
 const addNotificationID = (currentNotifications, newID) => {
-  const notifications = currentNotifications.length
-    ? currentNotifications.flatMap((item) => {
-        if (item.includes("-")) {
-          const [start, end] = item.split("-").map(Number);
-          return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-        }
-        return [Number(item)];
-      })
-    : [];
+  const notifications = (currentNotifications || []).flatMap((item) => {
+    if (item.includes("-")) {
+      const [start, end] = item.split("-").map(Number);
+      return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    }
+    return [Number(item)];
+  });
 
   notifications.push(Number(newID));
-
-  const uniqueNotifications = [
-    ...new Set(notifications.filter((id) => !isNaN(id))),
-  ].sort((a, b) => a - b);
-
+  const uniqueNotifications = [...new Set(notifications)].sort((a, b) => a - b);
   return compressNotificationIDs(uniqueNotifications);
 };
 
@@ -71,18 +63,16 @@ router.get("/", (req, res) => {
     message: "Notification Route",
     routes: {
       "/all": "Get all news articles",
-      "/:id": "Get a specific news article by ID",
       "/": "Create a new news article",
       "/:id": "Update a news article by ID",
       "/:id": "Delete a news article by ID",
-      "/:id": "Mark a news article as read",
       "/readall/:id": "Mark all notifications as read",
     },
   });
 });
 
 // Get all news articles
-router.get("/all", async (req, res) => {
+router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   try {
     const { data: newsArticles, error } = await supabase
       .from("news")
@@ -100,37 +90,10 @@ router.get("/all", async (req, res) => {
   }
 });
 
-// Get a specific news article by ID
-router.get("/:id", async (req, res) => {
-  const articleID = req.params.id;
-
-  try {
-    const { data: newsArticle, error } = await supabase
-      .from("news")
-      .select("*")
-      .eq("id", articleID)
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    if (!newsArticle) {
-      return res.status(404).send("News article not found");
-    }
-
-    res.json(newsArticle);
-  } catch (error) {
-    console.error("Error fetching news article:", error);
-    res.status(500).send("Error fetching news article");
-  }
-});
-
 // Create a new news article
-router.post("/", async (req, res) => {
+router.post("/:id", checkUserRole("amin"), async (req, res) => {
   const { title, text } = req.body;
 
-  // Basic validation
   if (!title || !text) {
     return res.status(400).send("Missing required fields: title or text");
   }
@@ -149,7 +112,6 @@ router.post("/", async (req, res) => {
 
     const newID = newArticle.id;
 
-    // Fetch all profiles and increment news_count
     const { data: profiles, error: profileError } = await supabase
       .from("profile")
       .select("id, new_notifications, news_count");
@@ -189,8 +151,8 @@ router.post("/", async (req, res) => {
 });
 
 // Update a news article by ID
-router.put("/:id", async (req, res) => {
-  const articleID = req.params.id;
+router.put("/:id/:artid", checkUserRole("admin"), async (req, res) => {
+  const articleID = req.params.artid;
   const { title, text } = req.body;
 
   if (!title && !text) {
@@ -224,11 +186,10 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete a news article by ID and remove its ID from all user notifications
-router.delete("/:id", async (req, res) => {
-  const articleID = Number(req.params.id);
+router.delete("/:id/:artid", checkUserRole("admin"), async (req, res) => {
+  const articleID = Number(req.params.artid);
 
   try {
-    // Step 1: Fetch the article to check if it exists
     const { data: existingArticle, error: fetchError } = await supabase
       .from("news")
       .select("*")
@@ -244,7 +205,6 @@ router.delete("/:id", async (req, res) => {
       return res.status(404).send("News article not found");
     }
 
-    // Step 2: Delete the article from the news table
     const { error: deleteError } = await supabase
       .from("news")
       .delete()
@@ -255,7 +215,6 @@ router.delete("/:id", async (req, res) => {
       return res.status(500).send("Error deleting news article");
     }
 
-    // Step 3: Fetch all user profiles to update their notifications
     const { data: profiles, error: profileError } = await supabase
       .from("profile")
       .select("id, new_notifications, news_count");
@@ -265,7 +224,6 @@ router.delete("/:id", async (req, res) => {
       return res.status(500).send("Error fetching profiles");
     }
 
-    // Step 4: Iterate over profiles and update only those that have the article ID
     for (const profile of profiles) {
       const currentNotifications = profile.new_notifications || [];
       const notificationsBeforeRemoval = [...currentNotifications];
@@ -274,14 +232,12 @@ router.delete("/:id", async (req, res) => {
         articleID
       );
 
-      // Check if the ID was removed (i.e., there was a change)
       if (
         notificationsBeforeRemoval.length !== updatedNotifications.length ||
         notificationsBeforeRemoval.some(
           (item, index) => item !== updatedNotifications[index]
         )
       ) {
-        // Decrement the news_count if the ID was found and removed
         const updatedNewsCount = Math.max((profile.news_count || 0) - 1, 0);
 
         const { error: updateError } = await supabase
@@ -301,7 +257,6 @@ router.delete("/:id", async (req, res) => {
       }
     }
 
-    // Step 5: Send success response
     res.status(204).send("News Deleted!");
   } catch (error) {
     console.error("Error during delete operation:", error);
@@ -309,59 +264,8 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Mark a news article as read
-router.post("/:id", async (req, res) => {
-  const userId = req.params.id;
-  const { articleId } = req.body;
-
-  if (!articleId) {
-    return res.status(400).send("Missing article ID");
-  }
-
-  try {
-    const { data: profile, error: fetchError } = await supabase
-      .from("profile")
-      .select("new_notifications, news_count")
-      .eq("id", userId)
-      .single();
-
-    if (fetchError || !profile) {
-      console.error("Error fetching profile:", fetchError);
-      return res.status(404).send("User profile not found");
-    }
-
-    const currentNotifications = profile.new_notifications || [];
-
-    const updatedNotifications = removeNotificationID(
-      currentNotifications,
-      Number(articleId)
-    );
-    const updatedNewsCount = Math.max((profile.news_count || 0) - 1, 0); // Ensure news_count is not negative
-
-    const { error: updateError } = await supabase
-      .from("profile")
-      .update({
-        new_notifications: updatedNotifications,
-        news_count: updatedNewsCount,
-      })
-      .eq("id", userId);
-
-    if (updateError) {
-      console.error("Error updating profile notifications:", updateError);
-      return res.status(500).send("Error updating notifications");
-    }
-
-    res
-      .status(200)
-      .json({ message: "Notification marked as read", updatedNotifications });
-  } catch (error) {
-    console.error("Error marking article as read:", error);
-    res.status(500).send("Error marking article as read");
-  }
-});
-
 // Mark all notifications as read
-router.post("/readall/:id", async (req, res) => {
+router.post("/readall/:id", checkUserRole("user"), async (req, res) => {
   const userId = req.params.id;
 
   try {
@@ -376,7 +280,7 @@ router.post("/readall/:id", async (req, res) => {
       return res.status(404).send("User profile not found");
     }
 
-    const updatedNotifications = [""];
+    const updatedNotifications = [];
     const updatedNewsCount = 0;
 
     const { error: updateError } = await supabase

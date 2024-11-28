@@ -8,6 +8,7 @@ import Modal from "../Modal";
 import ReportUserDisplay from "./ReportDisplays/ReportUserDisplay";
 import ReportPinDisplay from "./ReportDisplays/ReportPinDisplay";
 import Loader from "../Loader";
+import useAuth from "../../hooks/ProviderContext";
 
 type ReportUser = {
   id: string;
@@ -44,16 +45,18 @@ const ReportManagement = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedReport, setSelectedReport] = useState<null | ReportData>(null);
 
-  async function handleReportAction(reportData: ReportData, action: "dismiss" | "warn" | "ban") {
-    await rpMakeRequest(`reports/${reportData.id}/${reportData.id}`, "POST", undefined, { action: action });
+  const {userID} = useAuth();
 
-    makeRequest("reports/all")
+  async function handleReportAction(reportData: ReportData, action: "dismiss" | "warn" | "ban") {
+    await rpMakeRequest(`reports/${userID}/${reportData.id}`, "POST", undefined, { action: action });
+
+    makeRequest("reports/all/"+userID)
     setSelectedReport(null);
     setShowModal(false);
   }
 
   useEffect(() => {
-    makeRequest("reports/all");
+    makeRequest("reports/all/"+userID);
   }, []);
 
   useEffect(() => {

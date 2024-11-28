@@ -3,7 +3,9 @@ const router = express.Router();
 const supabase = require("../supabaseClient");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const checkApiKey = require("../apiKeyCheck");
+const checkApiKey = require("../utils/apiKeyCheck");
+const generateUniqueId = require("../utils/uuid-generator");
+const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
@@ -13,19 +15,18 @@ router.get("/", (req, res) => {
     message: "User Route",
     routes: {
       "/all": "Get all users and their data",
-      "/:id": "Get a user by ID",
+      "/:id": "Get a user by User ID",
       "/": "Create a new user and default settings",
+      "/login": "Login route",
       "/:id": "Update a user by User ID",
       "/:id": "Delete a user by User ID",
-      "/login": "Login route",
     },
   });
 });
 
 // Get all users
-router.get("/all", async (req, res) => {
+router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   try {
-    // Selecting all fields except "password"
     const { data: users, error } = await supabase.from("profile").select(`
         id, name, email, settings_id, avatar, banner, new_notifications, status, role, news_count
       `);
@@ -38,12 +39,11 @@ router.get("/all", async (req, res) => {
   }
 });
 
-// Get a user by ID
-router.get("/:id", async (req, res) => {
+// Get a user by User ID
+router.get("/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
 
   try {
-    //Fetch the user profile
     const { data: user, error: userError } = await supabase
       .from("profile")
       .select(
@@ -63,7 +63,6 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Fetch the settings
     const { data: settings, error: settingsError } = await supabase
       .from("settings")
       .select("*")
@@ -93,16 +92,14 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    // Step 1: Check if the email is already in use
     const { data: existingEmail, error: emailCheckError } = await supabase
       .from("profile")
       .select("email")
       .eq("email", email)
-      .limit(1) // Limit to 1 result
-      .single(); // Use .single() to avoid errors on multiple results
+      .limit(1)
+      .single();
 
     if (emailCheckError && emailCheckError.code !== "PGRST116") {
-      // Handle errors except for "no rows"
       console.error("Error checking email:", emailCheckError);
       return res.status(500).json({ error: "Error checking email" });
     }
@@ -111,7 +108,6 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "Email is already in use" });
     }
 
-    // Step 2: Check if the name is already taken
     const { data: existingName, error: nameCheckError } = await supabase
       .from("profile")
       .select("name")
@@ -131,10 +127,19 @@ router.post("/", async (req, res) => {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Step 3: Create default settings
+    const settingsId = await generateUniqueId();
+    const userId = await generateUniqueId();
+
     const { data: settingsData, error: settingsError } = await supabase
       .from("settings")
-      .insert([{ maptheme: "default", language: "en", notification: true }])
+      .insert([
+        {
+          id: settingsId,
+          maptheme: "default",
+          language: "en",
+          notification: true,
+        },
+      ])
       .select("id")
       .single();
 
@@ -143,27 +148,9 @@ router.post("/", async (req, res) => {
       return res.status(500).json({ error: "Error creating settings" });
     }
 
-    // Step 4: Generate unique UUID
-    const generateUniqueId = async () => {
-      let uniqueId;
-      let exists = true;
-      while (exists) {
-        uniqueId = crypto.randomUUID();
-        const { data, error } = await supabase
-          .from("profile")
-          .select("id")
-          .eq("id", uniqueId)
-          .single();
-        exists = data !== null;
-      }
-      return uniqueId;
-    };
-    const uniqueId = await generateUniqueId();
-
-    // Step 5: Create user profile
     const { error: profileError } = await supabase.from("profile").insert([
       {
-        id: uniqueId,
+        id: userId,
         name,
         email,
         password: hashedPassword,
@@ -180,106 +167,6 @@ router.post("/", async (req, res) => {
     res.status(201).json({ message: "Profile created successfully" });
   } catch (error) {
     console.error("Error during profile creation:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// Update a user by User ID
-router.put("/:id", async (req, res) => {
-  const userID = req.params.id;
-  const { name, email, password } = req.body;
-
-  const updatedFields = {};
-  if (name) updatedFields.name = name;
-  if (email) updatedFields.email = email;
-  if (password) updatedFields.password = await bcrypt.hash(password, 10);
-
-  try {
-    const { data, error } = await supabase
-      .from("profile")
-      .update(updatedFields)
-      .eq("id", userID)
-      .single();
-
-    if (error) {
-      console.error("Error updating user:", error);
-      return res.status(500).json({ error: "Error updating user" });
-    }
-
-    if (!data) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    res.status(200).json({ message: "User updated successfully", user: data });
-  } catch (error) {
-    console.error("Error during user update:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// Delete a user by User ID
-router.delete("/:id", async (req, res) => {
-  const userID = req.params.id;
-
-  try {
-    // Step 1: Fetch the user's profile to check if it exists
-    const { data: profile, error: fetchError } = await supabase
-      .from("profile")
-      .select("settings_id")
-      .eq("id", userID)
-      .single();
-
-    if (fetchError) {
-      console.error("Error fetching user profile:", fetchError);
-      return res.status(500).json({ error: "Error checking user profile" });
-    }
-
-    if (!profile) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const { settings_id } = profile;
-
-    // Step 2: Delete all pins associated with the user
-    const { error: deletePinsError } = await supabase
-      .from("pins")
-      .delete()
-      .eq("profile_id", userID);
-
-    if (deletePinsError) {
-      console.error("Error deleting user pins:", deletePinsError);
-      return res.status(500).json({ error: "Error deleting user pins" });
-    }
-
-    // Step 3: Delete user settings using settings_id
-    if (settings_id) {
-      const { error: deleteSettingsError } = await supabase
-        .from("settings")
-        .delete()
-        .eq("id", settings_id);
-
-      if (deleteSettingsError) {
-        console.error("Error deleting user settings:", deleteSettingsError);
-        return res.status(500).json({ error: "Error deleting user settings" });
-      }
-    }
-
-    // Step 4: Delete the user profile
-    const { error: deleteProfileError } = await supabase
-      .from("profile")
-      .delete()
-      .eq("id", userID)
-      .single();
-
-    if (deleteProfileError) {
-      console.error("Error deleting user profile:", deleteProfileError);
-      return res.status(500).json({ error: "Error deleting user profile" });
-    }
-
-    // Send a success response
-    res.status(204).send();
-  } catch (error) {
-    console.error("Error during user deletion:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -316,11 +203,231 @@ router.post("/login", async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ error: "Server error, please try again later." });
+  }
+});
+
+// Update a user by User ID
+router.put("/:id", checkUserRole("user"), async (req, res) => {
+  const userID = req.params.id;
+  const { name, email, password, avatar, status } = req.body;
+
+  try {
+    const { data: currentUser, error: fetchError } = await supabase
+      .from("profile")
+      .select("status")
+      .eq("id", userID)
+      .single();
+
+    if (fetchError) {
+      console.error("Error fetching user status:", fetchError);
+      return res.status(500).json({ error: "Error fetching user status" });
+    }
+
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (currentUser.status === "banned") {
+      return res.status(403).json({ error: "Cannot update user with reported status" });
+    }
+
+    const updatedFields = {};
+    if (avatar) updatedFields.avatar = avatar;
+    if (name) updatedFields.name = name;
+    if (email) updatedFields.email = email;
+    if (password) updatedFields.password = await bcrypt.hash(password, 10);
+
+    if (status) {
+      const allowedStatuses = ["public", "private"];
+      if (!allowedStatuses.includes(status)) {
+        return res.status(400).json({ error: "Invalid status value. Allowed values are 'public' or 'private'." });
+      }
+      updatedFields.status = status;
+    }
+
+    const { data, error } = await supabase
+      .from("profile")
+      .update(updatedFields)
+      .eq("id", userID)
+      .single();
+
+    if (error) {
+      console.error("Error updating user:", error);
+      return res.status(500).json({ error: "Error updating user" });
+    }
+
+    res.status(200).json({ message: "User updated successfully", user: data });
+  } catch (error) {
+    console.error("Error during user update:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Admin Update a user by User ID
+router.put("/:id/:userid", checkUserRole("admin"), async (req, res) => {
+  const userID = req.params.userid;
+  const { name, email, password, avatar, status, role } = req.body;
+
+  try {
+    const { data: currentUser, error: fetchError } = await supabase
+      .from("profile")
+      .select("status, role")
+      .eq("id", userID)
+      .single();
+
+    if (fetchError) {
+      console.error("Error fetching user status:", fetchError);
+      return res.status(500).json({ error: "Error fetching user status" });
+    }
+
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (currentUser.status === "banned") {
+      return res.status(403).json({ error: "Cannot update a banned user" });
+    }
+
+    const updatedFields = {};
+    if (avatar) updatedFields.avatar = avatar;
+    if (name) updatedFields.name = name;
+    if (email) updatedFields.email = email;
+    if (password) updatedFields.password = await bcrypt.hash(password, 10);
+
+    if (status) {
+      const allowedStatuses = ["public", "private"];
+      if (!allowedStatuses.includes(status)) {
+        return res.status(400).json({ error: "Invalid status value. Allowed values are 'public' or 'private'." });
+      }
+      updatedFields.status = status;
+    }
+
+    if (role) {
+      const allowedRoles = ["user", "admin"];
+      if (!allowedRoles.includes(role)) {
+        return res.status(400).json({ error: "Invalid role value. Allowed values are 'user' or 'admin'." });
+      }
+      updatedFields.role = role;
+    }
+
+    // Update the user in the database
+    const { data, error } = await supabase
+      .from("profile")
+      .update(updatedFields)
+      .eq("id", userID)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error updating user:", error);
+      return res.status(500).json({ error: "Error updating user" });
+    }
+
+    res.status(200).json({ message: "User updated successfully", user: data });
+  } catch (error) {
+    console.error("Error during user update:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Delete a user by User ID
+router.delete("/:id", checkUserRole("user"), async (req, res) => {
+  const userID = req.params.id;
+
+  try {
+    const { data: profile, error: fetchProfileError } = await supabase
+      .from("profile")
+      .select("settings_id")
+      .eq("id", userID)
+      .single();
+
+    if (fetchProfileError) {
+      console.error("Error fetching user profile:", fetchProfileError);
+      return res.status(500).json({ error: "Error fetching user profile" });
+    }
+
+    if (!profile) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const { settings_id } = profile;
+
+    // Step 2: Fetch all the user's pins
+    const { data: pins, error: fetchPinsError } = await supabase
+      .from("pins")
+      .select("id")
+      .eq("profile_id", userID);
+
+    if (fetchPinsError) {
+      console.error("Error fetching user pins:", fetchPinsError);
+      return res.status(500).json({ error: "Error fetching user pins" });
+    }
+
+    if (pins.length > 0) {
+      const pinIds = pins.map((pin) => pin.id);
+      const { error: deletePinReportsError } = await supabase
+        .from("reports")
+        .delete()
+        .in("reported_pin_id", pinIds);
+
+      if (deletePinReportsError) {
+        console.error("Error deleting reports for user's pins:", deletePinReportsError);
+        return res.status(500).json({ error: "Error deleting reports for user's pins" });
+      }
+    }
+
+    const { error: deleteUserReportsError } = await supabase
+      .from("reports")
+      .delete()
+      .or(`reported_user_id.eq.${userID},profile_id.eq.${userID}`);
+
+    if (deleteUserReportsError) {
+      console.error("Error deleting user reports:", deleteUserReportsError);
+      return res.status(500).json({ error: "Error deleting user reports" });
+    }
+
+    const { error: deletePinsError } = await supabase
+      .from("pins")
+      .delete()
+      .eq("profile_id", userID);
+
+    if (deletePinsError) {
+      console.error("Error deleting user pins:", deletePinsError);
+      return res.status(500).json({ error: "Error deleting user pins" });
+    }
+
+    if (settings_id) {
+      const { error: deleteSettingsError } = await supabase
+        .from("settings")
+        .delete()
+        .eq("id", settings_id);
+
+      if (deleteSettingsError) {
+        console.error("Error deleting user settings:", deleteSettingsError);
+        return res.status(500).json({ error: "Error deleting user settings" });
+      }
+    }
+
+    const { error: deleteProfileError } = await supabase
+      .from("profile")
+      .delete()
+      .eq("id", userID);
+
+    if (deleteProfileError) {
+      console.error("Error deleting user profile:", deleteProfileError);
+      return res.status(500).json({ error: "Error deleting user profile" });
+    }
+
+    res.status(200).json({ message: "User and related data deleted successfully" });
+  } catch (error) {
+    console.error("Error during user deletion:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

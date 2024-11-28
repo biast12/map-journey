@@ -2,9 +2,11 @@
 const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
-const checkApiKey = require("../apiKeyCheck");
+const checkApiKey = require("../utils/apiKeyCheck");
+const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
+
 
 // Root route
 router.get("/", (req, res) => {
@@ -17,37 +19,70 @@ router.get("/", (req, res) => {
   });
 });
 
-// Get a user's settings by Settings ID
-router.get("/:id", async (req, res) => {
-  const settingsID = req.params.id;
+
+// Get a user's settings by Profile ID or Settings ID
+router.get("/:id", checkUserRole("user"), async (req, res) => {
+  const id = req.params.id;
 
   try {
-    // Query the settings table using the settings ID
     const { data: settings, error: settingsError } = await supabase
+      .from("settings")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (settingsError && settingsError.code !== "PGRST116") {
+      console.error("Error fetching settings directly:", settingsError);
+      return res.status(500).json({ error: "Error fetching settings directly" });
+    }
+
+    if (settings) {
+      return res.status(200).json(settings);
+    }
+
+    const { data: profile, error: profileError } = await supabase
+      .from("profile")
+      .select("settings_id")
+      .eq("id", id)
+      .single();
+
+    if (profileError) {
+      console.error("Error fetching user profile:", profileError);
+      return res.status(500).json({ error: "Error fetching user profile" });
+    }
+
+    if (!profile) {
+      return res.status(404).json({ error: "Profile not found" });
+    }
+
+    const settingsID = profile.settings_id;
+
+    const { data: userSettings, error: userSettingsError } = await supabase
       .from("settings")
       .select("*")
       .eq("id", settingsID)
       .single();
 
-    if (settingsError) {
-      console.error("Error fetching user settings:", settingsError);
+    if (userSettingsError) {
+      console.error("Error fetching user settings:", userSettingsError);
       return res.status(500).json({ error: "Error fetching user settings" });
     }
 
-    if (!settings) {
+    if (!userSettings) {
       return res.status(404).json({ error: "Settings not found for user" });
     }
 
-    res.status(200).json(settings);
+    res.status(200).json(userSettings);
   } catch (error) {
     console.error("Error during fetching settings:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
+
 // Update a user's settings by Settings ID
-router.put("/:id", async (req, res) => {
-  const settingsID = req.params.id;
+router.put("/:id", checkUserRole("user"), async (req, res) => {
+  const id = req.params.id;
   const { maptheme, language, notification } = req.body;
 
   if (
@@ -61,7 +96,42 @@ router.put("/:id", async (req, res) => {
   }
 
   try {
-    // Create an object to hold updated fields
+    const { data: profile, error: profileError } = await supabase
+      .from("profile")
+      .select("status, settings_id")
+      .eq("id", id)
+      .single();
+
+    if (profileError) {
+      console.error("Error fetching user profile:", profileError);
+      return res.status(500).json({ error: "Error fetching user profile" });
+    }
+
+    if (!profile) {
+      return res.status(404).json({ error: "Profile not found" });
+    }
+
+    if (profile.status === "banned") {
+      return res.status(403).json({ error: "You are banned and cannot update settings." });
+    }
+
+    let settingsID = profile.settings_id;
+
+    const { data: settings, error: settingsError } = await supabase
+      .from("settings")
+      .select("*")
+      .eq("id", settingsID)
+      .single();
+
+    if (settingsError && settingsError.code !== "PGRST116") {
+      console.error("Error fetching settings directly:", settingsError);
+      return res.status(500).json({ error: "Error fetching settings directly" });
+    }
+
+    if (!settings) {
+      return res.status(404).json({ error: "Settings not found for user" });
+    }
+
     const updatedFields = {};
     if (maptheme !== undefined) updatedFields.maptheme = maptheme;
     if (language !== undefined) updatedFields.language = language;
@@ -83,5 +153,7 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
 
 module.exports = router;
