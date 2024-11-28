@@ -5,7 +5,6 @@ import {
   Photo,
 } from "@capacitor/camera";
 import { Directory, Filesystem } from "@capacitor/filesystem";
-
 import { Capacitor } from "@capacitor/core";
 import { Preferences } from "@capacitor/preferences";
 import { isPlatform } from "@ionic/react";
@@ -13,6 +12,8 @@ import { useEffect, useState } from "react";
 import Compressor from "compressorjs";
 import useSupabaseClient from "./useSupabaseClient";
 import useAuth from "./ProviderContext";
+import * as nsfwjs from "nsfwjs";
+import { loadImage } from "canvas";
 
 export interface UserPhoto {
   filePath: string;
@@ -135,6 +136,15 @@ export const usePhotoGallery = () => {
         convertSize: 10000,
         success: async (compressedResult: Blob) => {
           role === "admin" && console.log("compressed blob", compressedResult);
+
+          // Check for NSFW content
+          const isNSFW = await checkForNSFW(compressedResult);
+          if (isNSFW) {
+            console.warn("NSFW content detected, blocking image.");
+            reject("NSFW content detected");
+            return;
+          }
+
           const savedFileImage = await checkCompressedImage(
             fileName,
             compressedResult
@@ -146,6 +156,32 @@ export const usePhotoGallery = () => {
           reject(err);
         },
       });
+    });
+  }
+
+  async function checkForNSFW(imageBlob: Blob): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = async () => {
+        const model = await nsfwjs.load();
+        const predictions = await model.classify(img);
+
+        // Set a confidence threshold (70%)
+        const threshold = 0.7;
+
+        const isNSFW = predictions.some(
+          (prediction) =>
+            (prediction.className === "Porn" ||
+              prediction.className === "Hentai" ||
+              prediction.className === "Sexy") &&
+            prediction.probability > threshold
+        );
+        resolve(isNSFW);
+      };
+      img.onerror = (err) => {
+        reject(err);
+      };
+      img.src = URL.createObjectURL(imageBlob);
     });
   }
 
