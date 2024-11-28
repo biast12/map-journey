@@ -7,6 +7,7 @@ import "./ReportManagement.scss";
 import Modal from "../Modal";
 import ReportUserDisplay from "./ReportDisplays/ReportUserDisplay";
 import ReportPinDisplay from "./ReportDisplays/ReportPinDisplay";
+import Loader from "../Loader";
 
 type ReportUser = {
   id: string;
@@ -39,13 +40,14 @@ interface ReportData {
 
 const ReportManagement = () => {
   const { data, error, isLoading, makeRequest } = useRequestData();
+  const { data: rpData, error: rpError, isLoading: rpIsLoading, makeRequest: rpMakeRequest } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedReport, setSelectedReport] = useState<null | ReportData>(null);
 
-  function handleReportAction(reportData: ReportData, body: {[key: string]: any}) {
+  async function handleReportAction(reportData: ReportData, action: "dismiss" | "warn" | "ban") {
+    await rpMakeRequest(`reports/${reportData.id}/${reportData.id}`, "POST", undefined, { action: action });
 
-    makeRequest(`reports/${reportData.id}`, "PUT", undefined, body);
-
+    makeRequest("reports/all")
     setSelectedReport(null);
     setShowModal(false);
   }
@@ -60,6 +62,7 @@ const ReportManagement = () => {
 
   return (
     <>
+      {rpIsLoading && <Loader />}
       <Modal isOpen={showModal} onCloseModal={() => setShowModal(false)}>
         {selectedReport && (
           <IonGrid id="reportModalGrid">
@@ -80,13 +83,34 @@ const ReportManagement = () => {
             </IonRow>
             <IonRow id="reportButtonsRow">
               <IonCol size="4" className="reportButtons">
-                <IonButton color={"success"}>Dismiss</IonButton>
+                <IonButton
+                  color={"success"}
+                  onClick={(e) => {
+                    handleReportAction(selectedReport, "dismiss");
+                  }}
+                >
+                  Dismiss
+                </IonButton>
               </IonCol>
               <IonCol size="4" className="reportButtons">
-                <IonButton color={"warning"}>Warn</IonButton>
+                <IonButton
+                  color={"warning"}
+                  onClick={(e) => {
+                    handleReportAction(selectedReport, "warn");
+                  }}
+                >
+                  Warn
+                </IonButton>
               </IonCol>
               <IonCol size="4" className="reportButtons">
-                <IonButton color={"danger"}>Ban</IonButton>
+                <IonButton
+                  color={"danger"}
+                  onClick={(e) => {
+                    handleReportAction(selectedReport, "ban");
+                  }}
+                >
+                  Ban
+                </IonButton>
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -94,16 +118,18 @@ const ReportManagement = () => {
       </Modal>
       <IonRow id="reportsRow">
         {data &&
-          data.sort((a: ReportData, b: ReportData)=>new Date(b.date).getTime()-new Date(a.date).getTime()).map((reportData: ReportData) => (
-            <ReportColumn
-              key={reportData.id}
-              reportData={reportData}
-              onManageClick={(e) => {
-                setSelectedReport(reportData);
-                setShowModal(true);
-              }}
-            />
-          ))}
+          data
+            .sort((a: ReportData, b: ReportData) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .map((reportData: ReportData) => (
+              <ReportColumn
+                key={reportData.id}
+                reportData={reportData}
+                onManageClick={(e) => {
+                  setSelectedReport(reportData);
+                  setShowModal(true);
+                }}
+              />
+            ))}
       </IonRow>
     </>
   );
