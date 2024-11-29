@@ -1,7 +1,7 @@
 import { useHistory } from "react-router-dom";
-import useAuth from "./ProviderContext";
-import useRequestData from "./useRequestData";
-import useImageHandler from "./useImageHandler";
+import useAuth from "../hooks/ProviderContext";
+import useRequestData from "../hooks/useRequestData";
+import useImageHandler from "../hooks/useImageHandler";
 
 interface DeleteAccountProps {
   data: {

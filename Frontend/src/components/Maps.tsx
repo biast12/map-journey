@@ -146,7 +146,10 @@ function Map({ APIurl, pinID }: MapProps) {
 
     const map = new OlMap({
       target: "map",
-      controls: role !== "admin" ? defaultControls().extend([mousePositionControl]) : defaultControls(),
+      controls:
+        role !== "admin"
+          ? defaultControls().extend([mousePositionControl])
+          : defaultControls(),
       layers: [
         new TileLayer({
           source: new OSM(),

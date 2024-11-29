@@ -10,18 +10,17 @@ import { Preferences } from "@capacitor/preferences";
 import { isPlatform } from "@ionic/react";
 import { useEffect, useState } from "react";
 import Compressor from "compressorjs";
-import useSupabaseClient from "./useSupabaseClient";
-import useAuth from "./ProviderContext";
+import useSupabaseClient from "../hooks/useSupabaseClient";
+import useAuth from "../hooks/ProviderContext";
 import * as nsfwjs from "nsfwjs";
-import { loadImage } from "canvas";
 
-export interface UserPhoto {
+interface UserPhoto {
   filePath: string;
   webViewPath?: string;
 }
 
 const PHOTO_PREF_REF = "photos";
-export const usePhotoGallery = () => {
+const photoGallery = () => {
   const { role } = useAuth();
 
   const [photo, setPhoto] = useState<UserPhoto>();
@@ -235,3 +234,5 @@ export const usePhotoGallery = () => {
     uploadImageToStorage,
   };
 };
+
+export default photoGallery;

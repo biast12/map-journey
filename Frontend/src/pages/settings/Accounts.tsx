@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
 import useImageHandler from "../../hooks/useImageHandler";
-import handleDeleteAccount from "../../hooks/useDeleteAccount";
+import handleDeleteAccount from "../../utils/handleDeleteAccount";
 import { useAuth } from "../../hooks/ProviderContext";
 
 /* Components */

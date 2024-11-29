@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
-import { changeLanguage } from "../../i18n";
+import { changeLanguage } from "../../utils/i18n";
 
 /* Components */
 import Loader from "../../components/Loader";

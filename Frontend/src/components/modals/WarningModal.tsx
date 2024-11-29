@@ -13,7 +13,7 @@ import { trashOutline } from "ionicons/icons";
 import { useTranslation } from "react-i18next";
 import useAuth from "../../hooks/ProviderContext";
 import useRequestData from "../../hooks/useRequestData";
-import handleDeleteAccount from "../../hooks/useDeleteAccount";
+import handleDeleteAccount from "../../utils/handleDeleteAccount";
 import "./WarningModal.scss";
 
 interface WarningModalProps {
