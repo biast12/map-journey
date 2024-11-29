@@ -75,7 +75,7 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
       <IonHeader>
         <IonToolbar>
           <IonButton routerLink="/" fill="clear">
-            <IonImg src="/icons/webp/logo1.webp" alt="Logo" />
+            <IonImg src="/icons/logo.webp" alt="Logo" />
           </IonButton>
           <div className="IonButtonContainer">
             <IonButton fill="clear" onClick={handleOpenNotificationModal}>
