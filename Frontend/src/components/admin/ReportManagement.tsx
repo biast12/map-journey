@@ -8,60 +8,56 @@ import Modal from "../Modal";
 import ReportUserDisplay from "./ReportDisplays/ReportUserDisplay";
 import ReportPinDisplay from "./ReportDisplays/ReportPinDisplay";
 import Loader from "../Loader";
-import useAuth from "../../hooks/ProviderContext";
+import useAuth from "../../hooks/ProviderContext"
 
-type ReportUser = {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
+type SearchOptions = {
+  search: string;
+  searchBy: "id" | "name" | "text";
+  sortBy: "id" | "name" | "text";
 };
-
-type ReportPin = {
-  id: number;
-  profile_id: string;
-  title: string;
-  description: string;
-  imgurls: string;
-  date: string;
-  location: string;
-  longitude: number;
-  latitude: number;
-};
-
-interface ReportData {
-  id: number;
-  text: string;
-  date: string;
-  active: boolean;
-  reporting_user: ReportUser;
-  reported_user?: ReportUser;
-  reported_pin?: ReportPin;
-}
 
 const ReportManagement = () => {
   const { data, error, isLoading, makeRequest } = useRequestData();
   const { data: rpData, error: rpError, isLoading: rpIsLoading, makeRequest: rpMakeRequest } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedReport, setSelectedReport] = useState<null | ReportData>(null);
+  const [searchOptions, setSearchOptions] = useState<SearchOptions>({ search: "", searchBy: "name", sortBy: "name" });
 
-  const {userID} = useAuth();
+  const { userID } = useAuth();
 
   async function handleReportAction(reportData: ReportData, action: "dismiss" | "warn" | "ban") {
     await rpMakeRequest(`reports/${userID}/${reportData.id}`, "POST", undefined, { action: action });
 
-    makeRequest("reports/all/"+userID)
+    makeRequest("reports/all/" + userID);
     setSelectedReport(null);
     setShowModal(false);
   }
 
   useEffect(() => {
-    makeRequest("reports/all/"+userID);
+    makeRequest("reports/all/" + userID);
   }, []);
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+  useEffect(()=>{
+    console.log(data)
+  }, [data])
+
+  function filterData(reportData: ReportData) {
+    if (searchOptions.search === "") {
+      return true;
+    }
+
+    if (searchOptions.searchBy === "id") {
+      return reportData.id.toString().toLowerCase().match(searchOptions.search.toLowerCase());
+    }
+
+    if (searchOptions.searchBy === "name") {
+      return reportData.reporting_user.name.toLowerCase().match(searchOptions.search.toLowerCase());
+    }
+
+    if (searchOptions.searchBy === "text") {
+      return reportData.text.toLowerCase().match(searchOptions.search.toLowerCase());
+    }
+  }
 
   return (
     <>
@@ -119,10 +115,39 @@ const ReportManagement = () => {
           </IonGrid>
         )}
       </Modal>
+      <article className="searchOptions">
+        <section>
+          <label htmlFor="searchParams">Search </label>
+          <input
+            name="searchParams"
+            type="text"
+            placeholder="Search..."
+            onChange={(e) => {
+              setSearchOptions({ ...searchOptions, search: e.target.value });
+            }}
+          />
+        </section>
+        <section>
+          <label htmlFor="searchByParams">Search by </label>
+          <select
+            name="searchByParams"
+            id=""
+            onChange={(e) => {
+              const value = e.target.value as "id" | "name" | "text";
+              setSearchOptions({ ...searchOptions, searchBy: value });
+            }}
+          >
+            <option value="name">Name</option>
+            <option value="id">Id</option>
+            <option value="text">Text</option>
+          </select>
+        </section>
+      </article>
       <IonRow id="reportsRow">
         {data &&
           data
             .sort((a: ReportData, b: ReportData) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .filter(filterData)
             .map((reportData: ReportData) => (
               <ReportColumn
                 key={reportData.id}

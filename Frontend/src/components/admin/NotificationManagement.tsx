@@ -75,6 +75,7 @@ const NotificationManagement = () => {
             {data &&
               data.map((notifData: NotificationData) => (
                 <NotificationColumn
+                key={notifData.id}
                   onDeleteUserClick={() => {
                     setSelectedNotif(notifData);
                     setShowDeleteAlert(true);

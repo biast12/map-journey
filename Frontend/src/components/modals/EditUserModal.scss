@@ -1,0 +1,35 @@
+#editUserModal {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  
+    div {
+      display: flex;
+  
+      figure {
+        margin: 0;
+        img {
+          width: 100%;
+          height: auto;
+          margin: 0;
+        }
+      }
+    }
+  
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+      flex-grow: 2;
+  
+      select,
+      input {
+        padding: 0.2rem;
+      }
+  
+      .submitButton {
+        margin-top: auto;
+      }
+    }
+  }
