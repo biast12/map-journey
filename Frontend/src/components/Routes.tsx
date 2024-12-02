@@ -11,6 +11,7 @@ import Admin from "../pages/admin/Page";
 import GlobalMap from "../pages/GlobalMap";
 import OwnMap from "../pages/OwnMap";
 import Settings from "../pages/settings";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
 
 /* Settings Pages */
 import General from "../pages/settings/General";
@@ -67,6 +68,7 @@ export const Routes = () => {
         path="/settings/account"
         render={() => data && <Account userData={data} />}
       />
+      <Route exact path="/privacy-policy" component={PrivacyPolicy} />
       <Route exact path="/error" component={ErrorPage} />
       <Route exact path="/error/:status" component={ErrorPage} />
       <Route path="*">

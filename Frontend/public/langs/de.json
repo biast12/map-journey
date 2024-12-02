@@ -132,5 +132,32 @@
   "map": {
     "pin_alt": "Pin-Symbol",
     "error_page_message": "Pins konnten nicht abgerufen werden, bitte versuchen Sie es später erneut"
+  },
+  "privacy_policy": {
+    "title": "Datenschutzrichtlinie",
+    "introduction": {
+      "title": "Einführung",
+      "content": "Diese Datenschutzrichtlinie erklärt, wie wir Ihre persönlichen Daten handhaben. Wir verpflichten uns, Ihre Privatsphäre zu schützen und sicherzustellen, dass Ihre persönlichen Informationen sicher und verantwortungsbewusst behandelt werden."
+    },
+    "data_collection": {
+      "title": "Datenerfassung",
+      "content": "Wir erfassen folgende Arten von Daten: persönliche Identifikationsinformationen (Name (Benutzername), E-Mail-Adresse usw.)."
+    },
+    "data_usage": {
+      "title": "Datennutzung",
+      "content": "Wir verwenden Ihre Daten für folgende Zwecke: um unseren Service bereitzustellen und zu warten, um Sie über Änderungen an unserem Service zu informieren, um Ihnen die Teilnahme an interaktiven Funktionen unseres Service zu ermöglichen, um Kundensupport bereitzustellen, um Analysen oder wertvolle Informationen zu sammeln, damit wir unseren Service verbessern können."
+    },
+    "data_sharing": {
+      "title": "Datenweitergabe",
+      "content": "Wir teilen Ihre Daten mit niemandem, Ihre Daten sind vollständig sicher."
+    },
+    "user_rights": {
+      "title": "Benutzerrechte",
+      "content": "Sie haben folgende Rechte bezüglich Ihrer Daten: das Recht auf Zugang, Aktualisierung oder Löschung der Informationen, die wir über Sie haben, das Recht auf Berichtigung, das Recht auf Widerspruch, das Recht auf Einschränkung, das Recht auf Datenübertragbarkeit und das Recht, die Einwilligung zu widerrufen."
+    },
+    "contact": {
+      "title": "Kontaktieren Sie uns",
+      "content": "Wenn Sie Fragen haben, kontaktieren Sie uns bitte unter: "
+    }
   }
 }

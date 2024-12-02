@@ -72,31 +72,31 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
       {!isLoading && error && (
         <Error message={t("header.error_page_message")} />
       )}
-      <IonHeader>
-        <IonToolbar>
-          <IonButton routerLink="/" fill="clear">
-            <IonImg src="/icons/logo.webp" alt="Logo" />
-          </IonButton>
-          <div className="IonButtonContainer">
-            <IonButton fill="clear" onClick={handleOpenNotificationModal}>
-              <IonIcon aria-hidden="true" icon={notifications} />
-              {data && data.news_count >= 1 && (
-                <IonBadge color="danger">{data.news_count}</IonBadge>
-              )}
+      {userID && (
+        <IonHeader>
+          <IonToolbar>
+            <IonButton routerLink="/" fill="clear">
+              <IonImg src="/icons/logo.webp" alt="Logo" />
             </IonButton>
-            {role === "admin" && (
-              <IonButton routerLink="/admin" fill="clear">
-                <IonIcon aria-hidden="true" icon={shieldHalf} />
+            <div className="IonButtonContainer">
+              <IonButton fill="clear" onClick={handleOpenNotificationModal}>
+                <IonIcon aria-hidden="true" icon={notifications} />
+                {data && data.news_count >= 1 && (
+                  <IonBadge color="danger">{data.news_count}</IonBadge>
+                )}
               </IonButton>
-            )}
-            {userID && (
+              {role === "admin" && (
+                <IonButton routerLink="/admin" fill="clear">
+                  <IonIcon aria-hidden="true" icon={shieldHalf} />
+                </IonButton>
+              )}
               <IonButton routerLink="/settings" fill="clear">
                 <IonIcon aria-hidden="true" icon={settings} />
               </IonButton>
-            )}
-          </div>
-        </IonToolbar>
-      </IonHeader>
+            </div>
+          </IonToolbar>
+        </IonHeader>
+      )}
       <IonModal isOpen={showWarningModal} backdropDismiss={false}>
         <div className="modal-content">
           <WarningModal data={data} closeWarningModal={closeWarningModal} />

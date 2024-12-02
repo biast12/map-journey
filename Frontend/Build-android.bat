@@ -1,2 +1,2 @@
 Ionic capacitor build android
-Xcopy /S "AndroidManifest.xml" "android\app\src\main"
+Xcopy /Y /Q "%CD%\AndroidManifest.xml" "%CD%\android\app\src\main\AndroidManifest.xml"
