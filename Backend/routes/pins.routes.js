@@ -150,7 +150,6 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
     longitude,
     latitude,
     imgurls,
-    groups,
     status,
   } = req.body;
 
@@ -197,7 +196,6 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
       latitude,
       imgurls,
       status: status === "true" ? "public" : "private",
-      groups: groups || null,
     };
 
     const { error: pinError } = await supabase.from("pins").insert([pinData]);
@@ -225,7 +223,6 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
     longitude,
     latitude,
     imgurls,
-    groups,
     status,
   } = req.body;
 
@@ -236,7 +233,6 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
   if (longitude) updatedFields.longitude = longitude;
   if (latitude) updatedFields.latitude = latitude;
   if (imgurls) updatedFields.imgurls = imgurls;
-  if (groups) updatedFields.groups = groups;
   if (status) updatedFields.status = status === true ? "public" : "private";
 
   try {

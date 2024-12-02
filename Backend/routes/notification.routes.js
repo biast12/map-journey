@@ -184,7 +184,7 @@ router.delete("/:id/:artid", checkUserRole("admin"), async (req, res) => {
 
     if (fetchError) {
       console.error("Error fetching article:", fetchError);
-      return res.status(500).send("Error checking if article exists");
+      return res.status(404).send("Error news article not found");
     }
 
     if (!existingArticle) {
@@ -198,7 +198,7 @@ router.delete("/:id/:artid", checkUserRole("admin"), async (req, res) => {
 
     if (deleteError) {
       console.error("Error deleting article:", deleteError);
-      return res.status(500).send("Error deleting news article");
+      return res.status(418).send("Error deleting news article cos I'm a teapot");
     }
 
     const { data: profiles, error: profileError } = await supabase

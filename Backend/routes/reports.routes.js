@@ -6,6 +6,7 @@ const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
+// number of reports before action will be taken
 const Maxnumber = 5;
 
 // Helper function to validate UUIDs
