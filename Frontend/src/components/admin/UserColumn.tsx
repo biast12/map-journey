@@ -4,19 +4,6 @@ import { MouseEvent } from "react";
 import "./UserColumn.scss"
 import { createOutline, trashBin } from "ionicons/icons";
 
-type UserData = {
-  avatar: string;
-  banner: string;
-  email: string;
-  id: string;
-  name: string;
-  new_notifications: string[];
-  news_count: number;
-  role: "user" | "admin";
-  settings_id: number;
-  status: "public" | "private" | "reported";
-} 
-
 interface UserColumnProps {
   userData: UserData;
   onEditUserClick: (e: MouseEvent, userData: UserData) => void;

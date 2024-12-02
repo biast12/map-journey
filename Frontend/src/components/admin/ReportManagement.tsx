@@ -10,7 +10,7 @@ import ReportPinDisplay from "./ReportDisplays/ReportPinDisplay";
 import Loader from "../Loader";
 import useAuth from "../../hooks/ProviderContext"
 
-type SearchOptions = {
+type ReportSearchOptions = {
   search: string;
   searchBy: "id" | "name" | "text";
   sortBy: "id" | "name" | "text";
@@ -21,7 +21,7 @@ const ReportManagement = () => {
   const { data: rpData, error: rpError, isLoading: rpIsLoading, makeRequest: rpMakeRequest } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedReport, setSelectedReport] = useState<null | ReportData>(null);
-  const [searchOptions, setSearchOptions] = useState<SearchOptions>({ search: "", searchBy: "name", sortBy: "name" });
+  const [searchOptions, setSearchOptions] = useState<ReportSearchOptions>({ search: "", searchBy: "name", sortBy: "name" });
 
   const { userID } = useAuth();
 
@@ -36,10 +36,6 @@ const ReportManagement = () => {
   useEffect(() => {
     makeRequest("reports/all/" + userID);
   }, []);
-
-  useEffect(()=>{
-    console.log(data)
-  }, [data])
 
   function filterData(reportData: ReportData) {
     if (searchOptions.search === "") {

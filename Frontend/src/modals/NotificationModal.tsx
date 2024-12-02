@@ -25,7 +25,7 @@ const NotificationModal: React.FC = () => {
   const { userID, loading } = useAuth();
 
   useEffect(() => {
-    makeRequest(`notification/all`);
+    makeRequest(`notification/all/${userID}`);
   }, []);
 
   useEffect(() => {
@@ -49,12 +49,12 @@ const NotificationModal: React.FC = () => {
         <IonCardContent>
           <IonList>
             {data &&
-              data.map((notification: any, index: number) => (
+              data.map((notification: {title: string, text: string, date: string}, index: number) => (
                 <IonItem key={index}>
                   <IonLabel>
                     <h2>{notification.title}</h2>
-                    <p>{notification.text}</p>
-                    <small>{notification.date}</small>
+                    {notification.text.split("\n").map((text)=><p>{text}</p>)}
+                    <small>{new Date(notification.date).toDateString()}</small>
                   </IonLabel>
                 </IonItem>
               ))}

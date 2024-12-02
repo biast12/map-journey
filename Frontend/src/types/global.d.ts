@@ -29,6 +29,7 @@ interface ReportData {
 }
 /* Report END */
 
+/* User START */
 type UserData = {
   avatar: string;
   banner: string;
@@ -41,3 +42,13 @@ type UserData = {
   settings_id: number;
   status: "public" | "private" | "reported";
 };
+/* User END */
+
+/* Notification START */
+type NotificationData = {
+  date: string;
+  id: number;
+  text: string;
+  title: string;
+};
+/* Notification END */

@@ -3,13 +3,6 @@ import "./NotificationColumn.scss";
 import { trashBin } from "ionicons/icons";
 import { MouseEvent } from "react";
 
-type NotificationData = {
-  date: string;
-  id: number;
-  text: string;
-  title: string;
-};
-
 const NotificationColumn = ({ notifData, onDeleteUserClick }: { notifData: NotificationData, onDeleteUserClick: (e: MouseEvent, notifData: NotificationData) => void }) => {
 
   return (

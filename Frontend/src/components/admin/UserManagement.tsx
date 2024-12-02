@@ -1,19 +1,19 @@
 "use client";
 import { FormEvent, useEffect, useState } from "react";
-import { IonAlert, IonButton, IonRow } from "@ionic/react";
+import { IonAlert, IonRow } from "@ionic/react";
 
 import useRequestData from "../../hooks/useRequestData";
 import UserColumn from "./UserColumn";
-import Modal from "../Modal";
 
 import "./UserManagement.scss";
 import useAuth from "../../hooks/ProviderContext";
 import EditUserModal from "../modals/EditUserModal";
 
-type SearchOptions = {
+type UserSearchOptions = {
   search: string;
   searchBy: "id" | "name";
   sortBy: "id" | "name";
+  show: "all" | "public" | "private" | "reported" | "warning" | "banned";
 };
 
 const UserManagement = () => {
@@ -25,7 +25,12 @@ const UserManagement = () => {
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [handlingRequest, setHandlingRequest] = useState<boolean>(false);
-  const [searchOptions, setSearchOptions] = useState<SearchOptions>({ search: "", searchBy: "name", sortBy: "name" });
+  const [searchOptions, setSearchOptions] = useState<UserSearchOptions>({
+    search: "",
+    searchBy: "name",
+    sortBy: "name",
+    show: "all",
+  });
 
   const { userID } = useAuth();
 
@@ -63,11 +68,15 @@ const UserManagement = () => {
   }, []);
 
   function filterData(userData: UserData) {
+    console.log(searchOptions)
+    console.log(userData.status)
+    if (searchOptions.show !== "all" && userData.status !== searchOptions.show) {return false}
+    
     if (searchOptions.search === "") {
       return true;
+    } else {
+      return userData[searchOptions.searchBy].toLowerCase().match(searchOptions.search.toLowerCase());
     }
-
-    return userData[searchOptions.searchBy].toLowerCase().match(searchOptions.search.toLowerCase());
   }
 
   return (
@@ -111,6 +120,24 @@ const UserManagement = () => {
           >
             <option value="name">Name</option>
             <option value="id">Id</option>
+          </select>
+        </section>
+        <section>
+          <label htmlFor="showParams">Status </label>
+          <select
+            name="showParams"
+            id=""
+            onChange={(e) => {
+              const value = e.target.value as "all" | "public" | "private" | "reported" | "warning" | "banned";
+              setSearchOptions({ ...searchOptions, show: value });
+            }}
+          >
+            <option value="all">All</option>
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+            <option value="reported">Reported</option>
+            <option value="warning">Warned</option>
+            <option value="banned">Banned</option>
           </select>
         </section>
       </article>

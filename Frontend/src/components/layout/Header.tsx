@@ -43,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
             <IonImg src="/icons/webp/logo1.webp" alt="Logo" />
           </IonButton>
           <div className="IonButtonContainer">
-            {notificationsStatus && (
+            {/* notificationsStatus */ true && (
               <IonButton fill="clear" onClick={openNotificationModal}>
                 <IonIcon aria-hidden="true" icon={notifications} />
                 {data && data.news_count >= 1 && (

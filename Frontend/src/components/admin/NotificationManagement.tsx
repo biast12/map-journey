@@ -6,13 +6,6 @@ import useAuth from "../../hooks/ProviderContext";
 import NotificationColumn from "./NotificationColumn";
 import Loader from "../Loader";
 
-type NotificationData = {
-  date: string;
-  id: number;
-  text: string;
-  title: string;
-};
-
 const NotificationManagement = () => {
   const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false);
   const [selectedNotif, setSelectedNotif] = useState<NotificationData | null>(null);
@@ -46,9 +39,6 @@ const NotificationManagement = () => {
     makeRequest("notification/all/" + userID);
   }, []);
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   return (
       <>
@@ -69,6 +59,7 @@ const NotificationManagement = () => {
             <IonButton type="submit">Create</IonButton>
           </form>
           {createData && !createIsLoading && <p className="successText">Successfully created news!</p>}
+          {createError && !createIsLoading && <p className="errorText">Failed to create news!</p>}
         </IonCol>
         <IonCol size="12">
           <IonRow id="notifRow">
