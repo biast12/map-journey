@@ -4,7 +4,6 @@ import {
   CameraSource,
   Photo,
 } from "@capacitor/camera";
-import { Directory, Filesystem } from "@capacitor/filesystem";
 import { Capacitor } from "@capacitor/core";
 import { Preferences } from "@capacitor/preferences";
 import { isPlatform } from "@ionic/react";
@@ -56,27 +55,9 @@ const photoGallery = () => {
   ): Promise<UserPhoto> => {
     let base64Data: string;
 
-    if (isPlatform("hybrid")) {
-      const file = await Filesystem.readFile({
-        path: fileName,
-        directory: Directory.Data,
-      });
-      base64Data = file.data as string;
-    } else {
-      base64Data = await base64FromPath(photo.webPath!);
-    }
-    const savedFile = await Filesystem.writeFile({
-      path: fileName,
-      directory: Directory.Data,
-      data: base64Data,
-    });
+    base64Data = await base64FromPath(photo.webPath!);
 
-    if (isPlatform("hybrid")) {
-      return {
-        filePath: savedFile.uri,
-        webViewPath: Capacitor.convertFileSrc(savedFile.uri),
-      };
-    }
+    localStorage.setItem(fileName, base64Data);
 
     return {
       filePath: fileName,
@@ -224,7 +205,9 @@ const photoGallery = () => {
     return data;
   }
 
-  const deletePhoto = async (fileName: string) => {};
+  const deletePhoto = async (fileName: string) => {
+    localStorage.removeItem(fileName);
+  };
 
   return {
     blob,

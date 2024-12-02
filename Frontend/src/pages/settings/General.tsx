@@ -59,7 +59,7 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
   useEffect(() => {
     const importLanguages = async () => {
       const languageFiles = import.meta.glob<{ lang: string }>(
-        "../../langs/*.json"
+        "../../../public/langs/*.json"
       );
       const loadedLanguages: { [key: string]: string } = {};
 

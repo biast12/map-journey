@@ -32,7 +32,7 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
   const closeReportModal = () => setReportModal(false);
 
   const copySharedLink = async () => {
-    const domain = "localhost:8100";
+    const domain = "https://mapjourney.biast12.info";
     const url = `${domain}/globalmap?pin=${pinData.id}`;
 
     if (navigator.clipboard) {

@@ -4,7 +4,7 @@ import HttpBackend from "i18next-http-backend/cjs";
 import LanguageDetector from "i18next-browser-languagedetector";
 
 const defaultLanguage = "en";
-const loadPath = "src/langs/{{lng}}.json";
+const loadPath = "langs/{{lng}}.json";
 
 i18n
   .use(HttpBackend)

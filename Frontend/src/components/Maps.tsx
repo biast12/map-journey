@@ -66,7 +66,7 @@ function createStyle(size: number = 0.3) {
     image: new Icon({
       anchor: [0.5, 0.96],
       crossOrigin: "anonymous",
-      src: "http://localhost:8100/icons/ping.webp",
+      src: "icons/ping.webp",
       scale: size,
     }),
   });
@@ -243,7 +243,7 @@ function Map({ APIurl, pinID }: MapProps) {
         <div id="map">
           {/* Preload the image cause else React/Ionic will not load it and add it to "the public folder" */}
           <IonImg
-            src="/icons/ping.webp"
+            src="icons/ping.webp"
             alt={t("map.pin_alt")}
             style={{ display: "none" }}
             aria-hidden="true"
