@@ -16,6 +16,18 @@ function isValidUUID(uuid) {
   return uuidRegex.test(uuid);
 }
 
+// Root route
+router.get("/", (req, res) => {
+  res.json({
+    message: "reports Route",
+    routes: {
+      "/all/:id": "Get all reports",
+      "/:id": "Create a new report",
+      "/:id/:rpid": "Admin actions: dismiss / warn / ban",
+    },
+  });
+});
+
 // Get all reports
 router.get("/all/:id", checkUserRole("admin"), async (req, res) => {
   try {
@@ -161,7 +173,7 @@ router.post("/seen/:id", checkUserRole("user"), async (req, res) => {
   }
 });
 
-// make a report
+// Create a new report
 router.post("/:id", checkUserRole("user"), async (req, res) => {
   const { text, reported_user_id, reported_pin_id } = req.body;
   const profile_id = req.params.id;
@@ -195,7 +207,9 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
   }
 
   if (reportingUser.status === "banned") {
-    return res.status(403).json({ message: "You are banned and cannot create a report." });
+    return res
+      .status(403)
+      .json({ message: "You are banned and cannot create a report." });
   }
 
   try {
@@ -206,15 +220,21 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
 
     if (reportFetchError) {
       console.error("Error checking existing report:", reportFetchError);
-      return res.status(500).json({ message: "Error checking existing report" });
+      return res
+        .status(500)
+        .json({ message: "Error checking existing report" });
     }
 
-    const isDuplicateReport = existingReports.some(report => 
-      report.reported_user_id === reported_user_id || report.reported_pin_id === reported_pin_id
+    const isDuplicateReport = existingReports.some(
+      (report) =>
+        report.reported_user_id === reported_user_id ||
+        report.reported_pin_id === reported_pin_id
     );
 
     if (isDuplicateReport) {
-      return res.status(403).json({ message: "You can't report this user or pin again." });
+      return res
+        .status(403)
+        .json({ message: "You can't report this user or pin again." });
     }
 
     const { data: reportData, error: reportError } = await supabase
@@ -234,7 +254,9 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
     res.status(201).json({ message: "Report created successfully" });
   } catch (error) {
     console.error("Error during report creation:", error);
-    res.status(500).json({ message: "Failed to create report", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to create report", error: error.message });
   }
 });
 
@@ -281,11 +303,9 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
         if (pinOwnerFetchError) throw pinOwnerFetchError;
 
         if (pinOwner.role === "admin") {
-          return res
-            .status(403)
-            .json({
-              message: "Cannot perform actions on pins owned by admin users",
-            });
+          return res.status(403).json({
+            message: "Cannot perform actions on pins owned by admin users",
+          });
         }
       }
     }

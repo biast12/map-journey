@@ -7,6 +7,20 @@ const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
+// Root route
+router.get("/", (req, res) => {
+  res.json({
+    message: "Pins Route",
+    routes: {
+      "/all/:id": "Get all public pins",
+      "/:id": "Get pins by user ID",
+      "/:id": "Create a new pin",
+      "/:id/:pinid": "Update a pin by User ID and Pin ID",
+      "/:id/:pinid": "Delete a pin by User ID and Pin ID",
+    },
+  });
+});
+
 // Get all public pins
 router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
@@ -143,15 +157,8 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
 // Create a new pin
 router.post("/:id", checkUserRole("user"), async (req, res) => {
   const profile_id = req.params.id;
-  const {
-    title,
-    description,
-    location,
-    longitude,
-    latitude,
-    imgurls,
-    status,
-  } = req.body;
+  const { title, description, location, longitude, latitude, imgurls, status } =
+    req.body;
 
   if (
     !profile_id ||
@@ -181,7 +188,9 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
     }
 
     if (userProfile.status === "banned") {
-      return res.status(403).json({ error: "You are banned and cannot create a pin." });
+      return res
+        .status(403)
+        .json({ error: "You are banned and cannot create a pin." });
     }
 
     const uniqueId = await generateUniqueId();
@@ -216,15 +225,8 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
 router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
   const pinID = req.params.pinid;
-  const {
-    title,
-    description,
-    location,
-    longitude,
-    latitude,
-    imgurls,
-    status,
-  } = req.body;
+  const { title, description, location, longitude, latitude, imgurls, status } =
+    req.body;
 
   const updatedFields = {};
   if (title) updatedFields.title = title;
@@ -248,7 +250,9 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
     }
 
     if (userProfile.status === "banned") {
-      return res.status(403).json({ error: "You are banned and cannot update a pin." });
+      return res
+        .status(403)
+        .json({ error: "You are banned and cannot update a pin." });
     }
 
     const { data: pin, error: pinCheckError } = await supabase
@@ -300,7 +304,9 @@ router.delete("/:id/:pinid", checkUserRole("user"), async (req, res) => {
     }
 
     if (userProfile.status === "banned") {
-      return res.status(403).json({ error: "You are banned and cannot delete a pin." });
+      return res
+        .status(403)
+        .json({ error: "You are banned and cannot delete a pin." });
     }
 
     const { data: pin, error: pinCheckError } = await supabase

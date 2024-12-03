@@ -8,6 +8,22 @@ const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
+// Root route
+router.get("/", (req, res) => {
+  res.json({
+    message: "User Route",
+    routes: {
+      "/all/:id": "Get all users",
+      "/:id": "Get a user by User ID",
+      "/": "Create a new user and default settings",
+      "/login": "Login route",
+      "/:id": "Update a user by User ID",
+      "/:id/:userid": "Admin - Update a user by User ID",
+      "/:id": "Delete a user by User ID",
+    },
+  });
+});
+
 // Get all users
 router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   try {
@@ -254,7 +270,7 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
   }
 });
 
-// Admin Update a user by User ID
+// Admin - Update a user by User ID
 router.put("/:id/:userid", checkUserRole("admin"), async (req, res) => {
   const userID = req.params.userid;
   const { name, email, password, avatar, status, role } = req.body;

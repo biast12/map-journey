@@ -7,6 +7,17 @@ const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
+// Root route
+router.get("/", (req, res) => {
+  res.json({
+    message: "Settings Route",
+    routes: {
+      "/:id": "Get a user's settings by Settings ID",
+      "/:id": "Update a user's settings by Settings ID",
+    },
+  });
+});
+
 // Get a user's settings by Profile ID or Settings ID
 router.get("/:id", checkUserRole("user"), async (req, res) => {
   const id = req.params.id;
@@ -20,7 +31,9 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
 
     if (settingsError && settingsError.code !== "PGRST116") {
       console.error("Error fetching settings directly:", settingsError);
-      return res.status(500).json({ error: "Error fetching settings directly" });
+      return res
+        .status(500)
+        .json({ error: "Error fetching settings directly" });
     }
 
     if (settings) {
@@ -98,7 +111,9 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
     }
 
     if (profile.status === "banned") {
-      return res.status(403).json({ error: "You are banned and cannot update settings." });
+      return res
+        .status(403)
+        .json({ error: "You are banned and cannot update settings." });
     }
 
     let settingsID = profile.settings_id;
@@ -111,7 +126,9 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
 
     if (settingsError && settingsError.code !== "PGRST116") {
       console.error("Error fetching settings directly:", settingsError);
-      return res.status(500).json({ error: "Error fetching settings directly" });
+      return res
+        .status(500)
+        .json({ error: "Error fetching settings directly" });
     }
 
     if (!settings) {
