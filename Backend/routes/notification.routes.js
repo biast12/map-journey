@@ -38,7 +38,9 @@ const removeNotificationID = (currentNotifications, idToRemove) => {
     return [Number(item)];
   });
 
-  const updatedNotifications = notifications.filter((id) => id !== Number(idToRemove));
+  const updatedNotifications = notifications.filter(
+    (id) => id !== Number(idToRemove)
+  );
   return compressNotificationIDs(updatedNotifications);
 };
 
@@ -62,13 +64,11 @@ router.get("/", (req, res) => {
   res.json({
     message: "Notification Route",
     routes: {
-      "/all": "Get all news articles",
-      "/:id": "Get a specific news article by ID",
-      "/": "Create a new news article",
-      "/:id": "Update a news article by ID",
-      "/:id": "Delete a news article by ID",
-      "/:id": "Mark a news article as read",
+      "/all/:id": "Get all news articles",
+      "/:id": "Create a new news article",
       "/readall/:id": "Mark all notifications as read",
+      "/:id/:artid": "Update a news article by ID",
+      "/:id/:artid": "Delete a news article by ID",
     },
   });
 });
@@ -89,32 +89,6 @@ router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   } catch (error) {
     console.error("Error fetching news articles:", error);
     res.status(500).send("Error fetching news articles");
-  }
-});
-
-// Get a specific news article by ID
-router.get("/:id/:artid", checkUserRole("user"), async (req, res) => {
-  const articleID = req.params.artid;
-
-  try {
-    const { data: newsArticle, error } = await supabase
-      .from("news")
-      .select("*")
-      .eq("id", articleID)
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    if (!newsArticle) {
-      return res.status(404).send("News article not found");
-    }
-
-    res.json(newsArticle);
-  } catch (error) {
-    console.error("Error fetching news article:", error);
-    res.status(500).send("Error fetching news article");
   }
 });
 
@@ -178,6 +152,48 @@ router.post("/:id", checkUserRole("amin"), async (req, res) => {
   }
 });
 
+// Mark all notifications as read
+router.post("/readall/:id", checkUserRole("user"), async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const { data: profile, error: fetchError } = await supabase
+      .from("profile")
+      .select("new_notifications, news_count")
+      .eq("id", userId)
+      .single();
+
+    if (fetchError || !profile) {
+      console.error("Error fetching profile:", fetchError);
+      return res.status(404).send("User profile not found");
+    }
+
+    const updatedNotifications = [];
+    const updatedNewsCount = 0;
+
+    const { error: updateError } = await supabase
+      .from("profile")
+      .update({
+        new_notifications: updatedNotifications,
+        news_count: updatedNewsCount,
+      })
+      .eq("id", userId);
+
+    if (updateError) {
+      console.error("Error updating profile notifications:", updateError);
+      return res.status(500).send("Error updating notifications");
+    }
+
+    res.status(200).json({
+      message: "All notifications marked as read",
+      updatedNotifications,
+    });
+  } catch (error) {
+    console.error("Error marking all notifications as read:", error);
+    res.status(500).send("Error marking all notifications as read");
+  }
+});
+
 // Update a news article by ID
 router.put("/:id/:artid", checkUserRole("admin"), async (req, res) => {
   const articleID = req.params.artid;
@@ -213,7 +229,7 @@ router.put("/:id/:artid", checkUserRole("admin"), async (req, res) => {
   }
 });
 
-// Delete a news article by ID and remove its ID from all user notifications
+// Delete a news article by ID
 router.delete("/:id/:artid", checkUserRole("admin"), async (req, res) => {
   const articleID = Number(req.params.artid);
 
@@ -226,7 +242,7 @@ router.delete("/:id/:artid", checkUserRole("admin"), async (req, res) => {
 
     if (fetchError) {
       console.error("Error fetching article:", fetchError);
-      return res.status(500).send("Error checking if article exists");
+      return res.status(404).send("Error news article not found");
     }
 
     if (!existingArticle) {
@@ -240,7 +256,9 @@ router.delete("/:id/:artid", checkUserRole("admin"), async (req, res) => {
 
     if (deleteError) {
       console.error("Error deleting article:", deleteError);
-      return res.status(500).send("Error deleting news article");
+      return res
+        .status(418)
+        .send("Error deleting news article cos I'm a teapot");
     }
 
     const { data: profiles, error: profileError } = await supabase
@@ -289,99 +307,6 @@ router.delete("/:id/:artid", checkUserRole("admin"), async (req, res) => {
   } catch (error) {
     console.error("Error during delete operation:", error);
     res.status(500).send("Error deleting news article");
-  }
-});
-
-// Mark a news article as read
-router.post("/read/:id/:artid", checkUserRole("user"), async (req, res) => {
-  const userId = req.params.id;
-  const articleId = req.params.artid;
-
-  if (!articleId) {
-    return res.status(400).send("Missing article ID");
-  }
-
-  try {
-    const { data: profile, error: fetchError } = await supabase
-      .from("profile")
-      .select("new_notifications, news_count")
-      .eq("id", userId)
-      .single();
-
-    if (fetchError || !profile) {
-      console.error("Error fetching profile:", fetchError);
-      return res.status(404).send("User profile not found");
-    }
-
-    const currentNotifications = profile.new_notifications || [];
-
-    const updatedNotifications = removeNotificationID(
-      currentNotifications,
-      Number(articleId)
-    );
-    const updatedNewsCount = Math.max((profile.news_count || 0) - 1, 0); // Ensure news_count is not negative
-
-    const { error: updateError } = await supabase
-      .from("profile")
-      .update({
-        new_notifications: updatedNotifications,
-        news_count: updatedNewsCount,
-      })
-      .eq("id", userId);
-
-    if (updateError) {
-      console.error("Error updating profile notifications:", updateError);
-      return res.status(500).send("Error updating notifications");
-    }
-
-    res
-      .status(200)
-      .json({ message: "Notification marked as read", updatedNotifications });
-  } catch (error) {
-    console.error("Error marking article as read:", error);
-    res.status(500).send("Error marking article as read");
-  }
-});
-
-// Mark all notifications as read
-router.post("/readall/:id", checkUserRole("user"), async (req, res) => {
-  const userId = req.params.id;
-
-  try {
-    const { data: profile, error: fetchError } = await supabase
-      .from("profile")
-      .select("new_notifications, news_count")
-      .eq("id", userId)
-      .single();
-
-    if (fetchError || !profile) {
-      console.error("Error fetching profile:", fetchError);
-      return res.status(404).send("User profile not found");
-    }
-
-    const updatedNotifications = [];
-    const updatedNewsCount = 0;
-
-    const { error: updateError } = await supabase
-      .from("profile")
-      .update({
-        new_notifications: updatedNotifications,
-        news_count: updatedNewsCount,
-      })
-      .eq("id", userId);
-
-    if (updateError) {
-      console.error("Error updating profile notifications:", updateError);
-      return res.status(500).send("Error updating notifications");
-    }
-
-    res.status(200).json({
-      message: "All notifications marked as read",
-      updatedNotifications,
-    });
-  } catch (error) {
-    console.error("Error marking all notifications as read:", error);
-    res.status(500).send("Error marking all notifications as read");
   }
 });
 
