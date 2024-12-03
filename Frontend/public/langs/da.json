@@ -158,5 +158,65 @@
       "title": "Kontakt os",
       "content": "Hvis du har spørgsmål, bedes du kontakte os på: "
     }
+  },
+  "terms_of_service": {
+  "title": "Vilkår for brug",
+  "introduction": {
+    "title": "Accept af vilkår",
+    "content": "Ved at få adgang til eller bruge Map Journey-appen accepterer du at være bundet af disse vilkår for brug. Hvis du ikke accepterer nogen del af disse vilkår, må du ikke bruge appen."
+  },
+  "description": {
+    "title": "Beskrivelse af tjenesten",
+    "content": "Map Journey giver brugere mulighed for at kortlægge deres rejser ved at placere pins med lokalitetsdata, tekst og billeder. Pins kan indstilles som offentlige eller private, og brugere kan oprette tilpassede profiler med billeder og bannere."
+  },
+  "user_accounts": {
+    "title": "Brugerkonti",
+    "content": "For at få adgang til visse funktioner skal du oprette en konto. Du forpligter dig til at give korrekte og fuldstændige oplysninger under registreringen og opdatere dine oplysninger efter behov. Du er ansvarlig for at holde dine kontooplysninger fortrolige."
+  },
+  "user_generated_content": {
+    "title": "Brugergenereret indhold",
+    "content": "Brugere kan oprette og uploade indhold, herunder pins og profiloplysninger. Du bevarer ejerskab af dit indhold, men giver Map Journey en ikke-eksklusiv, verdensomspændende licens til at vise det i appen. Du er ansvarlig for, at dit indhold ikke overtræder lovgivningen eller andres rettigheder."
+  },
+  "prohibited_conduct": {
+    "title": "Forbudt adfærd",
+    "content": "Du accepterer ikke at: (1) poste ulovligt eller skadeligt indhold, (2) chikanere, true eller udgive dig for at være andre, (3) hacke eller forsøge at reverse-engineere appen, (4) dele falske oplysninger eller (5) krænke andres rettigheder."
+  },
+  "privacy_policy": {
+    "title": "Privatlivspolitik",
+    "content": "Din brug af appen er også underlagt vores privatlivspolitik, som forklarer, hvordan vi indsamler, bruger og beskytter dine personlige data. Ved at bruge appen accepterer du betingelserne i vores privatlivspolitik."
+  },
+  "intellectual_property": {
+    "title": "Intellektuel ejendomsret",
+    "content": "Alt indhold i appen, undtagen brugergenereret indhold, er Map Journeys eller dets licensgiveres ejendom. Du må ikke kopiere, ændre eller distribuere nogen del af appen uden forudgående skriftligt samtykke."
+  },
+  "service_availability": {
+    "title": "Tjenestens tilgængelighed og ændringer",
+    "content": "Vi bestræber os på at holde appen tilgængelig, men kan ikke garantere uafbrudt adgang. Vi forbeholder os retten til at ændre eller afbryde funktioner eller tjenesten uden varsel."
+  },
+  "termination": {
+    "title": "Opsigelse",
+    "content": "Vi kan suspendere eller opsige din konto til enhver tid, hvis du overtræder disse vilkår. Du kan også slette din konto når som helst, hvilket vil resultere i sletning af dit indhold og data."
+  },
+  "disclaimers": {
+    "title": "Ansvarsfraskrivelse",
+    "content": "Appen leveres 'som den er' uden garantier. Vi garanterer ikke nøjagtigheden af indhold eller lokalitetsdata og er ikke ansvarlige for brugerinteraktioner eller eksterne links."
+  },
+  "limitation_of_liability": {
+    "title": "Ansvarsbegrænsning",
+    "content": "I det omfang det er tilladt i henhold til lovgivningen, er Map Journey ikke ansvarlig for indirekte, hændelige eller følgeskader, der opstår som følge af din brug af appen."
+  },
+  "governing_law": {
+    "title": "Gældende lov",
+    "content": "Disse vilkår er underlagt gældende internationale love og standarder. Enhver tvist, der opstår som følge af disse vilkår eller din brug af appen, vil blive løst i overensstemmelse med globale juridiske principper og under jurisdiktion af internationalt anerkendte retlige organer."
+  },
+  "updates_to_terms": {
+    "title": "Ændringer i vilkårene",
+    "content": "Vi forbeholder os retten til at opdatere disse vilkår når som helst. Vi vil underrette brugere om væsentlige ændringer via appen eller e-mail. Fortsat brug af appen efter ændringer betyder, at du accepterer de nye vilkår."
+  },
+  "contact": {
+    "title": "Kontakt os",
+    "content": "Hvis du har spørgsmål vedrørende disse vilkår, kan du kontakte os på: "
   }
+}
+
 }

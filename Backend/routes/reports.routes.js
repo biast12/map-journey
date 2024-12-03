@@ -646,14 +646,6 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
               }
             }
 
-            const { data: deletedPinData, error: deletePinError } =
-              await supabase.from("pins").delete().eq("id", reported_pin_id);
-
-            if (deletePinError) {
-              console.error("Error deleting pin:", deletePinError);
-              return res.status(500).json({ message: "Error deleting pin" });
-            }
-
             const { error: deleteReportsErrorPin } = await supabase
               .from("reports")
               .delete()
@@ -667,6 +659,14 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
               return res
                 .status(500)
                 .json({ message: "Error deleting pin reports" });
+            }
+
+            const { data: deletedPinData, error: deletePinError } =
+              await supabase.from("pins").delete().eq("id", reported_pin_id);
+
+            if (deletePinError) {
+              console.error("Error deleting pin:", deletePinError);
+              return res.status(500).json({ message: "Error deleting pin" });
             }
 
             const { error: updateAllPinsError } = await supabase

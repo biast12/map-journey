@@ -65,7 +65,7 @@ const AppContent: React.FC = () => {
   const closeNotificationModal = () => setShowNotificationModal(false);
 
   // Define the paths for Public Routes
-  const publicPaths = ["/privacy-policy", "/error", "/error/:status"];
+  const publicPaths = ["/privacy-policy", "/terms-of-service", "/error", "/error/:status"];
 
   useEffect(() => {
     if (!userID && !loading && !publicPaths.includes(location.pathname)) {
