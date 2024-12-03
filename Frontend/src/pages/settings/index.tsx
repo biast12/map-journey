@@ -40,6 +40,11 @@ const Settings: React.FC = () => {
       icon: personOutline,
     },
   ];
+
+  const navigateTo = (url: string) => {
+    history.push(`/settings/${url}`);
+  };
+
   return (
     <>
       <IonHeader>
@@ -50,7 +55,7 @@ const Settings: React.FC = () => {
       <IonContent>
         <IonList>
           {settingsData.map((setting, index) => (
-            <IonItem key={index} button href={"/settings/" + setting.url}>
+            <IonItem key={index} button onClick={() => navigateTo(setting.url)}>
               <IonIcon icon={setting.icon} slot="start" />
               <IonLabel>{setting.name}</IonLabel>
             </IonItem>

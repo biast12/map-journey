@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import {
   IonHeader,
   IonToolbar,
@@ -8,7 +7,6 @@ import {
   IonButton,
   IonIcon,
   IonInput,
-  IonToast,
   IonModal,
   IonAlert,
 } from "@ionic/react";
@@ -18,11 +16,13 @@ import { useTranslation } from "react-i18next";
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
 import useImageHandler from "../../hooks/useImageHandler";
+import handleDeleteAccount from "../../utils/handleDeleteAccount";
 import { useAuth } from "../../hooks/ProviderContext";
 
 /* Components */
 import Loader from "../../components/Loader";
 import Error from "../../components/Error";
+import Toast, { showToastMessage } from "../../components/Toast";
 
 import "./Accounts.scss";
 
@@ -37,20 +37,18 @@ interface UserDataProps {
 
 const Account: React.FC<UserDataProps> = ({ userData }) => {
   const { t } = useTranslation();
-  const history = useHistory();
 
   /* States */
   const [username, setUsername] = useState(userData.name);
   const [email, setEmail] = useState(userData.email);
   const [password, setPassword] = useState("");
   const [avatar, setAvatar] = useState(userData.avatar);
-  const [showToast, setShowToast] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   /* Hooks */
   const { makeRequest, isLoading, error } = useRequestData();
   const { takePhoto, photoUrl, handleUpload, removeImage } = useImageHandler();
-  const { role, clearAuthToken, clearRoleToken } = useAuth();
+  const { role } = useAuth();
 
   useEffect(() => {
     if (photoUrl) {
@@ -81,6 +79,11 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
       email: email,
     };
 
+    if (!updatedData.name || !updatedData.email) {
+      showToastMessage(t("pages.settings.accounts.required_fields"));
+      return;
+    }
+
     if (password) {
       updatedData = { ...updatedData, password };
     }
@@ -95,31 +98,12 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
     );
 
     if (!error) {
-      setShowToast(true);
+      showToastMessage(t("pages.settings.accounts.successful"));
       await removeImage(userData.avatar).catch((error) =>
         console.error("Error removing old image:", error)
       );
     } else {
-      console.error("Error updating user data");
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    try {
-      await makeRequest(`users/${userData.id}`, "DELETE");
-      if (
-        !(
-          userData.avatar ===
-          "https://ezjagphpkkbghjkxczwk.supabase.co/storage/v1/object/sign/assets/ProfileG5.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvUHJvZmlsZUc1LnBuZyIsImlhdCI6MTczMDc5NjI5NCwiZXhwIjoxNzYyMzMyMjk0fQ.GBRbr_PMqO19m21c43HGX_L5NKxBdcpo6a6UQdwkXLA&t=2024-11-05T08%3A44%3A54.995Z"
-        )
-      ) {
-        await removeImage(userData.avatar);
-      }
-      await clearAuthToken();
-      await clearRoleToken();
-      history.push("/");
-    } catch (error) {
-      console.error("Error deleting account:", error);
+      showToastMessage(t("pages.settings.accounts.error_fetch"));
     }
   };
 
@@ -180,12 +164,6 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
             {t("pages.settings.accounts.delete.header")}
           </IonButton>
         </div>
-        <IonToast
-          isOpen={showToast}
-          onDidDismiss={() => setShowToast(false)}
-          message={t("pages.settings.accounts.successful")}
-          duration={2000}
-        />
         <IonModal
           isOpen={showDeleteModal}
           onDidDismiss={() => setShowDeleteModal(false)}
@@ -207,11 +185,16 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
               },
               {
                 text: t("pages.settings.accounts.delete.header"),
-                handler: handleDeleteAccount,
+                handler: () => {
+                  handleDeleteAccount({
+                    data: { id: userData.id, avatar: userData.avatar },
+                  });
+                },
               },
             ]}
           />
         </IonModal>
+        <Toast />
       </IonContent>
     </>
   );

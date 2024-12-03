@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<manifest package="com.videndjurs.mapjourney" xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="me.mapjourney" xmlns:android="http://schemas.android.com/apk/res/android">
     <application android:allowBackup="true" android:label="@string/map_journey" android:icon="@mipmap/ic_launcher">
         <activity android:name=".MapJourneyActivity" android:label="@string/map_journey">
             <intent-filter>

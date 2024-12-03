@@ -4,7 +4,7 @@ import { Route, Redirect, Switch, useLocation } from "react-router-dom";
 /* Hooks */
 import useRequestData from "../hooks/useRequestData";
 import useAuth from "../hooks/ProviderContext";
-import { changeLanguage, setDebugMode } from "../i18n";
+import { changeLanguage, setDebugMode } from "../utils/i18n";
 
 /* Pages */
 import Admin from "../pages/admin/Page";
@@ -19,7 +19,7 @@ import ErrorPage from "../pages/ErrorPage";
 
 export const Routes = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { userID, role, loading } = useAuth();
+  const { userID, role, loading, storeAuthToken, storeRoleToken } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -32,6 +32,8 @@ export const Routes = () => {
     if (data && !isLoading) {
       changeLanguage(data.settings.language);
       role === "admin" && setDebugMode(true);
+      storeAuthToken(data.id);
+      storeRoleToken(data.role);
     }
   }, [data, isLoading]);
 
@@ -53,11 +55,7 @@ export const Routes = () => {
         path="/ownmap"
         render={() => userID && !loading && <OwnMap userID={userID} />}
       />
-      <Route
-        exact
-        path="/admin"
-        render={() => role === "admin" && <Admin />}
-      />
+      <Route exact path="/admin" render={() => role === "admin" && <Admin />} />
       <Route exact path="/settings" render={() => userID && <Settings />} />
       <Route
         exact

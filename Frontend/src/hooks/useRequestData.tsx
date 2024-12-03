@@ -8,8 +8,9 @@ makeRequest(`users`, "POST", { "Content-Type": "application/json" }, { name: "Jo
 makeRequest(`users/${id}`, "PUT", { "Content-Type": "application/json" }, { name: "Jane Doe" });
 makeRequest(`users/${id}`, "DELETE");
 */
-// https://mapapi.biast12.info
-// http://localhost:8101
+// https://mapapi.biast12.info - Will only be online while Vikings PC is on and hosting the server
+// https://map-journey.onrender.com - Will always be online but only use the persion from github
+// http://localhost:8101 - Will only be online while the server is running on your local machine
 const domain = "http://localhost:8101";
 
 interface RequestData {

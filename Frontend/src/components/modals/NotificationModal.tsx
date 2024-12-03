@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   IonList,
   IonItem,
@@ -13,8 +13,12 @@ import { useTranslation } from "react-i18next";
 // hooks
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
+
+// components
 import Loader from "../../components/Loader";
 import Error from "../../components/Error";
+import { getNewNotifications } from "../layout/Header";
+import "./NotificationModal.scss";
 
 const NotificationModal: React.FC = () => {
   const { t } = useTranslation();
@@ -25,17 +29,44 @@ const NotificationModal: React.FC = () => {
     isLoading: isLoadingReset,
   } = useRequestData();
   const { userID, role, loading } = useAuth();
+  const [unreadNotifications, setUnreadNotifications] = useState<Set<number>>(
+    new Set()
+  );
 
   useEffect(() => {
-    makeRequest(`notification/all`);
+    makeRequest(`notification/all/${userID}`);
   }, []);
 
   useEffect(() => {
     if (userID && !loading) {
       makeRequestReset(`notification/readall/${userID}`, "POST");
-      role === "admin" && console.log("All notifications are not read");
+      role === "admin" && console.log("All notifications are now read");
     }
   }, [userID, loading]);
+
+  useEffect(() => {
+    const unreadArray = getNewNotifications();
+    if (unreadArray && unreadArray.length > 0) {
+      setUnreadNotifications(parseUnreadNotifications(unreadArray));
+    }
+  }, [data]);
+
+  const parseUnreadNotifications = (unreadArray: string[]): Set<number> => {
+    const unreadSet = new Set<number>();
+
+    unreadArray.forEach((item) => {
+      if (item.includes("-")) {
+        const [start, end] = item.split("-").map(Number);
+        for (let i = start; i <= end; i++) {
+          unreadSet.add(i);
+        }
+      } else {
+        unreadSet.add(Number(item));
+      }
+    });
+
+    return unreadSet;
+  };
 
   return (
     <>
@@ -53,7 +84,14 @@ const NotificationModal: React.FC = () => {
           <IonList>
             {data &&
               data.map((notification: any, index: number) => (
-                <IonItem key={index}>
+                <IonItem
+                  key={index}
+                  className={
+                    unreadNotifications.has(notification.id)
+                      ? "unread-notification"
+                      : ""
+                  }
+                >
                   <IonLabel>
                     <h2>{notification.title}</h2>
                     <p>{notification.text}</p>

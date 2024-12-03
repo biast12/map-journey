@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { usePhotoGallery } from "./usePhotoGallery";
+import photoGallery from "../utils/photoGallery";
 import supabase from "./useSupabaseClient";
 
 const useImageHandler = () => {
   const [photoUrl, setPhotoUrl] = useState<string>("");
-  const { takePhoto, photo, uploadImageToStorage, blob } = usePhotoGallery();
+  const { takePhoto, photo, uploadImageToStorage, blob } = photoGallery();
 
   useEffect(() => {
     if (photo && photo.webViewPath) {
