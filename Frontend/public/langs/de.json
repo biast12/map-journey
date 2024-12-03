@@ -159,5 +159,65 @@
       "title": "Kontaktieren Sie uns",
       "content": "Wenn Sie Fragen haben, kontaktieren Sie uns bitte unter: "
     }
+  },
+  "terms_of_service": {
+  "title": "Nutzungsbedingungen",
+  "introduction": {
+    "title": "Akzeptanz der Bedingungen",
+    "content": "Durch den Zugriff auf oder die Nutzung der Map Journey-App stimmen Sie diesen Nutzungsbedingungen zu. Wenn Sie diesen Bedingungen nicht zustimmen, dürfen Sie die App nicht verwenden."
+  },
+  "description": {
+    "title": "Beschreibung des Dienstes",
+    "content": "Map Journey ermöglicht es Benutzern, ihre Reisen durch das Setzen von Pins mit Standortdaten, Texten und Bildern zu kartieren. Pins können als öffentlich oder privat festgelegt werden, und Benutzer können personalisierte Profile mit Bildern und Bannern erstellen."
+  },
+  "user_accounts": {
+    "title": "Benutzerkonten",
+    "content": "Um bestimmte Funktionen nutzen zu können, müssen Sie ein Konto erstellen. Sie verpflichten sich, während der Registrierung genaue und vollständige Informationen bereitzustellen und diese bei Bedarf zu aktualisieren. Sie sind für die Vertraulichkeit Ihrer Kontoinformationen verantwortlich."
+  },
+  "user_generated_content": {
+    "title": "Von Benutzern erstellte Inhalte",
+    "content": "Benutzer können Inhalte wie Pins und Profilinformationen erstellen und hochladen. Sie behalten das Eigentum an Ihren Inhalten, gewähren Map Journey jedoch eine nicht-exklusive, weltweite Lizenz zur Anzeige dieser Inhalte innerhalb der App. Sie sind dafür verantwortlich, dass Ihre Inhalte keine Gesetze verletzen oder die Rechte anderer beeinträchtigen."
+  },
+  "prohibited_conduct": {
+    "title": "Verbotenes Verhalten",
+    "content": "Sie stimmen zu, Folgendes zu unterlassen: (1) das Posten von illegalen oder schädlichen Inhalten, (2) das Belästigen, Bedrohen oder Vortäuschen anderer Identitäten, (3) das Hacken oder Reverse-Engineering der App, (4) das Teilen falscher Informationen oder (5) das Verletzen der Rechte anderer."
+  },
+  "privacy_policy": {
+    "title": "Datenschutzrichtlinie",
+    "content": "Die Nutzung der App unterliegt auch unserer Datenschutzrichtlinie, die erklärt, wie wir Ihre persönlichen Daten sammeln, verwenden und schützen. Durch die Nutzung der App stimmen Sie den Bedingungen unserer Datenschutzrichtlinie zu."
+  },
+  "intellectual_property": {
+    "title": "Geistiges Eigentum",
+    "content": "Alle Inhalte in der App, mit Ausnahme der von Benutzern erstellten Inhalte, sind Eigentum von Map Journey oder seinen Lizenzgebern. Ohne vorherige schriftliche Zustimmung dürfen Sie keine Teile der App kopieren, modifizieren oder verbreiten."
+  },
+  "service_availability": {
+    "title": "Verfügbarkeit und Änderungen des Dienstes",
+    "content": "Wir bemühen uns, die Verfügbarkeit der App sicherzustellen, können jedoch keinen ununterbrochenen Zugriff garantieren. Wir behalten uns das Recht vor, Funktionen oder den gesamten Dienst ohne vorherige Ankündigung zu ändern oder einzustellen."
+  },
+  "termination": {
+    "title": "Kündigung",
+    "content": "Wir können Ihr Konto jederzeit sperren oder kündigen, wenn Sie gegen diese Bedingungen verstoßen. Sie können Ihr Konto jederzeit löschen, wodurch Ihre Inhalte und Daten entfernt werden."
+  },
+  "disclaimers": {
+    "title": "Haftungsausschluss",
+    "content": "Die App wird 'wie besehen' ohne Garantien bereitgestellt. Wir übernehmen keine Gewähr für die Genauigkeit von Inhalten oder Standortdaten und sind nicht für Benutzerinteraktionen oder externe Links verantwortlich."
+  },
+  "limitation_of_liability": {
+    "title": "Haftungsbeschränkung",
+    "content": "Soweit gesetzlich zulässig, haftet Map Journey nicht für indirekte, zufällige oder Folgeschäden, die aus der Nutzung der App entstehen."
+  },
+  "governing_law": {
+    "title": "Geltendes Recht",
+    "content": "Diese Bedingungen unterliegen den geltenden internationalen Gesetzen und Standards. Alle Streitigkeiten, die sich aus diesen Bedingungen oder Ihrer Nutzung der App ergeben, werden gemäß globalen Rechtsgrundsätzen und unter der Gerichtsbarkeit international anerkannter Rechtsorgane beigelegt."
+  },
+  "updates_to_terms": {
+    "title": "Änderungen der Nutzungsbedingungen",
+    "content": "Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu aktualisieren. Über wesentliche Änderungen werden wir die Benutzer über die App oder per E-Mail informieren. Die fortgesetzte Nutzung der App nach Änderungen bedeutet, dass Sie die neuen Bedingungen akzeptieren."
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "content": "Wenn Sie Fragen zu diesen Bedingungen haben, kontaktieren Sie uns bitte unter "
   }
+}
+
 }
