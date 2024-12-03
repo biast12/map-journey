@@ -46,7 +46,7 @@ const PrivacyPolicy: React.FC = () => {
           <h2>{t("privacy_policy.contact.title")}</h2>
           <p>
             {t("privacy_policy.contact.content")}
-            <a href="mailto:mapjourney.biast12.info">mapjourney.biast12.info</a>
+            <a href="mailto:mapjourney@biast12.info">mapjourney@biast12.info</a>
           </p>
         </section>
       </IonContent>
