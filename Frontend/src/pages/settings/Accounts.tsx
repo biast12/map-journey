@@ -116,7 +116,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>{t("pages.settings.accounts.card_title")}</IonTitle>
-          <IonButton slot="end" href="/settings" fill="clear">
+          <IonButton slot="end" routerLink="/settings" fill="clear">
             <IonIcon icon={close} />
           </IonButton>
         </IonToolbar>

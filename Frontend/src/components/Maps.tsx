@@ -55,8 +55,6 @@ const clusterTextColor = "#fff"; // Color of the text/number inside the cluster 
 const mousePositionControl = new MousePosition({
   coordinateFormat: createStringXY(4),
   projection: "EPSG:4326",
-  // comment the following two lines to have the mouse position
-  // be placed within the map.
   className: "custom-mouse-position",
   target: document.getElementById("mouse-position") as HTMLElement,
 });
@@ -66,7 +64,7 @@ function createStyle(size: number = 0.3) {
     image: new Icon({
       anchor: [0.5, 0.96],
       crossOrigin: "anonymous",
-      src: "http://localhost:8100/icons/ping.webp",
+      src: "icons/ping.webp",
       scale: size,
     }),
   });
@@ -134,6 +132,7 @@ function Map({ APIurl, pinID }: MapProps) {
     const view = new View({
       center: [0, 0],
       zoom: 2,
+      enableRotation: false,
     }) as View;
     const vectorSource = new VectorSource({
       features: points,
@@ -147,7 +146,7 @@ function Map({ APIurl, pinID }: MapProps) {
     const map = new OlMap({
       target: "map",
       controls:
-        role !== "admin"
+        role === "admin"
           ? defaultControls().extend([mousePositionControl])
           : defaultControls(),
       layers: [
@@ -160,21 +159,6 @@ function Map({ APIurl, pinID }: MapProps) {
         }),
       ],
       view: view,
-    });
-
-    let lastLogTime = 0;
-
-    // Add pointermove event listener to log mouse position
-    map.on("pointermove", (event) => {
-      if (role !== "admin") return;
-      const currentTime = Date.now();
-      if (currentTime - lastLogTime >= 1000) {
-        lastLogTime = currentTime;
-        const coordinates = toLonLat(event.coordinate);
-        console.log(
-          `Longitude: ${coordinates[0]}, Latitude: ${coordinates[1]}`
-        );
-      }
     });
 
     // Add click event listener to open ShowPinModal or zoom in on cluster
@@ -243,7 +227,7 @@ function Map({ APIurl, pinID }: MapProps) {
         <div id="map">
           {/* Preload the image cause else React/Ionic will not load it and add it to "the public folder" */}
           <IonImg
-            src="/icons/ping.webp"
+            src="icons/ping.webp"
             alt={t("map.pin_alt")}
             style={{ display: "none" }}
             aria-hidden="true"

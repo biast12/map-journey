@@ -25,6 +25,7 @@ import "./General.scss";
 
 interface UserDataProps {
   userData: {
+    id: string;
     settings: {
       id: string;
       maptheme: string;
@@ -59,7 +60,7 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
   useEffect(() => {
     const importLanguages = async () => {
       const languageFiles = import.meta.glob<{ lang: string }>(
-        "../../langs/*.json"
+        "/public/langs/*.json"
       );
       const loadedLanguages: { [key: string]: string } = {};
 
@@ -99,7 +100,7 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
     };
 
     await makeRequest(
-      `settings/${userData.settings.id}`,
+      `settings/${userData.id}`,
       "PUT",
       { "Content-Type": "application/json" },
       updatedData
@@ -121,7 +122,7 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>{t("pages.settings.general.card_title")}</IonTitle>
-          <IonButton slot="end" href="/settings" fill="clear">
+          <IonButton slot="end" routerLink="/settings" fill="clear">
             <IonIcon icon={close} />
           </IonButton>
         </IonToolbar>

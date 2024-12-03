@@ -131,5 +131,32 @@
   "map": {
     "pin_alt": "Pin Icon",
     "error_page_message": "Failed to get pins, please try again later"
+  },
+  "privacy_policy": {
+    "title": "Privacy Policy",
+    "introduction": {
+      "title": "Introduction",
+      "content": "This Privacy Policy explains how we handle your personal data. We are committed to protecting your privacy and ensuring that your personal information is handled in a safe and responsible manner."
+    },
+    "data_collection": {
+      "title": "Data Collection",
+      "content": "We collect the following types of data: personal identification information (name (username), email address, etc.)."
+    },
+    "data_usage": {
+      "title": "Data Usage",
+      "content": "We use your data for the following purposes: to provide and maintain our service, to notify you about changes to our service, to allow you to participate in interactive features of our service, to provide customer support, to gather analysis or valuable information so that we can improve our service."
+    },
+    "data_sharing": {
+      "title": "Data Sharing",
+      "content": "We do not share your data with anyone, your data is fully secure."
+    },
+    "user_rights": {
+      "title": "User Rights",
+      "content": "You have the following rights regarding your data: the right to access, update, or delete the information we have on you, the right to rectification, the right to object, the right of restriction, the right to data portability, and the right to withdraw consent, most of these can be done under your settings."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "content": "If you have any questions, please contact us at: "
+    }
   }
 }

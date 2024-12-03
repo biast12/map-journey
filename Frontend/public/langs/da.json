@@ -131,5 +131,32 @@
   "map": {
     "pin_alt": "Pin Ikon",
     "error_page_message": "Kunne ikke hente pins, prøv venligst igen senere"
+  },
+  "privacy_policy": {
+    "title": "Privatlivspolitik",
+    "introduction": {
+      "title": "Introduktion",
+      "content": "Denne privatlivspolitik forklarer, hvordan vi håndterer dine personlige data. Vi er forpligtet til at beskytte dit privatliv og sikre, at dine personlige oplysninger håndteres på en sikker og ansvarlig måde."
+    },
+    "data_collection": {
+      "title": "Dataindsamling",
+      "content": "Vi indsamler følgende typer data: personlige identifikationsoplysninger (navn (brugernavn), e-mailadresse osv.)."
+    },
+    "data_usage": {
+      "title": "Dataanvendelse",
+      "content": "Vi bruger dine data til følgende formål: at levere og vedligeholde vores service, at informere dig om ændringer i vores service, at give dig mulighed for at deltage i interaktive funktioner i vores service, at yde kundesupport, at indsamle analyser eller værdifuld information, så vi kan forbedre vores service."
+    },
+    "data_sharing": {
+      "title": "Datadeling",
+      "content": "Vi deler ikke dine data med nogen, dine data er fuldt sikre."
+    },
+    "user_rights": {
+      "title": "Brugerrettigheder",
+      "content": "Du har følgende rettigheder vedrørende dine data: retten til at få adgang til, opdatere eller slette de oplysninger, vi har om dig, retten til berigtigelse, retten til at gøre indsigelse, retten til begrænsning, retten til dataportabilitet og retten til at trække samtykke tilbage, de fleste af disse kan gøres under dine indstillinger."
+    },
+    "contact": {
+      "title": "Kontakt os",
+      "content": "Hvis du har spørgsmål, bedes du kontakte os på: "
+    }
   }
 }

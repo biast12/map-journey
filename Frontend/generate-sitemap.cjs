@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { SitemapStream, streamToPromise } = require('sitemap');
 
-const baseUrl = 'http://localhost:8100';
+const baseUrl = 'https://mapjourney.biast12.info';
 
 // Read routes.tsx and extract paths using regular expressions
 const routesFilePath = path.join(__dirname, 'src/components', 'routes.tsx');
