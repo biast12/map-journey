@@ -4,6 +4,7 @@ import "./Page.scss";
 import UserManagement from "../../components/admin/UserManagement";
 import ReportManagement from "../../components/admin/ReportManagement";
 import NotificationManagement from "../../components/admin/NotificationManagement";
+import PinsManagement from "../../components/admin/PinsManagement";
 
 
 const Page = () => {
@@ -16,6 +17,9 @@ const Page = () => {
 
         <h3>Users</h3>
         <UserManagement />
+
+        <h3>Pins</h3>
+        <PinsManagement />
 
         <h3>Reports</h3>
         <ReportManagement />

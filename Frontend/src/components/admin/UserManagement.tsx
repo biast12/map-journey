@@ -68,14 +68,17 @@ const UserManagement = () => {
   }, []);
 
   function filterData(userData: UserData) {
-    console.log(searchOptions)
-    console.log(userData.status)
-    if (searchOptions.show !== "all" && userData.status !== searchOptions.show) {return false}
-    
+    if (searchOptions.show !== "all" && userData.status !== searchOptions.show) {
+      return false;
+    }
+
     if (searchOptions.search === "") {
       return true;
     } else {
-      return userData[searchOptions.searchBy].toLowerCase().match(searchOptions.search.toLowerCase());
+      userData[searchOptions.searchBy]
+        .toString()
+        .toLowerCase()
+        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
     }
   }
 

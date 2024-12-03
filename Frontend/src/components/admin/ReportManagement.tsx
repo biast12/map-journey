@@ -5,10 +5,10 @@ import ReportColumn from "./ReportColumn";
 
 import "./ReportManagement.scss";
 import Modal from "../Modal";
-import ReportUserDisplay from "./ReportDisplays/ReportUserDisplay";
-import ReportPinDisplay from "./ReportDisplays/ReportPinDisplay";
+import ReportUserDisplay from "./reportDisplays/ReportUserDisplay";
+import ReportPinDisplay from "./reportDisplays/ReportPinDisplay";
 import Loader from "../Loader";
-import useAuth from "../../hooks/ProviderContext"
+import useAuth from "../../hooks/ProviderContext";
 
 type ReportSearchOptions = {
   search: string;
@@ -21,7 +21,11 @@ const ReportManagement = () => {
   const { data: rpData, error: rpError, isLoading: rpIsLoading, makeRequest: rpMakeRequest } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedReport, setSelectedReport] = useState<null | ReportData>(null);
-  const [searchOptions, setSearchOptions] = useState<ReportSearchOptions>({ search: "", searchBy: "name", sortBy: "name" });
+  const [searchOptions, setSearchOptions] = useState<ReportSearchOptions>({
+    search: "",
+    searchBy: "name",
+    sortBy: "name",
+  });
 
   const { userID } = useAuth();
 
@@ -43,15 +47,22 @@ const ReportManagement = () => {
     }
 
     if (searchOptions.searchBy === "id") {
-      return reportData.id.toString().toLowerCase().match(searchOptions.search.toLowerCase());
+      return reportData.id
+        .toString()
+        .toLowerCase()
+        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
     }
 
     if (searchOptions.searchBy === "name") {
-      return reportData.reporting_user.name.toLowerCase().match(searchOptions.search.toLowerCase());
+      return reportData.reporting_user.name
+        .toLowerCase()
+        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
     }
 
     if (searchOptions.searchBy === "text") {
-      return reportData.text.toLowerCase().match(searchOptions.search.toLowerCase());
+      return reportData.text
+        .toLowerCase()
+        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
     }
   }
 

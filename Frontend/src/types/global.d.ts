@@ -1,11 +1,16 @@
-/* Report START */
-type ReportUser = {
+/* General START */
+type Status = "public" | "private" | "reported" | "warning" | "banned"
+type UserRole = "user" | "admin"
+
+type UserProfile = {
   id: string;
   name: string;
   email: string;
   avatar: string;
 };
+/* General END */
 
+/* Report START */
 type ReportPin = {
   id: number;
   profile_id: string;
@@ -18,13 +23,13 @@ type ReportPin = {
   latitude: number;
 };
 
-interface ReportData {
+type ReportData = {
   id: number;
   text: string;
   date: string;
   active: boolean;
-  reporting_user: ReportUser;
-  reported_user?: ReportUser;
+  reporting_user: UserProfile;
+  reported_user?: UserProfile;
   reported_pin?: ReportPin;
 }
 /* Report END */
@@ -38,9 +43,9 @@ type UserData = {
   name: string;
   new_notifications: string[];
   news_count: number;
-  role: "user" | "admin";
+  role: UserRole;
   settings_id: number;
-  status: "public" | "private" | "reported";
+  status: Status;
 };
 /* User END */
 
@@ -52,3 +57,20 @@ type NotificationData = {
   title: string;
 };
 /* Notification END */
+
+/* Pins START */
+type PinData = {
+  date: string,
+  description: string,
+  id: string,
+  imgurls: string,
+  latitude: number,
+  longitude: number,
+  location: string,
+  profile: UserProfile,
+  profile_id: string,
+  reported: boolean,
+  status: Status,
+  title: string,
+}
+/* Pins END */

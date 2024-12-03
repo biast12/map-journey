@@ -29,6 +29,7 @@ import { Geolocation } from "@capacitor/geolocation";
 import useRequestData from "../hooks/useRequestData";
 import Loader from "./Loader";
 import Error from "./Error";
+import useAuth from "../hooks/ProviderContext";
 
 interface MapProps {
   APIurl: string;
@@ -109,8 +110,10 @@ function Map({ APIurl }: MapProps) {
   const openShowPinModal = () => setShowPinModal(true);
   const closeShowPinModal = () => setShowPinModal(false);
 
+  const {userID} = useAuth();
+
   useEffect(() => {
-    makeRequest(`pins/${APIurl}`);
+    makeRequest(`pins/${APIurl}/${userID}`);
   }, [APIurl]);
 
   useEffect(() => {

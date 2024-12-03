@@ -11,6 +11,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    flex-grow: 1;
     gap: 0.5rem;
     p {
       margin-top: 0rem;
@@ -36,13 +37,6 @@
     }
   }
 
-  .reportText {
-    color: rgb(255, 255, 255);
-    flex-grow: 1;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;   
-    p {
-      margin: 0;
-    }
-  }
+  
+  
 }

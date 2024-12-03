@@ -49,11 +49,11 @@ const NotificationModal: React.FC = () => {
         <IonCardContent>
           <IonList>
             {data &&
-              data.map((notification: {title: string, text: string, date: string}, index: number) => (
-                <IonItem key={index}>
+              data.map((notification: NotificationData, index: number) => (
+                <IonItem key={notification.id}>
                   <IonLabel>
                     <h2>{notification.title}</h2>
-                    {notification.text.split("\n").map((text)=><p>{text}</p>)}
+                    {notification.text.split("\n").map((text, index)=><p key={text+index}>{text}</p>)}
                     <small>{new Date(notification.date).toDateString()}</small>
                   </IonLabel>
                 </IonItem>

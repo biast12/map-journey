@@ -25,7 +25,6 @@ const ReportColumn = ({
           <p>Text: {reportData.text}</p>
         </div>
       </section>
-      <section className="reportText"></section>
       <IonButton onClick={onManageClick}>Manage</IonButton>
     </IonCol>
   );
