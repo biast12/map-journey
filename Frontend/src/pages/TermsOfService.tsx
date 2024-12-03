@@ -7,10 +7,27 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { useTranslation } from "react-i18next";
-import "./TermsOfService.scss";
+import "./TOS&PP.scss";
 
 const TermsOfService: React.FC = () => {
   const { t } = useTranslation();
+
+  const sections = [
+    "introduction",
+    "description",
+    "user_accounts",
+    "user_generated_content",
+    "prohibited_conduct",
+    "privacy_policy",
+    "intellectual_property",
+    "service_availability",
+    "termination",
+    "disclaimers",
+    "limitation_of_liability",
+    "governing_law",
+    "updates_to_terms",
+    "contact",
+  ];
 
   return (
     <IonPage>
@@ -20,30 +37,15 @@ const TermsOfService: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="terms-container">
-        {[
-          "introduction",
-          "description",
-          "user_accounts",
-          "user_generated_content",
-          "prohibited_conduct",
-          "privacy_policy",
-          "intellectual_property",
-          "service_availability",
-          "termination",
-          "disclaimers",
-          "limitation_of_liability",
-          "governing_law",
-          "updates_to_terms",
-          "contact",
-        ].map((sectionKey) => (
+        {sections.map((sectionKey) => (
           <section key={sectionKey} className="section">
             <h2>{t(`terms_of_service.${sectionKey}.title`)}</h2>
             <p>
               {sectionKey === "contact" ? (
                 <>
                   {t(`terms_of_service.${sectionKey}.content`)}{" "}
-                  <a href="mailto:mapjourney@biast12.info">
-                    mapjourney@biast12.info
+                  <a href="mailto:contact@map-journey.com">
+                    contact@map-journey.com
                   </a>
                 </>
               ) : (

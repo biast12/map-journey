@@ -5,14 +5,21 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonButton,
-  IonImg,
 } from "@ionic/react";
 import { useTranslation } from "react-i18next";
-import "./PrivacyPolicy.scss";
+import "./TOS&PP.scss";
 
 const PrivacyPolicy: React.FC = () => {
   const { t } = useTranslation();
+
+  const sections = [
+    "introduction",
+    "data_collection",
+    "data_usage",
+    "data_sharing",
+    "user_rights",
+    "contact",
+  ];
 
   return (
     <IonPage>
@@ -21,34 +28,24 @@ const PrivacyPolicy: React.FC = () => {
           <IonTitle>{t("privacy_policy.title")}</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
-        <section>
-          <h2>{t("privacy_policy.introduction.title")}</h2>
-          <p>{t("privacy_policy.introduction.content")}</p>
-        </section>
-        <section>
-          <h2>{t("privacy_policy.data_collection.title")}</h2>
-          <p>{t("privacy_policy.data_collection.content")}</p>
-        </section>
-        <section>
-          <h2>{t("privacy_policy.data_usage.title")}</h2>
-          <p>{t("privacy_policy.data_usage.content")}</p>
-        </section>
-        <section>
-          <h2>{t("privacy_policy.data_sharing.title")}</h2>
-          <p>{t("privacy_policy.data_sharing.content")}</p>
-        </section>
-        <section>
-          <h2>{t("privacy_policy.user_rights.title")}</h2>
-          <p>{t("privacy_policy.user_rights.content")}</p>
-        </section>
-        <section>
-          <h2>{t("privacy_policy.contact.title")}</h2>
-          <p>
-            {t("privacy_policy.contact.content")}
-            <a href="mailto:mapjourney@biast12.info">mapjourney@biast12.info</a>
-          </p>
-        </section>
+      <IonContent className="terms-container">
+        {sections.map((sectionKey) => (
+          <section key={sectionKey} className="section">
+            <h2>{t(`privacy_policy.${sectionKey}.title`)}</h2>
+            <p>
+              {sectionKey === "contact" ? (
+                <>
+                  {t(`privacy_policy.${sectionKey}.content`)}{" "}
+                  <a href="mailto:contact@map-journey.com">
+                    contact@map-journey.com
+                  </a>
+                </>
+              ) : (
+                t(`privacy_policy.${sectionKey}.content`)
+              )}
+            </p>
+          </section>
+        ))}
       </IonContent>
     </IonPage>
   );
