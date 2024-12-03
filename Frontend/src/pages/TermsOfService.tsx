@@ -9,15 +9,23 @@ import {
 import { useTranslation } from "react-i18next";
 import "./TOS&PP.scss";
 
-const PrivacyPolicy: React.FC = () => {
+const TermsOfService: React.FC = () => {
   const { t } = useTranslation();
 
   const sections = [
     "introduction",
-    "data_collection",
-    "data_usage",
-    "data_sharing",
-    "user_rights",
+    "description",
+    "user_accounts",
+    "user_generated_content",
+    "prohibited_conduct",
+    "privacy_policy",
+    "intellectual_property",
+    "service_availability",
+    "termination",
+    "disclaimers",
+    "limitation_of_liability",
+    "governing_law",
+    "updates_to_terms",
     "contact",
   ];
 
@@ -25,23 +33,23 @@ const PrivacyPolicy: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>{t("privacy_policy.title")}</IonTitle>
+          <IonTitle>{t("terms_of_service.title")}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="terms-container">
         {sections.map((sectionKey) => (
           <section key={sectionKey} className="section">
-            <h2>{t(`privacy_policy.${sectionKey}.title`)}</h2>
+            <h2>{t(`terms_of_service.${sectionKey}.title`)}</h2>
             <p>
               {sectionKey === "contact" ? (
                 <>
-                  {t(`privacy_policy.${sectionKey}.content`)}{" "}
+                  {t(`terms_of_service.${sectionKey}.content`)}{" "}
                   <a href="mailto:contact@map-journey.com">
                     contact@map-journey.com
                   </a>
                 </>
               ) : (
-                t(`privacy_policy.${sectionKey}.content`)
+                t(`terms_of_service.${sectionKey}.content`)
               )}
             </p>
           </section>
@@ -51,4 +59,4 @@ const PrivacyPolicy: React.FC = () => {
   );
 };
 
-export default PrivacyPolicy;
+export default TermsOfService;
