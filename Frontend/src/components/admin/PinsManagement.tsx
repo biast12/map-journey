@@ -1,4 +1,4 @@
-import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
+import { IonAlert, IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
 import useRequestData from "../../hooks/useRequestData";
 import { useEffect, useState } from "react";
 
@@ -10,22 +10,30 @@ import PinsColumn from "./PinsColumn";
 
 type PinSearchOptions = {
   search: string;
-  searchBy: "id" | "name" | "text";
-  sortBy: "id" | "name" | "text";
+  searchBy: "id" | "title" | "description";
+  sortBy: "id" | "title" | "description";
 };
 
 const PinsManagement = () => {
   const { data, error, isLoading, makeRequest } = useRequestData();
-  const { data: rpData, error: rpError, isLoading: rpIsLoading, makeRequest: rpMakeRequest } = useRequestData();
+  const { data: delData, error: delError, isLoading: delIsLoading, makeRequest: delMakeRequest } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
   const [selectedPin, setSelectedPin] = useState<null | PinData>(null);
   const [searchOptions, setSearchOptions] = useState<PinSearchOptions>({
     search: "",
-    searchBy: "name",
-    sortBy: "name",
+    searchBy: "title",
+    sortBy: "title",
   });
 
   const { userID } = useAuth();
+
+  async function handleDeletePin(pinData: PinData) {
+    await delMakeRequest(`pins/${pinData.id}/${userID}`, "DELETE")
+
+    setSelectedPin(null);
+    setShowModal(false);
+  }
 
   useEffect(() => {
     makeRequest("pins/all/" + userID);
@@ -35,9 +43,27 @@ const PinsManagement = () => {
     console.log(data);
   }, [data]);
 
+  function filterData(pinData: PinData) {
+    if (searchOptions.search === "") {
+      return true;
+    } else {
+      return pinData[searchOptions.searchBy]
+        .toString()
+        .toLowerCase()
+        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
+    }
+  }
+
   return (
     <>
-      {rpIsLoading && <Loader />}
+      {delIsLoading && <Loader />}
+      <IonAlert
+        isOpen={showAlert}
+        onDidDismiss={() => setShowAlert(false)}
+        header="Are you sure?"
+        message="Deleting is a permanent action!"
+        buttons={["Cancel", { text: "Confirm", handler: () => handleDeletePin(selectedPin!) }]}
+      />
       <Modal isOpen={showModal} onCloseModal={() => setShowModal(false)}>
         {selectedPin && (
           <IonGrid id="pinModalGrid">
@@ -54,23 +80,26 @@ const PinsManagement = () => {
                   <img src={selectedPin.imgurls} alt="" />
                   <p>{selectedPin.location}</p>
                 </figure>
-                <p>{selectedPin.description}</p>
+                <p className="descriptionText">{selectedPin.description}</p>
               </section>
               <hr />
               <div>
-                <p>{selectedPin.profile.name}</p>
-                <p className="smallText">Id: {selectedPin.profile.id}</p>
+                <section className="avatarSection">
+                  <figure>
+                    <img src={selectedPin.profile.avatar} alt="" />
+                  </figure>
+                </section>
+                <section>
+                  <p>{selectedPin.profile.name}</p>
+                  <p className="smallText">Id: {selectedPin.profile.id}</p>
+                </section>
               </div>
             </IonRow>
             <IonRow id="pinButtonsRow">
               <IonCol size="4" className="pinButtons">
-                <IonButton color={"success"}>Dismiss</IonButton>
-              </IonCol>
-              <IonCol size="4" className="pinButtons">
-                <IonButton color={"warning"}>Warn</IonButton>
-              </IonCol>
-              <IonCol size="4" className="pinButtons">
-                <IonButton color={"danger"}>Ban</IonButton>
+                <IonButton color={"danger"} onClick={()=>setShowAlert(true)}>
+                  Delete
+                </IonButton>
               </IonCol>
             </IonRow>
           </IonGrid>
@@ -94,19 +123,19 @@ const PinsManagement = () => {
             name="searchByParams"
             id=""
             onChange={(e) => {
-              const value = e.target.value as "id" | "name" | "text";
+              const value = e.target.value as "id" | "title" | "description";
               setSearchOptions({ ...searchOptions, searchBy: value });
             }}
           >
-            <option value="name">Name</option>
+            <option value="title">Title</option>
             <option value="id">Id</option>
-            <option value="text">Text</option>
+            <option value="description">Description</option>
           </select>
         </section>
       </article>
       <IonRow id="pinsRow">
         {data &&
-          data.map((pinData: PinData) => (
+          data.filter(filterData).map((pinData: PinData) => (
             <PinsColumn
               key={pinData.id}
               pinData={pinData}

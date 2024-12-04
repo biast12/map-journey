@@ -75,7 +75,7 @@ const UserManagement = () => {
     if (searchOptions.search === "") {
       return true;
     } else {
-      userData[searchOptions.searchBy]
+      return userData[searchOptions.searchBy]
         .toString()
         .toLowerCase()
         .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));

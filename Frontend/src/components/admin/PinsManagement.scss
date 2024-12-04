@@ -9,9 +9,9 @@
     flex-direction: row;
     gap: 2%;
     opacity: 0.75;
-
+    
     p {
-      font-size: small;
+      font-size: 0.7rem;
     }
   }
 
@@ -24,6 +24,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%;
 
       figure {
         width: 100%;
@@ -34,16 +35,25 @@
 
         img {
           max-width: 600px;
+          max-height: 160px;
           object-position: center;
           object-fit: contain;
           margin: 0;
         }
         p {
           opacity: 0.75;
-          font-size: 0.8rem;
+          font-size: 0.6rem;
           margin-top: 0.5rem;
+          text-align: center;
         }
       }
+
+      .descriptionText {
+        border: 2px solid rgba(23, 23, 23, 0.386);
+        border-radius: 3px;
+        padding: 2%;
+      }
+
       p {
         width: 100%;
         margin-top: 0;
@@ -51,21 +61,38 @@
     }
 
     div {
-        margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
       p {
         margin: 0;
-        margin-bottom: 0.4rem;
       }
       .smallText {
         opacity: 0.75;
         font-size: 0.8rem;
         margin: 0;
       }
+
+      .avatarSection {
+        width: auto;
+        figure {
+          img {
+            max-height: 60px;
+          }
+        }
+      }
+
+      section {
+        display: flex;
+        align-content: baseline;
+      }
     }
   }
 
   #pinButtonsRow {
     margin-top: auto;
+    justify-content: center;
     .pinButtons {
       ion-button {
         width: 100%;
