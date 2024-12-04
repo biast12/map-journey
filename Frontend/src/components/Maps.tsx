@@ -31,7 +31,6 @@ import useRequestData from "../hooks/useRequestData";
 import useAuth from "../hooks/ProviderContext";
 import Loader from "./Loader";
 import Error from "./Error";
-import useAuth from "../hooks/ProviderContext";
 
 interface MapProps {
   APIurl: string;
@@ -117,7 +116,7 @@ function Map({ APIurl, pinID }: MapProps) {
   const {userID} = useAuth();
 
   useEffect(() => {
-    makeRequest(`pins/${APIurl}/${userID}`);
+    makeRequest(`pins/${APIurl}`);
   }, [APIurl]);
 
   useEffect(() => {

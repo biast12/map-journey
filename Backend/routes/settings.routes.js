@@ -43,38 +43,6 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
     const { data: userSettings, error: userSettingsError } = await supabase
       .from("settings")
       .select("*")
-      .eq("id", id)
-      .single();
-
-    if (settingsError && settingsError.code !== "PGRST116") {
-      console.error("Error fetching settings directly:", settingsError);
-      return res.status(500).json({ error: "Error fetching settings directly" });
-    }
-
-    if (settings) {
-      return res.status(200).json(settings);
-    }
-
-    const { data: profile, error: profileError } = await supabase
-      .from("profile")
-      .select("settings_id")
-      .eq("id", id)
-      .single();
-
-    if (profileError) {
-      console.error("Error fetching user profile:", profileError);
-      return res.status(500).json({ error: "Error fetching user profile" });
-    }
-
-    if (!profile) {
-      return res.status(404).json({ error: "Profile not found" });
-    }
-
-    const settingsID = profile.settings_id;
-
-    const { data: userSettings, error: userSettingsError } = await supabase
-      .from("settings")
-      .select("*")
       .eq("id", settingsID)
       .single();
 
