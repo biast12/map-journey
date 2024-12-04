@@ -39,10 +39,6 @@ const PinsManagement = () => {
     makeRequest("pins/all/" + userID);
   }, []);
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
   function filterData(pinData: PinData) {
     if (searchOptions.search === "") {
       return true;
