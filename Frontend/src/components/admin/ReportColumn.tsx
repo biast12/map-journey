@@ -1,6 +1,7 @@
-import { IonButton, IonCol } from "@ionic/react";
-import "./ReportColumn.scss";
 import { MouseEvent } from "react";
+import { IonButton, IonCol } from "@ionic/react";
+
+import "./ReportColumn.scss";
 
 const ReportColumn = ({
   reportData,

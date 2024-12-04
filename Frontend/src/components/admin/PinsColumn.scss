@@ -1,42 +1,38 @@
 .pinsColumn {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+
+  background-color: rgb(65, 65, 65);
+
+  .pinsCon {
     display: flex;
     flex-direction: row;
-    width: 100%;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  
-    background-color: rgb(65, 65, 65);
-  
-    .pinsCon {
+    flex-wrap: wrap;
+    flex-grow: 1;
+    gap: 0.5rem;
+    p {
+      margin-top: 0rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .pinsId {
       display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      flex-grow: 1;
+      width: 100%;
       gap: 0.5rem;
       p {
-        margin-top: 0rem;
-        margin-bottom: 0.5rem;
-       
-      }
-  
-      .pinsId {
-        display: flex;
-        width: 100%;
-        gap: 0.5rem;
-        p {
-          margin-top: 0.5rem;
-          font-size: 0.8rem;
-          opacity: 0.8;
-        }
-      }
-  
-      .pinsInfo {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.75rem;
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        opacity: 0.8;
       }
     }
-  
-   
+
+    .pinsInfo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
   }
-  
+}

@@ -7,7 +7,7 @@ import useAuth from "../hooks/ProviderContext";
 import { changeLanguage, setDebugMode } from "../utils/i18n";
 
 /* Pages */
-import Admin from "../pages/admin/Page";
+import Admin from "../pages/admin/Admin";
 import GlobalMap from "../pages/GlobalMap";
 import OwnMap from "../pages/OwnMap";
 import Settings from "../pages/settings";
@@ -17,6 +17,7 @@ import TermsOfService from "../pages/TermsOfService"
 /* Settings Pages */
 import General from "../pages/settings/General";
 import Account from "../pages/settings/Accounts";
+import Pins from "../pages/settings/Pins";
 import ErrorPage from "../pages/ErrorPage";
 
 export const Routes = () => {
@@ -68,6 +69,11 @@ export const Routes = () => {
         exact
         path="/settings/account"
         render={() => data && <Account userData={data} />}
+      />
+      <Route
+        exact
+        path="/settings/pins"
+        render={() => <Pins />}
       />
       <Route exact path="/privacy-policy" component={PrivacyPolicy} />
       <Route exact path="/terms-of-service" component={TermsOfService} />

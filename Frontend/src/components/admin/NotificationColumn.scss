@@ -1,49 +1,48 @@
 .notifColumn {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  justify-content: space-between;
+
+  background-color: rgb(65, 65, 65);
+
+  .notifCon {
     display: flex;
     flex-direction: row;
-    width: 100%;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    justify-content: space-between;
-  
-    background-color: rgb(65, 65, 65);
-  
-    .notifCon {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    p {
+      margin-top: 0rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .notifId {
       display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
+      width: 100%;
       gap: 0.5rem;
       p {
-        margin-top: 0rem;
-        margin-bottom: 0.5rem;
-      }
-  
-      .notifId {
-        display: flex;
-        width: 100%;
-        gap: 0.5rem;
-        p {
-          margin-top: 0.5rem;
-          font-size: 0.8rem;
-          opacity: 0.8;
-        }
-      }
-  
-      .notifInfo {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.75rem;
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        opacity: 0.8;
       }
     }
-  
-    .notifText {
-      color: rgb(255, 255, 255);
-      flex-grow: 1;
-      padding-top: 0.2rem;
-      padding-bottom: 0.2rem;   
-      p {
-        margin: 0;
-      }
+
+    .notifInfo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
     }
   }
-  
+
+  .notifText {
+    color: rgb(255, 255, 255);
+    flex-grow: 1;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    p {
+      margin: 0;
+    }
+  }
+}

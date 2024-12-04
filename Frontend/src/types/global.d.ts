@@ -74,3 +74,12 @@ type PinData = {
   title: string,
 }
 /* Pins END */
+
+/* Pin Search Options START */
+type PinSearchOptions = {
+  search: string;
+  searchBy: "id" | "title" | "description";
+  sortBy: "id" | "title" | "description";
+  status: "all" | "public" | "private";
+};
+/* Pin Search Options END */

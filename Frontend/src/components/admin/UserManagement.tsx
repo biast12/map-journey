@@ -2,24 +2,30 @@
 import { FormEvent, useEffect, useState } from "react";
 import { IonAlert, IonRow } from "@ionic/react";
 
+/* Hooks */
 import useRequestData from "../../hooks/useRequestData";
+import useAuth from "../../hooks/ProviderContext";
+
+/* Components */
+import EditUserModal from "../modals/EditUserModal";
 import UserColumn from "./UserColumn";
+import Loader from "../Loader";
+import Error from "../Error";
 
 import "./UserManagement.scss";
-import useAuth from "../../hooks/ProviderContext";
-import EditUserModal from "../modals/EditUserModal";
 
 type UserSearchOptions = {
   search: string;
   searchBy: "id" | "name";
   sortBy: "id" | "name";
-  show: "all" | "public" | "private" | "reported" | "warning" | "banned";
+  role: "all" | "user" | "admin";
+  status: "all" | "public" | "private" | "reported" | "warning" | "banned"
 };
 
 const UserManagement = () => {
-  const { data, error, isLoading, makeRequest } = useRequestData();
-  const { data: delData, error: delError, isLoading: delIsLoading, makeRequest: delMakeRequest } = useRequestData();
-  const { data: editData, error: editError, isLoading: editIsLoading, makeRequest: editMakeRequest } = useRequestData();
+  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { makeRequest: delMakeRequest, error: delError, isLoading: delIsLoading } = useRequestData();
+  const { makeRequest: editMakeRequest, error: editError, isLoading: editIsLoading } = useRequestData();
 
   const [selectedUser, setSelectedUser] = useState<null | UserData>(null);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
@@ -29,7 +35,8 @@ const UserManagement = () => {
     search: "",
     searchBy: "name",
     sortBy: "name",
-    show: "all",
+    role: "all",
+    status: "all",
   });
 
   const { userID } = useAuth();
@@ -41,12 +48,12 @@ const UserManagement = () => {
 
     const body = {
       name: form.username.value,
+      role: form.userrole.value,
       status: form.status.value,
-      role: userID === userData.id ? undefined : form.userrole.value,
     };
 
-    const res = await editMakeRequest(`users/${userID}/${userData.id}`, "PUT", undefined, body);
-    makeRequest("users/all/" + userID);
+    await editMakeRequest(`users/${userID}/${userData.id}`, "PUT", undefined, body);
+    makeRequest(`users/all/${userID}`);
 
     setShowEditModal(false);
     setSelectedUser(null);
@@ -55,8 +62,8 @@ const UserManagement = () => {
   async function handleUserDelete(userData: UserData) {
     setHandlingRequest(true);
 
-    const res = await delMakeRequest(`users/${userData.id}`, "DELETE");
-    makeRequest("users/all/" + userID);
+    await delMakeRequest(`users/${userData.id}`, "DELETE");
+    makeRequest(`users/all/${userID}`);
 
     setShowDeleteModal(false);
     setSelectedUser(null);
@@ -64,11 +71,11 @@ const UserManagement = () => {
   }
 
   useEffect(() => {
-    makeRequest("users/all/" + userID);
+    makeRequest(`users/all/${userID}`);
   }, []);
 
   function filterData(userData: UserData) {
-    if (searchOptions.show !== "all" && userData.status !== searchOptions.show) {
+    if ((searchOptions.role !== "all" && userData.role !== searchOptions.role) || (searchOptions.status !== "all" && userData.status !== searchOptions.status) || userData.id === userID) {
       return false;
     }
 
@@ -84,12 +91,16 @@ const UserManagement = () => {
 
   return (
     <>
-      <EditUserModal
-        showModal={showEditModal}
-        setShowModal={setShowEditModal}
-        userData={selectedUser}
-        onSubmit={handleUserEdit}
-      />
+      {error || delError || editError && <Error message="Error" />}
+      {delIsLoading || editIsLoading && <Loader />}
+      {selectedUser && (
+        <EditUserModal
+          userData={selectedUser}
+          showModal={showEditModal}
+          setShowModal={setShowEditModal}
+          onSubmit={handleUserEdit}
+        />
+      )}
       <IonAlert
         isOpen={showDeleteModal}
         onDidDismiss={() => setShowDeleteModal(false)}
@@ -115,7 +126,7 @@ const UserManagement = () => {
           <label htmlFor="searchByParams">Search by </label>
           <select
             name="searchByParams"
-            id=""
+            title="searchBy"
             onChange={(e) => {
               const value = e.target.value as "id" | "name";
               setSearchOptions({ ...searchOptions, searchBy: value });
@@ -126,13 +137,28 @@ const UserManagement = () => {
           </select>
         </section>
         <section>
-          <label htmlFor="showParams">Status </label>
+          <label htmlFor="roleParams">Role </label>
           <select
-            name="showParams"
-            id=""
+            name="roleParams"
+            title="Role"
+            onChange={(e) => {
+              const value = e.target.value as "all" | "user" | "admin";
+              setSearchOptions({ ...searchOptions, role: value });
+            }}
+          >
+            <option value="all">All</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </section>
+        <section>
+          <label htmlFor="statusParams">Status </label>
+          <select
+            name="statusParams"
+            title="Status"
             onChange={(e) => {
               const value = e.target.value as "all" | "public" | "private" | "reported" | "warning" | "banned";
-              setSearchOptions({ ...searchOptions, show: value });
+              setSearchOptions({ ...searchOptions, status: value });
             }}
           >
             <option value="all">All</option>
@@ -145,7 +171,7 @@ const UserManagement = () => {
         </section>
       </article>
       <IonRow id="userRow">
-        {data &&
+        {data ? (
           data.filter(filterData).map((userData: UserData) => (
             <UserColumn
               key={userData.id}
@@ -161,7 +187,10 @@ const UserManagement = () => {
                 setShowDeleteModal(true);
               }}
             />
-          ))}
+          ))
+        ) : (
+          isLoading ? <p>Loading...</p> : <p>No data</p>
+        )}
       </IonRow>
     </>
   );

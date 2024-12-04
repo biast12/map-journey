@@ -6,26 +6,24 @@
   margin-top: 0.5rem;
 }
 
-#notifFormColumn {  
+#notifFormColumn {
+  h5 {
+    margin-top: 0;
+  }
 
-    h5 {
-        margin-top: 0;
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    max-width: 400px;
+
+    textarea {
+      resize: none;
+      min-height: 80px;
+      margin-top: 0.35rem;
+      margin-bottom: 0.35rem;
     }
-
-    form {
-        display: flex;
-        flex-wrap: wrap;
-        flex-direction: column;
-        max-width: 400px;
-        
-        textarea {
-            resize: none;
-            min-height: 80px;
-            margin-top: 0.35rem;
-            margin-bottom: 0.35rem;
-        }
-
-    }
+  }
 }
 
 .successText {
@@ -38,4 +36,3 @@
   margin: 0;
   margin-bottom: 2rem;
 }
-

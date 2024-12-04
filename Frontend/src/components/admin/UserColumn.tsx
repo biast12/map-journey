@@ -1,8 +1,8 @@
-import { IonButton, IonCol, IonIcon } from "@ionic/react";
 import { MouseEvent } from "react";
+import { IonButton, IonCol, IonIcon } from "@ionic/react";
+import { createOutline, trashBin } from "ionicons/icons";
 
 import "./UserColumn.scss"
-import { createOutline, trashBin } from "ionicons/icons";
 
 interface UserColumnProps {
   userData: UserData;
@@ -13,7 +13,7 @@ interface UserColumnProps {
 const UserColumn: React.FC<UserColumnProps> = ({ userData, onEditUserClick, onDeleteUserClick }) => {
   return (
     <IonCol className="userColumn" size="12">
-      <section className="">
+      <section>
         <div className="userIdCon">
           <p className="userIdText">Id: {userData.id}</p>
         </div>

@@ -1,14 +1,17 @@
-import { IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
-import useRequestData from "../../hooks/useRequestData";
 import { useEffect, useState } from "react";
+import { IonRow } from "@ionic/react";
+
+/* Hooks */
+import useRequestData from "../../hooks/useRequestData";
+import useAuth from "../../hooks/ProviderContext";
+
+/* Components */
+import ReportActionModal from "../modals/ReportActionModal";
 import ReportColumn from "./ReportColumn";
+import Loader from "../Loader";
+import Error from "../Error";
 
 import "./ReportManagement.scss";
-import Modal from "../Modal";
-import ReportUserDisplay from "./reportDisplays/ReportUserDisplay";
-import ReportPinDisplay from "./reportDisplays/ReportPinDisplay";
-import Loader from "../Loader";
-import useAuth from "../../hooks/ProviderContext";
 
 type ReportSearchOptions = {
   search: string;
@@ -17,8 +20,8 @@ type ReportSearchOptions = {
 };
 
 const ReportManagement = () => {
-  const { data, error, isLoading, makeRequest } = useRequestData();
-  const { data: rpData, error: rpError, isLoading: rpIsLoading, makeRequest: rpMakeRequest } = useRequestData();
+  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { makeRequest: rpMakeRequest, error: rpError, isLoading: rpIsLoading } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedReport, setSelectedReport] = useState<null | ReportData>(null);
   const [searchOptions, setSearchOptions] = useState<ReportSearchOptions>({
@@ -32,13 +35,13 @@ const ReportManagement = () => {
   async function handleReportAction(reportData: ReportData, action: "dismiss" | "warn" | "ban") {
     await rpMakeRequest(`reports/${userID}/${reportData.id}`, "POST", undefined, { action: action });
 
-    makeRequest("reports/all/" + userID);
+    makeRequest(`reports/all/${userID}`);
     setSelectedReport(null);
     setShowModal(false);
   }
 
   useEffect(() => {
-    makeRequest("reports/all/" + userID);
+    makeRequest(`reports/all/${userID}`);
   }, []);
 
   function filterData(reportData: ReportData) {
@@ -68,60 +71,9 @@ const ReportManagement = () => {
 
   return (
     <>
+      {error || rpError && <Error message="Error" />}
       {rpIsLoading && <Loader />}
-      <Modal isOpen={showModal} onCloseModal={() => setShowModal(false)}>
-        {selectedReport && (
-          <IonGrid id="reportModalGrid">
-            <IonRow>
-              <IonCol id="reportModalTop" size="12">
-                <p>Id: {selectedReport.id}</p>
-                <p>Date: {new Date(selectedReport.date).toUTCString()}</p>
-              </IonCol>
-            </IonRow>
-            <IonRow id="reportModalContent">
-              <ReportUserDisplay header="Reporting User:" reportUser={selectedReport.reporting_user} />
-              {selectedReport.reported_user ? (
-                <ReportUserDisplay header="Reported User:" reportUser={selectedReport.reported_user} />
-              ) : (
-                selectedReport.reported_pin && <ReportPinDisplay reportPin={selectedReport.reported_pin} />
-              )}
-              <IonCol size="12">Reasoning: {selectedReport.text}</IonCol>
-            </IonRow>
-            <IonRow id="reportButtonsRow">
-              <IonCol size="4" className="reportButtons">
-                <IonButton
-                  color={"success"}
-                  onClick={(e) => {
-                    handleReportAction(selectedReport, "dismiss");
-                  }}
-                >
-                  Dismiss
-                </IonButton>
-              </IonCol>
-              <IonCol size="4" className="reportButtons">
-                <IonButton
-                  color={"warning"}
-                  onClick={(e) => {
-                    handleReportAction(selectedReport, "warn");
-                  }}
-                >
-                  Warn
-                </IonButton>
-              </IonCol>
-              <IonCol size="4" className="reportButtons">
-                <IonButton
-                  color={"danger"}
-                  onClick={(e) => {
-                    handleReportAction(selectedReport, "ban");
-                  }}
-                >
-                  Ban
-                </IonButton>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-        )}
-      </Modal>
+      {selectedReport && <ReportActionModal selectedReport={selectedReport} showModal={showModal} setShowModal={setShowModal} handleReportAction={handleReportAction} />}
       <article className="searchOptions">
         <section>
           <label htmlFor="searchParams">Search </label>
@@ -138,7 +90,7 @@ const ReportManagement = () => {
           <label htmlFor="searchByParams">Search by </label>
           <select
             name="searchByParams"
-            id=""
+            title="SearchBy"
             onChange={(e) => {
               const value = e.target.value as "id" | "name" | "text";
               setSearchOptions({ ...searchOptions, searchBy: value });
@@ -151,7 +103,7 @@ const ReportManagement = () => {
         </section>
       </article>
       <IonRow id="reportsRow">
-        {data &&
+        {data ? (
           data
             .sort((a: ReportData, b: ReportData) => new Date(b.date).getTime() - new Date(a.date).getTime())
             .filter(filterData)
@@ -164,7 +116,10 @@ const ReportManagement = () => {
                   setShowModal(true);
                 }}
               />
-            ))}
+            ))
+        ) : (
+          isLoading ? <p>Loading...</p> : <p>No data</p>
+        )}
       </IonRow>
     </>
   );

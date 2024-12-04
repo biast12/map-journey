@@ -1,10 +1,16 @@
+import { FormEvent, useEffect, useState } from "react";
 import { IonAlert, IonButton, IonCol, IonRow } from "@ionic/react";
-import "./NotificationManagement.scss";
+
+/* Hooks */
 import useRequestData from "../../hooks/useRequestData";
-import { FormEvent, MouseEvent, useEffect, useState } from "react";
 import useAuth from "../../hooks/ProviderContext";
+
+/* Components */
 import NotificationColumn from "./NotificationColumn";
 import Loader from "../Loader";
+import Error from "../Error";
+
+import "./NotificationManagement.scss";
 
 type NotificationSearchOptions = {
   search: string;
@@ -20,12 +26,12 @@ const NotificationManagement = () => {
   const [selectedNotif, setSelectedNotif] = useState<NotificationData | null>(null);
   const { data, error, isLoading, makeRequest } = useRequestData();
   const {
+    makeRequest: createMakeRequest,
     data: createData,
     error: createError,
-    isLoading: createIsLoading,
-    makeRequest: createMakeRequest,
+    isLoading: createIsLoading
   } = useRequestData();
-  const { data: delData, error: delError, isLoading: delIsLoading, makeRequest: delMakeRequest } = useRequestData();
+  const { makeRequest: delMakeRequest, error: delError, isLoading: delIsLoading } = useRequestData();
 
   const { userID } = useAuth();
 
@@ -55,7 +61,8 @@ const NotificationManagement = () => {
 
   return (
     <>
-      {createIsLoading && <Loader />}
+      {error || createError || delError && <Error message="Error" />}
+      {createIsLoading || delIsLoading && <Loader />}
       <IonAlert
         isOpen={showDeleteAlert}
         onDidDismiss={() => setShowDeleteAlert(false)}
@@ -92,7 +99,7 @@ const NotificationManagement = () => {
                 <label htmlFor="searchByParams">Search by </label>
                 <select
                   name="searchByParams"
-                  id=""
+                  title="searchBy"
                   onChange={(e) => {
                     const value = e.target.value as "title" | "text";
                     setSearchOptions({ ...searchOptions, searchBy: value });
@@ -106,7 +113,7 @@ const NotificationManagement = () => {
             </article>
           </IonRow>
           <IonRow id="notifRow">
-            {data &&
+            {data ? (
               data
                 .sort((a: NotificationData, b: NotificationData) => b.id - a.id)
                 .filter((notifData: NotificationData) => {
@@ -128,7 +135,10 @@ const NotificationManagement = () => {
                     }}
                     notifData={notifData}
                   />
-                ))}
+                ))
+            ) : (
+              isLoading ? <p>Loading...</p> : <p>No data</p>
+            )}
           </IonRow>
         </IonCol>
       </IonRow>

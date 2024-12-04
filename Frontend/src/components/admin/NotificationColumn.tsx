@@ -1,7 +1,8 @@
-import { IonButton, IonCol, IonIcon } from "@ionic/react";
-import "./NotificationColumn.scss";
-import { trashBin } from "ionicons/icons";
 import { MouseEvent } from "react";
+import { IonButton, IonCol, IonIcon } from "@ionic/react";
+import { trashBin } from "ionicons/icons";
+
+import "./NotificationColumn.scss";
 
 const NotificationColumn = ({ notifData, onDeleteUserClick }: { notifData: NotificationData, onDeleteUserClick: (e: MouseEvent, notifData: NotificationData) => void }) => {
 

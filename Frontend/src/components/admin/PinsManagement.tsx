@@ -1,22 +1,21 @@
-import { IonAlert, IonButton, IonCol, IonGrid, IonRow } from "@ionic/react";
-import useRequestData from "../../hooks/useRequestData";
 import { useEffect, useState } from "react";
+import { IonAlert, IonRow } from "@ionic/react";
+
+/* Hooks */
+import useRequestData from "../../hooks/useRequestData";
+import useAuth from "../../hooks/ProviderContext";
+
+/* Components */
+import EditPinModal from "../modals/EditPinModal";
+import PinsColumn from "./PinsColumn";
+import Loader from "../Loader";
+import Error from "../Error";
 
 import "./PinsManagement.scss";
-import Modal from "../Modal";
-import Loader from "../Loader";
-import useAuth from "../../hooks/ProviderContext";
-import PinsColumn from "./PinsColumn";
 
-type PinSearchOptions = {
-  search: string;
-  searchBy: "id" | "title" | "description";
-  sortBy: "id" | "title" | "description";
-};
-
-const PinsManagement = () => {
-  const { data, error, isLoading, makeRequest } = useRequestData();
-  const { data: delData, error: delError, isLoading: delIsLoading, makeRequest: delMakeRequest } = useRequestData();
+const PinsManagement = ({ url }: { url: string }) => {
+  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { makeRequest: delMakeRequest, error: delError, isLoading: delIsLoading } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [selectedPin, setSelectedPin] = useState<null | PinData>(null);
@@ -24,9 +23,10 @@ const PinsManagement = () => {
     search: "",
     searchBy: "title",
     sortBy: "title",
+    status: "all",
   });
 
-  const { userID } = useAuth();
+  const { userID, role } = useAuth();
 
   async function handleDeletePin(pinData: PinData) {
     await delMakeRequest(`pins/${pinData.id}/${userID}`, "DELETE")
@@ -36,10 +36,14 @@ const PinsManagement = () => {
   }
 
   useEffect(() => {
-    makeRequest("pins/all/" + userID);
+    makeRequest(`${url}/${userID}`);
   }, []);
 
   function filterData(pinData: PinData) {
+    if (searchOptions.status !== "all" && pinData.status !== searchOptions.status) {
+      return false;
+    }
+
     if (searchOptions.search === "") {
       return true;
     } else {
@@ -52,6 +56,7 @@ const PinsManagement = () => {
 
   return (
     <>
+      {error || delError && <Error message="Error" />}
       {delIsLoading && <Loader />}
       <IonAlert
         isOpen={showAlert}
@@ -60,47 +65,7 @@ const PinsManagement = () => {
         message="Deleting is a permanent action!"
         buttons={["Cancel", { text: "Confirm", handler: () => handleDeletePin(selectedPin!) }]}
       />
-      <Modal isOpen={showModal} onCloseModal={() => setShowModal(false)}>
-        {selectedPin && (
-          <IonGrid id="pinModalGrid">
-            <IonRow>
-              <IonCol id="pinModalTop" size="12">
-                <p>Id: {selectedPin.id}</p>
-                <p>Date: {new Date(selectedPin.date).toUTCString()}</p>
-              </IonCol>
-            </IonRow>
-            <IonRow id="pinModalContent">
-              <section>
-                <h4>{selectedPin.title}</h4>
-                <figure>
-                  <img src={selectedPin.imgurls} alt="" />
-                  <p>{selectedPin.location}</p>
-                </figure>
-                <p className="descriptionText">{selectedPin.description}</p>
-              </section>
-              <hr />
-              <div>
-                <section className="avatarSection">
-                  <figure>
-                    <img src={selectedPin.profile.avatar} alt="" />
-                  </figure>
-                </section>
-                <section>
-                  <p>{selectedPin.profile.name}</p>
-                  <p className="smallText">Id: {selectedPin.profile.id}</p>
-                </section>
-              </div>
-            </IonRow>
-            <IonRow id="pinButtonsRow">
-              <IonCol size="4" className="pinButtons">
-                <IonButton color={"danger"} onClick={()=>setShowAlert(true)}>
-                  Delete
-                </IonButton>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-        )}
-      </Modal>
+      {selectedPin && <EditPinModal selectedPin={selectedPin} showModal={showModal} setShowModal={setShowModal} setShowAlert={setShowAlert} />}
       <article className="searchOptions">
         <section>
           <label htmlFor="searchParams">Search </label>
@@ -117,20 +82,35 @@ const PinsManagement = () => {
           <label htmlFor="searchByParams">Search by </label>
           <select
             name="searchByParams"
-            id=""
+            title="searchBy"
             onChange={(e) => {
               const value = e.target.value as "id" | "title" | "description";
               setSearchOptions({ ...searchOptions, searchBy: value });
             }}
           >
             <option value="title">Title</option>
-            <option value="id">Id</option>
+            {role === "admin" && <option value="id">Id</option>}
             <option value="description">Description</option>
+          </select>
+        </section>
+        <section>
+          <label htmlFor="statusParams">Status </label>
+          <select
+            name="statusParams"
+            title="Status"
+            onChange={(e) => {
+              const value = e.target.value as "all" | "public" | "private";
+              setSearchOptions({ ...searchOptions, status: value });
+            }}
+          >
+            <option value="all">All</option>
+            <option value="public">Public</option>
+            <option value="private">Private</option>
           </select>
         </section>
       </article>
       <IonRow id="pinsRow">
-        {data &&
+        {data ? (
           data.filter(filterData).map((pinData: PinData) => (
             <PinsColumn
               key={pinData.id}
@@ -140,7 +120,10 @@ const PinsManagement = () => {
                 setShowModal(true);
               }}
             />
-          ))}
+          ))
+        ) : (
+          isLoading ? <p>Loading...</p> : <p>No data</p>
+        )}
       </IonRow>
     </>
   );
