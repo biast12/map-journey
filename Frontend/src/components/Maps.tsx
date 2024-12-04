@@ -113,6 +113,8 @@ function Map({ APIurl, pinID }: MapProps) {
   const openShowPinModal = () => setShowPinModal(true);
   const closeShowPinModal = () => setShowPinModal(false);
 
+  const {userID} = useAuth();
+
   useEffect(() => {
     makeRequest(`pins/${APIurl}`);
   }, [APIurl]);

@@ -1,0 +1,27 @@
+#userRow {
+  gap: 0.2rem;
+  max-height: 60vh;
+  overflow: auto;
+  margin-top: 0.5rem;
+  margin-bottom: 4rem;
+}
+
+ion-modal#deleteUserModal {
+  --width: fit-content;
+  --min-width: 250px;
+  --height: fit-content;
+
+  .modal-content {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    padding-left: 1rem;
+  }
+}
+
+.searchOptions {
+  display: flex;
+  gap: 0.75rem;
+}

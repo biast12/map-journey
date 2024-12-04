@@ -90,6 +90,8 @@ router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   }
 });
 
+
+
 // Get pins by user ID
 router.get("/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
@@ -153,6 +155,7 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 // Create a new pin
 router.post("/:id", checkUserRole("user"), async (req, res) => {
@@ -349,5 +352,6 @@ router.delete("/:id/:pinid", checkUserRole("user"), async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 module.exports = router;

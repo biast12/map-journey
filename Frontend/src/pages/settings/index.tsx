@@ -11,7 +11,7 @@ import {
   IonModal,
   IonAlert,
 } from "@ionic/react";
-import { settingsOutline, personOutline, logOutOutline } from "ionicons/icons";
+import { settingsOutline, personOutline, logOutOutline, navigateOutline } from "ionicons/icons";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../hooks/ProviderContext";
 import { useTranslation } from "react-i18next";
@@ -38,6 +38,11 @@ const Settings: React.FC = () => {
       name: t("pages.settings.index.general"),
       url: "general",
       icon: personOutline,
+    },
+    {
+      name: "Pins",
+      url: "pins",
+      icon: navigateOutline,
     },
   ];
 
