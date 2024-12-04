@@ -16,35 +16,34 @@ import { MousePosition, defaults as defaultControls } from "ol/control.js";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer.js";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import Feature from "ol/Feature";
 import { FeatureLike } from "ol/Feature";
 import { default as OlMap } from "ol/Map";
 import Point from "ol/geom/Point";
-import ShowPinModal from "../modals/ShowPinModal";
+import ShowPinModal from "../components/modals/ShowPinModal";
 import View from "ol/View";
 import { close } from "ionicons/icons";
 import { createStringXY } from "ol/coordinate.js";
 import { Geolocation } from "@capacitor/geolocation";
 import useRequestData from "../hooks/useRequestData";
+import useAuth from "../hooks/ProviderContext";
 import Loader from "./Loader";
 import Error from "./Error";
 import useAuth from "../hooks/ProviderContext";
 
 interface MapProps {
   APIurl: string;
+  pinID?: string | null;
 }
 
 interface PinData {
-  id: number;
+  id: string;
   longitude: number;
   latitude: number;
-  [key: string]: any; // Add other properties as needed
+  [key: string]: any;
 }
-
-const debug = false; // Set this to false to disable logging
-
-const iconSrc: string = "http://localhost:8100/icons/webp/ping1.webp"; // Replace with the correct URL to the pin icon
 
 // Predefined styles for clustering
 const distanceBetweenPinsBeforeClustering = 20; // Distance between pins before clustering
@@ -57,8 +56,6 @@ const clusterTextColor = "#fff"; // Color of the text/number inside the cluster 
 const mousePositionControl = new MousePosition({
   coordinateFormat: createStringXY(4),
   projection: "EPSG:4326",
-  // comment the following two lines to have the mouse position
-  // be placed within the map.
   className: "custom-mouse-position",
   target: document.getElementById("mouse-position") as HTMLElement,
 });
@@ -68,7 +65,7 @@ function createStyle(size: number = 0.3) {
     image: new Icon({
       anchor: [0.5, 0.96],
       crossOrigin: "anonymous",
-      src: iconSrc,
+      src: "icons/ping.webp",
       scale: size,
     }),
   });
@@ -101,12 +98,19 @@ function createClusterStyle(feature: FeatureLike): Style {
   return style;
 }
 
-function Map({ APIurl }: MapProps) {
+function Map({ APIurl, pinID }: MapProps) {
+  const { t } = useTranslation();
   const points: Feature[] = [];
-  const { makeRequest, data, error, isLoading } = useRequestData();
+
+  /* States */
   const [showPinModal, setShowPinModal] = useState(false);
   const [selectedPin, setSelectedPin] = useState<PinData | null>(null);
 
+  /* Hooks */
+  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { role } = useAuth();
+
+  /* Functions */
   const openShowPinModal = () => setShowPinModal(true);
   const closeShowPinModal = () => setShowPinModal(false);
 
@@ -131,6 +135,7 @@ function Map({ APIurl }: MapProps) {
     const view = new View({
       center: [0, 0],
       zoom: 2,
+      enableRotation: false,
     }) as View;
     const vectorSource = new VectorSource({
       features: points,
@@ -143,7 +148,10 @@ function Map({ APIurl }: MapProps) {
 
     const map = new OlMap({
       target: "map",
-      controls: defaultControls().extend([mousePositionControl]),
+      controls:
+        role === "admin"
+          ? defaultControls().extend([mousePositionControl])
+          : defaultControls(),
       layers: [
         new TileLayer({
           source: new OSM(),
@@ -154,22 +162,6 @@ function Map({ APIurl }: MapProps) {
         }),
       ],
       view: view,
-    });
-    getBrowserLocation(map, view);
-
-    let lastLogTime = 0;
-
-    // Add pointermove event listener to log mouse position
-    map.on("pointermove", (event) => {
-      if (!debug) return; // Check if debug is true
-      const currentTime = Date.now();
-      if (currentTime - lastLogTime >= 1000) {
-        lastLogTime = currentTime;
-        const coordinates = toLonLat(event.coordinate);
-        console.log(
-          `Longitude: ${coordinates[0]}, Latitude: ${coordinates[1]}`
-        );
-      }
     });
 
     // Add click event listener to open ShowPinModal or zoom in on cluster
@@ -201,9 +193,24 @@ function Map({ APIurl }: MapProps) {
         }
       });
     });
+
+    if (pinID && data) {
+      const pin = data.find((pin: PinData) => pin.id === pinID);
+      if (pin) {
+        setSelectedPin(pin);
+        view.animate(
+          { center: fromLonLat([pin.longitude, pin.latitude]) },
+          { zoom: 19 },
+          { duration: 10000 }
+        );
+        openShowPinModal();
+      }
+    } else {
+      getBrowserLocation(view);
+    }
   }, [data]);
 
-  const getBrowserLocation = async (map: OlMap, view: View) => {
+  const getBrowserLocation = async (view: View) => {
     try {
       const position = await Geolocation.getCurrentPosition();
       const { latitude, longitude } = position.coords;
@@ -218,13 +225,13 @@ function Map({ APIurl }: MapProps) {
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && <Error message={"Failed fetching pins!"} />}
+      {!isLoading && error && <Error message={t("map.error_page_message")} />}
       {data && (
         <div id="map">
           {/* Preload the image cause else React/Ionic will not load it and add it to "the public folder" */}
           <IonImg
-            src="/icons/webp/ping1.webp"
-            alt="Pin Icon"
+            src="icons/ping.webp"
+            alt={t("map.pin_alt")}
             style={{ display: "none" }}
             aria-hidden="true"
           />
@@ -236,8 +243,9 @@ function Map({ APIurl }: MapProps) {
             className="close-button"
             onClick={closeShowPinModal}
             fill="clear"
+            shape="round"
           >
-            <IonIcon icon={close} />
+            <IonIcon slot="icon-only" icon={close} />
           </IonButton>
           <ShowPinModal pinData={selectedPin} />
         </div>

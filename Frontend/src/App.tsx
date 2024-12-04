@@ -1,3 +1,14 @@
+import { useEffect, useState } from "react";
+import {
+  setupIonicReact,
+  IonApp,
+  IonContent,
+  IonTabs,
+  IonRouterOutlet,
+} from "@ionic/react";
+import { IonReactRouter } from "@ionic/react-router";
+import { Route, Switch, useLocation } from "react-router-dom";
+
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
 /* Basic CSS for apps built with Ionic */
@@ -11,28 +22,14 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
-/* import '@ionic/react/css/palettes/dark.always.css'; */
-/* import '@ionic/react/css/palettes/dark.class.css'; */
-import "@ionic/react/css/palettes/dark.system.css";
-/* Theme variables */
-import "./theme/variables.scss";
+import "@ionic/react/css/palettes/dark.always.css";
 import "./App.scss";
-
-import { useEffect, useState } from "react";
-import {
-  setupIonicReact,
-  IonApp,
-  IonContent,
-  IonTabs,
-  IonRouterOutlet,
-} from "@ionic/react";
-import { IonReactRouter } from "@ionic/react-router";
 
 /* Components */
 import Header from "./components/layout/Header";
-import Routes from "./components/Routes";
 import Footer from "./components/layout/Footer";
 import Modals from "./components/Modals";
+import Routes from "./components/Routes";
 
 /* Hooks */
 import useAuth from "./hooks/ProviderContext";
@@ -41,8 +38,19 @@ import useAuth from "./hooks/ProviderContext";
 setupIonicReact();
 
 const App: React.FC = () => {
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <AppContent />
+      </IonReactRouter>
+    </IonApp>
+  );
+};
+
+const AppContent: React.FC = () => {
+  const location = useLocation();
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [makePinModal, setMakePinModal] = useState(false);
+  const [createPinModal, setCreatePinModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   const { userID, loading } = useAuth();
@@ -50,40 +58,41 @@ const App: React.FC = () => {
   const openLoginModal = () => setShowLoginModal(true);
   const closeLoginModal = () => setShowLoginModal(false);
 
-  const openMakePinModal = () => setMakePinModal(true);
-  const closeMakePinModal = () => setMakePinModal(false);
+  const openCreatePinModal = () => setCreatePinModal(true);
+  const closeCreatePinModal = () => setCreatePinModal(false);
 
   const openNotificationModal = () => setShowNotificationModal(true);
   const closeNotificationModal = () => setShowNotificationModal(false);
 
+  // Define the paths for Public Routes
+  const publicPaths = ["/privacy-policy", "/terms-of-service", "/error", "/error/:status"];
+
   useEffect(() => {
-    if (!userID && !loading) {
+    if (!userID && !loading && !publicPaths.includes(location.pathname)) {
       openLoginModal();
     }
-  }, [userID, loading]);
+  }, [userID, loading, location.pathname]);
 
   return (
-    <IonApp>
-      <IonReactRouter>
-        <Header openNotificationModal={openNotificationModal} />
-        <IonContent>
-          <IonTabs>
-            <IonRouterOutlet>
-              <Routes />
-            </IonRouterOutlet>
-            <Footer openMakePinModal={openMakePinModal} />
-          </IonTabs>
-        </IonContent>
-        <Modals
-          showLoginModal={showLoginModal}
-          closeLoginModal={closeLoginModal}
-          makePinModal={makePinModal}
-          closeMakePinModal={closeMakePinModal}
-          showNotificationModal={showNotificationModal}
-          closeNotificationModal={closeNotificationModal}
-        />
-      </IonReactRouter>
-    </IonApp>
+    <>
+      <Header openNotificationModal={openNotificationModal} />
+      <IonContent>
+        <IonTabs>
+          <IonRouterOutlet>
+            <Routes />
+          </IonRouterOutlet>
+          <Footer openCreatePinModal={openCreatePinModal} />
+        </IonTabs>
+      </IonContent>
+      <Modals
+        showLoginModal={showLoginModal}
+        closeLoginModal={closeLoginModal}
+        createPinModal={createPinModal}
+        closeCreatePinModal={closeCreatePinModal}
+        showNotificationModal={showNotificationModal}
+        closeNotificationModal={closeNotificationModal}
+      />
+    </>
   );
 };
 

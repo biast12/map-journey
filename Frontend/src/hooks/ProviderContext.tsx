@@ -3,12 +3,12 @@ import { Preferences } from "@capacitor/preferences";
 
 interface ProviderContextProps {
   userID: string | null;
-  notificationsStatus: boolean | null;
+  role: string | null;
   loading: boolean;
   storeAuthToken: (token: string) => Promise<void>;
   clearAuthToken: () => Promise<void>;
-  storeNotificationsStatusToken: (token: boolean) => Promise<void>;
-  clearNotificationsStatusToken: () => Promise<void>;
+  storeRoleToken: (token: string) => Promise<void>;
+  clearRoleToken: () => Promise<void>;
 }
 
 const ProviderContext = createContext<ProviderContextProps | undefined>(
@@ -19,9 +19,7 @@ export const ProviderContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [userID, setUserID] = useState<string | null>(null);
-  const [notificationsStatus, setNotificationsStatus] = useState<
-    boolean | null
-  >(null);
+  const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   /* Auth */
@@ -53,36 +51,31 @@ export const ProviderContextProvider: React.FC<{
     }
   };
 
-  /* Notifications Status */
-  const storeNotificationsStatusToken = async (token: boolean) => {
+  /* Role */
+  const storeRoleToken = async (token: string) => {
     try {
-      await Preferences.set({
-        key: "notificationsStatusToken",
-        value: token.toString(),
-      });
-      setNotificationsStatus(token);
+      await Preferences.set({ key: "roleToken", value: token });
+      setRole(token);
     } catch (error) {
-      console.error("Failed to store notifications status token", error);
+      console.error("Failed to store role token", error);
     }
   };
 
-  const clearNotificationsStatusToken = async () => {
+  const clearRoleToken = async () => {
     try {
-      await Preferences.remove({ key: "notificationsStatusToken" });
-      setNotificationsStatus(null);
+      await Preferences.remove({ key: "roleToken" });
+      setRole(null);
     } catch (error) {
-      console.error("Failed to clear notifications status token", error);
+      console.error("Failed to clear role token", error);
     }
   };
 
-  const getNotificationsStatusToken = async () => {
+  const getRoleToken = async () => {
     try {
-      const { value } = await Preferences.get({
-        key: "notificationsStatusToken",
-      });
-      return value === "true";
+      const { value } = await Preferences.get({ key: "roleToken" });
+      return value;
     } catch (error) {
-      console.error("Failed to get notifications status token", error);
+      console.error("Failed to get role token", error);
       return null;
     }
   };
@@ -90,13 +83,10 @@ export const ProviderContextProvider: React.FC<{
   useEffect(() => {
     async function initialize() {
       try {
-        const [authToken, notificationsStatusToken] = await Promise.all([
-          getAuthToken(),
-          getNotificationsStatusToken(),
-        ]);
+        const authToken = await getAuthToken();
         if (authToken) setUserID(authToken);
-        if (notificationsStatusToken)
-          setNotificationsStatus(notificationsStatusToken);
+        const roleToken = await getRoleToken();
+        if (roleToken) setRole(roleToken);
       } catch (error) {
         console.error("Failed to initialize tokens", error);
       } finally {
@@ -109,12 +99,12 @@ export const ProviderContextProvider: React.FC<{
 
   const contextValue = {
     userID,
-    notificationsStatus,
+    role,
     loading,
     storeAuthToken,
     clearAuthToken,
-    storeNotificationsStatusToken,
-    clearNotificationsStatusToken,
+    storeRoleToken,
+    clearRoleToken,
   };
 
   return (
@@ -128,16 +118,6 @@ export const useAuth = () => {
   const context = useContext(ProviderContext);
   if (context === undefined) {
     throw new Error("useAuth must be used within a ProviderContextProvider");
-  }
-  return context;
-};
-
-export const useNotificationsStatus = () => {
-  const context = useContext(ProviderContext);
-  if (context === undefined) {
-    throw new Error(
-      "useNotificationsStatus must be used within a ProviderContextProvider"
-    );
   }
   return context;
 };

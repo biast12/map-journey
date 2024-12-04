@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const supabase = require("../supabaseClient");
 const bcrypt = require("bcrypt");
-const crypto = require("crypto");
 const checkApiKey = require("../utils/apiKeyCheck");
 const generateUniqueId = require("../utils/uuid-generator");
 const checkUserRole = require("../utils/checkUserRole");
@@ -14,11 +13,12 @@ router.get("/", (req, res) => {
   res.json({
     message: "User Route",
     routes: {
-      "/all": "Get all users and their data",
+      "/all/:id": "Get all users",
       "/:id": "Get a user by User ID",
       "/": "Create a new user and default settings",
       "/login": "Login route",
       "/:id": "Update a user by User ID",
+      "/:id/:userid": "Admin - Update a user by User ID",
       "/:id": "Delete a user by User ID",
     },
   });
@@ -155,6 +155,7 @@ router.post("/", async (req, res) => {
         email,
         password: hashedPassword,
         settings_id: settingsData.id,
+        new_notifications: [],
       },
     ]);
 
@@ -164,7 +165,7 @@ router.post("/", async (req, res) => {
       return res.status(500).json({ error: "Error creating profile" });
     }
 
-    res.status(201).json({ message: "Profile created successfully" });
+    res.status(201).json({ message: "Profile created successfully", id: userId, role: "user" });
   } catch (error) {
     console.error("Error during profile creation:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -269,7 +270,7 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
   }
 });
 
-// Admin Update a user by User ID
+// Admin - Update a user by User ID
 router.put("/:id/:userid", checkUserRole("admin"), async (req, res) => {
   const userID = req.params.userid;
   const { name, email, password, avatar, status, role } = req.body;

@@ -1,0 +1,222 @@
+{
+  "lang": "Dansk",
+  "required_fields": "Alle felter er påkrævet.",
+  "profanityFilter": "Din indtastning indeholder upassende sprog.",
+  "header": {
+    "error_page_message": "Kunne ikke hente bruger! Prøv igen senere"
+  },
+  "footer": {
+    "global_map": "Globalt Kort",
+    "add_pin": "Tilføj Pin",
+    "own_map": "Eget Kort"
+  },
+  "modals": {
+    "create_pin": {
+      "card_title": "Kortlæg din Rejse",
+      "title": "Titel",
+      "title_placeholder": "Din titel her",
+      "location": "Placering",
+      "description": "Beskrivelse",
+      "description_placeholder": "Din beskrivelse her",
+      "visibility": "Offentlig",
+      "submit": "Bekræft"
+    },
+    "create_user": {
+      "card_title": "Opret Bruger",
+      "username": "Brugernavn",
+      "username_placeholder": "Dit brugernavn her",
+      "email": "Email",
+      "email_placeholder": "Din email her",
+      "password": "Adgangskode",
+      "password_placeholder": "Din adgangskode her",
+      "submit": "Opret bruger",
+      "close": "Luk",
+      "failed": "Brugeroprettelse mislykkedes! Tjek indtastningerne",
+      "error_page_message": "Kunne ikke oprette bruger, prøv igen senere"
+    },
+    "login": {
+      "card_title": "Login",
+      "email": "Email",
+      "email_placeholder": "Din email her",
+      "password": "Adgangskode",
+      "password_placeholder": "Din adgangskode her",
+      "submit": "Login",
+      "create_user": "Opret bruger",
+      "successful": "Login succesfuld",
+      "failed": "Login mislykkedes! Tjek indtastningerne",
+      "error_page_message": "Kunne ikke logge ind, prøv igen senere"
+    },
+    "notification": {
+      "card_title": "Notifikationer",
+      "error_page_message": "Kunne ikke hente notifikationer, prøv igen senere"
+    },
+    "report": {
+      "card_title": "Rapportering",
+      "text": "Rapport Tekst",
+      "submit": "Indsend Rapport",
+      "close": "Luk",
+      "successful": "Rapporteret succesfuldt",
+      "failed": "Rapportering af {{type}} mislykkedes! Tjek indtastningerne",
+      "error_page_message": "Kunne ikke rapportere, prøv igen senere"
+    },
+    "pin": {
+      "img_alt": "Bruger avatar",
+      "report": "Rapporter pin"
+    },
+    "warning": {
+      "card_title": "Advarsel",
+      "card_title_banned": "Banned",
+      "warning": "Dette er en advarsel, din konto er blevet rapporteret og er i fare for at blive bannet. Venligst undlad at fortsætte med at overtræde servicevilkårene.",
+      "reported": "Din konto er blevet markeret som rapporteret, dine pins vil være private, indtil problemet er løst.",
+      "banned": "Din konto er blevet bannet, du kan ikke længere bruge tjenesten.",
+      "support": "Kontakt venligst support for mere information.",
+      "close": "Luk",
+      "delete": {
+        "header": "Slet Konto",
+        "message": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
+        "yes": "Ja",
+        "cancel": "Annuller"
+      }
+    }
+  },
+  "pages": {
+    "settings": {
+      "index": {
+        "card_title": "Indstillinger",
+        "account": "Konto",
+        "general": "Generelt",
+        "Logout": {
+          "header": "Log ud",
+          "message": "Er du sikker på, at du vil logge ud?",
+          "yes": "Ja",
+          "cancel": "Annuller"
+        }
+      },
+      "accounts": {
+        "card_title": "Konto",
+        "img_alt": "Bruger avatar",
+        "username": "Brugernavn",
+        "email": "Email",
+        "password": "Adgangskode",
+        "required_fields": "Brugernavn og e-mail felter er påkrævet",
+        "submit": "Gem",
+        "successful": "Konto opdateret succesfuldt",
+        "failed": "Kontoopdatering mislykkedes! Tjek indtastningerne",
+        "error_fetch": "Fejl ved opdatering af brugerdata",
+        "error_page_message": "Kunne ikke hente brugere, prøv igen senere",
+        "Delete": {
+          "header": "Slet",
+          "message": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
+          "yes": "Ja",
+          "cancel": "Annuller"
+        }
+      },
+      "general": {
+        "lang_missing_key": "Sprog nøgle mangler",
+        "card_title": "Generelle Indstillinger",
+        "map_theme": "Kort Tema",
+        "map_theme_placeholder": "Vælg Kort Tema",
+        "language": "Sprog",
+        "language_placeholder": "Vælg Sprog",
+        "notification": "Aktiver Notifikationer",
+        "submit": "Gem",
+        "error_page_message": "Kunne ikke hente indstillinger, prøv igen senere"
+      }
+    },
+    "errorpage": {
+      "error": "Fejl",
+      "errormessage": "Noget gik galt!"
+    }
+  },
+  "map": {
+    "pin_alt": "Pin Ikon",
+    "error_page_message": "Kunne ikke hente pins, prøv venligst igen senere"
+  },
+  "privacy_policy": {
+    "title": "Privatlivspolitik",
+    "introduction": {
+      "title": "Introduktion",
+      "content": "Denne privatlivspolitik forklarer, hvordan vi håndterer dine personlige data. Vi er forpligtet til at beskytte dit privatliv og sikre, at dine personlige oplysninger håndteres på en sikker og ansvarlig måde."
+    },
+    "data_collection": {
+      "title": "Dataindsamling",
+      "content": "Vi indsamler følgende typer data: personlige identifikationsoplysninger (navn (brugernavn), e-mailadresse osv.)."
+    },
+    "data_usage": {
+      "title": "Dataanvendelse",
+      "content": "Vi bruger dine data til følgende formål: at levere og vedligeholde vores service, at informere dig om ændringer i vores service, at give dig mulighed for at deltage i interaktive funktioner i vores service, at yde kundesupport, at indsamle analyser eller værdifuld information, så vi kan forbedre vores service."
+    },
+    "data_sharing": {
+      "title": "Datadeling",
+      "content": "Vi deler ikke dine data med nogen, dine data er fuldt sikre."
+    },
+    "user_rights": {
+      "title": "Brugerrettigheder",
+      "content": "Du har følgende rettigheder vedrørende dine data: retten til at få adgang til, opdatere eller slette de oplysninger, vi har om dig, retten til berigtigelse, retten til at gøre indsigelse, retten til begrænsning, retten til dataportabilitet og retten til at trække samtykke tilbage, de fleste af disse kan gøres under dine indstillinger."
+    },
+    "contact": {
+      "title": "Kontakt os",
+      "content": "Hvis du har spørgsmål, bedes du kontakte os på: "
+    }
+  },
+  "terms_of_service": {
+  "title": "Vilkår for brug",
+  "introduction": {
+    "title": "Accept af vilkår",
+    "content": "Ved at få adgang til eller bruge Map Journey-appen accepterer du at være bundet af disse vilkår for brug. Hvis du ikke accepterer nogen del af disse vilkår, må du ikke bruge appen."
+  },
+  "description": {
+    "title": "Beskrivelse af tjenesten",
+    "content": "Map Journey giver brugere mulighed for at kortlægge deres rejser ved at placere pins med lokalitetsdata, tekst og billeder. Pins kan indstilles som offentlige eller private, og brugere kan oprette tilpassede profiler med billeder og bannere."
+  },
+  "user_accounts": {
+    "title": "Brugerkonti",
+    "content": "For at få adgang til visse funktioner skal du oprette en konto. Du forpligter dig til at give korrekte og fuldstændige oplysninger under registreringen og opdatere dine oplysninger efter behov. Du er ansvarlig for at holde dine kontooplysninger fortrolige."
+  },
+  "user_generated_content": {
+    "title": "Brugergenereret indhold",
+    "content": "Brugere kan oprette og uploade indhold, herunder pins og profiloplysninger. Du bevarer ejerskab af dit indhold, men giver Map Journey en ikke-eksklusiv, verdensomspændende licens til at vise det i appen. Du er ansvarlig for, at dit indhold ikke overtræder lovgivningen eller andres rettigheder."
+  },
+  "prohibited_conduct": {
+    "title": "Forbudt adfærd",
+    "content": "Du accepterer ikke at: (1) poste ulovligt eller skadeligt indhold, (2) chikanere, true eller udgive dig for at være andre, (3) hacke eller forsøge at reverse-engineere appen, (4) dele falske oplysninger eller (5) krænke andres rettigheder."
+  },
+  "privacy_policy": {
+    "title": "Privatlivspolitik",
+    "content": "Din brug af appen er også underlagt vores privatlivspolitik, som forklarer, hvordan vi indsamler, bruger og beskytter dine personlige data. Ved at bruge appen accepterer du betingelserne i vores privatlivspolitik."
+  },
+  "intellectual_property": {
+    "title": "Intellektuel ejendomsret",
+    "content": "Alt indhold i appen, undtagen brugergenereret indhold, er Map Journeys eller dets licensgiveres ejendom. Du må ikke kopiere, ændre eller distribuere nogen del af appen uden forudgående skriftligt samtykke."
+  },
+  "service_availability": {
+    "title": "Tjenestens tilgængelighed og ændringer",
+    "content": "Vi bestræber os på at holde appen tilgængelig, men kan ikke garantere uafbrudt adgang. Vi forbeholder os retten til at ændre eller afbryde funktioner eller tjenesten uden varsel."
+  },
+  "termination": {
+    "title": "Opsigelse",
+    "content": "Vi kan suspendere eller opsige din konto til enhver tid, hvis du overtræder disse vilkår. Du kan også slette din konto når som helst, hvilket vil resultere i sletning af dit indhold og data."
+  },
+  "disclaimers": {
+    "title": "Ansvarsfraskrivelse",
+    "content": "Appen leveres 'som den er' uden garantier. Vi garanterer ikke nøjagtigheden af indhold eller lokalitetsdata og er ikke ansvarlige for brugerinteraktioner eller eksterne links."
+  },
+  "limitation_of_liability": {
+    "title": "Ansvarsbegrænsning",
+    "content": "I det omfang det er tilladt i henhold til lovgivningen, er Map Journey ikke ansvarlig for indirekte, hændelige eller følgeskader, der opstår som følge af din brug af appen."
+  },
+  "governing_law": {
+    "title": "Gældende lov",
+    "content": "Disse vilkår er underlagt gældende internationale love og standarder. Enhver tvist, der opstår som følge af disse vilkår eller din brug af appen, vil blive løst i overensstemmelse med globale juridiske principper og under jurisdiktion af internationalt anerkendte retlige organer."
+  },
+  "updates_to_terms": {
+    "title": "Ændringer i vilkårene",
+    "content": "Vi forbeholder os retten til at opdatere disse vilkår når som helst. Vi vil underrette brugere om væsentlige ændringer via appen eller e-mail. Fortsat brug af appen efter ændringer betyder, at du accepterer de nye vilkår."
+  },
+  "contact": {
+    "title": "Kontakt os",
+    "content": "Hvis du har spørgsmål vedrørende disse vilkår, kan du kontakte os på: "
+  }
+}
+
+}

@@ -19,13 +19,28 @@ router.get("/", (req, res) => {
   });
 });
 
-
-// Get a user's settings by Profile ID or Settings ID
+// Get a user's settings by user ID
 router.get("/:id", checkUserRole("user"), async (req, res) => {
   const id = req.params.id;
 
   try {
-    const { data: settings, error: settingsError } = await supabase
+    const { data: profile, error: profileError } = await supabase
+      .from("profile")
+      .select("settings_id")
+      .eq("id", id)
+      .single();
+
+    if (profileError) {
+      console.error("Error fetching user profile:", profileError);
+      return res.status(500).json({ error: "Error fetching user profile" });
+    }
+
+    if (!profile) {
+      return res.status(404).json({ error: "Profile not found" });
+    }
+    const settingsID = profile.settings_id;
+
+    const { data: userSettings, error: userSettingsError } = await supabase
       .from("settings")
       .select("*")
       .eq("id", id)
@@ -79,8 +94,7 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
   }
 });
 
-
-// Update a user's settings by Settings ID
+// Update a user's settings by user ID
 router.put("/:id", checkUserRole("user"), async (req, res) => {
   const id = req.params.id;
   const { maptheme, language, notification } = req.body;
@@ -112,7 +126,9 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
     }
 
     if (profile.status === "banned") {
-      return res.status(403).json({ error: "You are banned and cannot update settings." });
+      return res
+        .status(403)
+        .json({ error: "You are banned and cannot update settings." });
     }
 
     let settingsID = profile.settings_id;
@@ -125,7 +141,9 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
 
     if (settingsError && settingsError.code !== "PGRST116") {
       console.error("Error fetching settings directly:", settingsError);
-      return res.status(500).json({ error: "Error fetching settings directly" });
+      return res
+        .status(500)
+        .json({ error: "Error fetching settings directly" });
     }
 
     if (!settings) {

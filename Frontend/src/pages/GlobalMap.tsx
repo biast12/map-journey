@@ -1,9 +1,14 @@
 import Map from "../components/Maps";
 
-function GlobalMap() {
+interface OwnMapProps {
+  userID: string;
+  pinId?: string | null;
+}
+
+function GlobalMap({ userID, pinId }: OwnMapProps) {
   return (
     <>
-      <Map APIurl="all"/>
+      <Map APIurl={`all/${userID}`} pinID={pinId} />
     </>
   );
 }

@@ -1,0 +1,1 @@
+Ionic capacitor build ios

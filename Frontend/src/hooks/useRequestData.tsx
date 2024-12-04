@@ -8,9 +8,10 @@ makeRequest(`users`, "POST", { "Content-Type": "application/json" }, { name: "Jo
 makeRequest(`users/${id}`, "PUT", { "Content-Type": "application/json" }, { name: "Jane Doe" });
 makeRequest(`users/${id}`, "DELETE");
 */
-// https://mapapi.biast12.info
-// http://localhost:8101
-const domain = "http://localhost:8101";
+// https://api.map-journey.com - Will only be online while Vikings server is online
+// https://map-journey.onrender.com - Will always be online but only use the persion from github
+// http://localhost:8101 - Will only be online while the server is running on your local machine
+const domain = "https://api.map-journey.com";
 
 interface RequestData {
   makeRequest: (
@@ -81,10 +82,16 @@ function useRequestData(): RequestData {
         setError(true);
         throw new Error("Error: No data in response");
       }
+
+      // Throw an error if the response status is not in the 2xx range
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
     } catch (error) {
       setData(null);
       setError(true);
       console.log(error);
+      throw error;
     } finally {
       setIsLoading(false);
     }

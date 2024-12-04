@@ -8,3 +8,16 @@ body {
   height: 100%;
   width: 100%;
 }
+
+.custom-mouse-position {
+  top: 15px;
+  right: 15px;
+  left: auto;
+  bottom: auto;
+  position: absolute;
+  color: black;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 6px;
+  border-radius: 4px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}

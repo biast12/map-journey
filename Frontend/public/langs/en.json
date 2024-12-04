@@ -1,0 +1,221 @@
+{
+  "lang": "English",
+  "required_fields": "All fields are required.",
+  "profanityFilter": "Your input contains inappropriate language.",
+  "header": {
+    "error_page_message": "Failed fetching user! Please try again later"
+  },
+  "footer": {
+    "global_map": "Global Map",
+    "add_pin": "Add Pin",
+    "own_map": "Own Map"
+  },
+  "modals": {
+    "create_pin": {
+      "card_title": "Map your Journey",
+      "title": "Title",
+      "title_placeholder": "Your title here",
+      "location": "Location",
+      "description": "Description",
+      "description_placeholder": "Your description here",
+      "visibility": "Public",
+      "submit": "Confirm"
+    },
+    "create_user": {
+      "card_title": "Create User",
+      "username": "Username",
+      "username_placeholder": "Your username here",
+      "email": "Email",
+      "email_placeholder": "Your email here",
+      "password": "Password",
+      "password_placeholder": "Your password here",
+      "submit": "Create user",
+      "close": "Close",
+      "failed": "User creation failed! Check the inputs",
+      "error_page_message": "Failed to create user, please try again later"
+    },
+    "login": {
+      "card_title": "Login",
+      "email": "Email",
+      "email_placeholder": "Your email here",
+      "password": "Password",
+      "password_placeholder": "Your password here",
+      "submit": "Login",
+      "create_user": "Create user",
+      "successful": "Login successful",
+      "failed": "Login failed! Check the inputs",
+      "error_page_message": "Failed to login, please try again later"
+    },
+    "notification": {
+      "card_title": "Notifications",
+      "error_page_message": "Failed to get notifications, please try again later"
+    },
+    "report": {
+      "card_title": "Reporting",
+      "text": "Report Text",
+      "submit": "Submit Report",
+      "close": "Close",
+      "successful": "Reported successfully",
+      "failed": "Reporting {{type}} failed! Check the inputs",
+      "error_page_message": "Failed to report, please try again later"
+    },
+    "pin": {
+      "img_alt": "User avatar",
+      "report": "Report pin"
+    },
+    "warning": {
+      "card_title": "Warning",
+      "card_title_banned": "Banned",
+      "warning": "This is a warning, your account has been reported and is at risk at being banned. please don't continue to violate the terms of service.",
+      "reported": "Your account has been labled as reported, your pins will be private until the issue is resolved.",
+      "banned": "Your account has been banned, you can no longer use the service.",
+      "support": "Please contact support for more information.",
+      "close": "Close",
+      "delete": {
+        "header": "Delete Account",
+        "message": "Are you sure you want to delete your account? This action cannot be undone.",
+        "yes": "Yes",
+        "cancel": "Cancel"
+      }
+    }
+  },
+  "pages": {
+    "settings": {
+      "index": {
+        "card_title": "Settings",
+        "account": "Account",
+        "general": "General",
+        "logout": {
+          "header": "Logout",
+          "message": "Are you sure you want to logout?",
+          "yes": "Yes",
+          "cancel": "Cancel"
+        }
+      },
+      "accounts": {
+        "card_title": "Account",
+        "img_alt": "User avatar",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "required_fields": "Username and Email fields are required",
+        "submit": "Save",
+        "successful": "Account updated successfully",
+        "failed": "Account update failed! Check the inputs",
+        "error_fetch": "Error updating user data",
+        "error_page_message": "Failed to get users, please try again later",
+        "delete": {
+          "header": "Delete Account",
+          "message": "Are you sure you want to delete your account? This action cannot be undone.",
+          "yes": "Yes",
+          "cancel": "Cancel"
+        }
+      },
+      "general": {
+        "lang_missing_key": "Lang key missing",
+        "card_title": "General Settings",
+        "map_theme": "Map Theme",
+        "map_theme_placeholder": "Select Map Theme",
+        "language": "Language",
+        "language_placeholder": "Select Language",
+        "notification": "Enable Notifications",
+        "submit": "Save",
+        "error_page_message": "Failed to get settings, please try again later"
+      }
+    },
+    "errorpage": {
+      "error": "Error",
+      "errormessage": "Something went wrong!"
+    }
+  },
+  "map": {
+    "pin_alt": "Pin Icon",
+    "error_page_message": "Failed to get pins, please try again later"
+  },
+  "privacy_policy": {
+    "title": "Privacy Policy",
+    "introduction": {
+      "title": "Introduction",
+      "content": "This Privacy Policy explains how we handle your personal data. We are committed to protecting your privacy and ensuring that your personal information is handled in a safe and responsible manner."
+    },
+    "data_collection": {
+      "title": "Data Collection",
+      "content": "We collect the following types of data: personal identification information (name (username), email address, etc.)."
+    },
+    "data_usage": {
+      "title": "Data Usage",
+      "content": "We use your data for the following purposes: to provide and maintain our service, to notify you about changes to our service, to allow you to participate in interactive features of our service, to provide customer support, to gather analysis or valuable information so that we can improve our service."
+    },
+    "data_sharing": {
+      "title": "Data Sharing",
+      "content": "We do not share your data with anyone, your data is fully secure."
+    },
+    "user_rights": {
+      "title": "User Rights",
+      "content": "You have the following rights regarding your data: the right to access, update, or delete the information we have on you, the right to rectification, the right to object, the right of restriction, the right to data portability, and the right to withdraw consent, most of these can be done under your settings."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "content": "If you have any questions, please contact us at: "
+    }
+  },
+  "terms_of_service": {
+    "title": "Terms of Service",
+    "introduction": {
+      "title": "Acceptance of Terms",
+      "content": "By accessing or using the Map Journey app, you agree to be bound by these Terms of Service. If you do not agree with any part of these Terms, you may not use the app."
+    },
+    "description": {
+      "title": "Description of the Service",
+      "content": "Map Journey allows users to create and manage trip maps by placing pins with location data, text, and images. Pins can be set as public or private, and users can create customizable profiles with images and banners."
+    },
+    "user_accounts": {
+      "title": "User Accounts",
+      "content": "To access certain features of the app, you must create an account. You agree to provide accurate and complete information during registration and to update your information as necessary. You are responsible for maintaining the confidentiality of your account and for all activities that occur under your account."
+    },
+    "user_generated_content": {
+      "title": "User-Generated Content",
+      "content": "Users can create and upload content, including pins and profile details. You retain ownership of your content but grant Map Journey a non-exclusive, worldwide license to host, display, and distribute it within the app. You are responsible for ensuring your content does not violate any laws or rights of others."
+    },
+    "prohibited_conduct": {
+      "title": "Prohibited Conduct",
+      "content": "You agree not to: (1) post illegal or harmful content, (2) harass, threaten, or impersonate others, (3) attempt to hack or reverse-engineer the app, (4) share false or misleading information, or (5) infringe on the rights of others."
+    },
+    "privacy_policy": {
+      "title": "Privacy Policy",
+      "content": "Your use of the app is also governed by our Privacy Policy, which explains how we collect, use, and protect your personal data. By using the app, you agree to the terms outlined in our Privacy Policy."
+    },
+    "intellectual_property": {
+      "title": "Intellectual Property",
+      "content": "All non-user-generated content, including the app’s design, software, and logos, is the property of Map Journey or its licensors. You may not copy, modify, or distribute any part of the app without prior written consent."
+    },
+    "service_availability": {
+      "title": "Service Availability and Modifications",
+      "content": "We strive to maintain the app’s availability but cannot guarantee uninterrupted access. We reserve the right to modify or discontinue features or the entire service without prior notice."
+    },
+    "termination": {
+      "title": "Termination",
+      "content": "We may suspend or terminate your account at any time if you violate these Terms. You may also delete your account at any time. Termination will result in the deletion of your content and data."
+    },
+    "disclaimers": {
+      "title": "Disclaimers",
+      "content": "The app is provided \"as is\" without warranties of any kind. We do not guarantee the accuracy of content or location data and are not responsible for user interactions or external links."
+    },
+    "limitation_of_liability": {
+      "title": "Limitation of Liability",
+      "content": "To the fullest extent permitted by law, Map Journey shall not be liable for any indirect, incidental, or consequential damages arising from your use of the app."
+    },
+    "governing_law": {
+      "title": "Governing Law",
+      "content": "These Terms are governed by applicable international laws and standards. Any disputes arising from these Terms or your use of the app will be resolved in accordance with global legal principles and under the jurisdiction of internationally recognized legal bodies."
+    },
+    "updates_to_terms": {
+      "title": "Changes to These Terms",
+      "content": "We reserve the right to update these Terms at any time. We will notify users of significant changes through in-app notifications or email. Continued use of the app after changes means you accept the new Terms."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "content": "If you have questions or concerns about these Terms, please contact us at: "
+    }
+  }
+}

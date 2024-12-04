@@ -1,13 +1,18 @@
 import { useEffect } from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Route, Redirect, Switch, useLocation } from "react-router-dom";
+
+/* Hooks */
 import useRequestData from "../hooks/useRequestData";
 import useAuth from "../hooks/ProviderContext";
+import { changeLanguage, setDebugMode } from "../utils/i18n";
 
 /* Pages */
 import Admin from "../pages/admin/Page";
 import GlobalMap from "../pages/GlobalMap";
 import OwnMap from "../pages/OwnMap";
 import Settings from "../pages/settings";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
+import TermsOfService from "../pages/TermsOfService"
 
 /* Settings Pages */
 import General from "../pages/settings/General";
@@ -16,7 +21,8 @@ import ErrorPage from "../pages/ErrorPage";
 
 export const Routes = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { userID, loading } = useAuth();
+  const { userID, role, loading, storeAuthToken, storeRoleToken } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
     if (userID && !loading) {
@@ -24,22 +30,34 @@ export const Routes = () => {
     }
   }, [userID, loading]);
 
+  useEffect(() => {
+    if (data && !isLoading) {
+      changeLanguage(data.settings.language);
+      role === "admin" && setDebugMode(true);
+      storeAuthToken(data.id);
+      storeRoleToken(data.role);
+    }
+  }, [data, isLoading]);
+
   return (
-    <>
-      <Route exact path="/*">
-        <Redirect to="/globalmap" />
-      </Route>
-      <Route exact path="/globalmap" render={() => <GlobalMap />} />
+    <Switch>
+      <Route
+        exact
+        path="/globalmap"
+        render={() => {
+          const params = new URLSearchParams(location.search);
+          const pinId = params.get("pin");
+          return (
+            userID && !loading && <GlobalMap userID={userID} pinId={pinId} />
+          );
+        }}
+      />
       <Route
         exact
         path="/ownmap"
         render={() => userID && !loading && <OwnMap userID={userID} />}
       />
-      <Route
-        exact
-        path="/admin"
-        render={() => data && data.role === "admin" && <Admin />}
-      />
+      <Route exact path="/admin" render={() => role === "admin" && <Admin />} />
       <Route exact path="/settings" render={() => userID && <Settings />} />
       <Route
         exact
@@ -51,9 +69,15 @@ export const Routes = () => {
         path="/settings/account"
         render={() => data && <Account userData={data} />}
       />
+      <Route exact path="/privacy-policy" component={PrivacyPolicy} />
+      <Route exact path="/terms-of-service" component={TermsOfService} />
       <Route exact path="/error" component={ErrorPage} />
       <Route exact path="/error/:status" component={ErrorPage} />
-    </>
+      <Route path="*">
+        <Redirect to="/globalmap" />
+      </Route>
+    </Switch>
   );
 };
+
 export default Routes;

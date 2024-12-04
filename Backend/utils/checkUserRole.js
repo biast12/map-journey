@@ -2,7 +2,6 @@ const supabase = require("../supabaseClient");
 
 const checkUserRole = (requiredRole) => {
   return async (req, res, next) => {
-    // Use req.params.id to fetch user role
     const userID = req.params.id;
 
     if (!userID) {

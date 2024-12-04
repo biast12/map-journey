@@ -5,16 +5,15 @@ import "./Modals.scss";
 import useAuth from "../hooks/ProviderContext";
 
 /* Modals */
-import LoginModal from "../modals/LoginModal";
-import MakePinModal from "../modals/MakePinModal";
-import NotificationModal from "../modals/NotificationModal";
-import Modal from "./Modal";
+import LoginModal from "./modals/LoginModal";
+import CreatePinModal from "./modals/CreatePinModal";
+import NotificationModal from "./modals/NotificationModal";
 
 interface ModalsProps {
   showLoginModal: boolean;
   closeLoginModal: () => void;
-  makePinModal: boolean;
-  closeMakePinModal: () => void;
+  createPinModal: boolean;
+  closeCreatePinModal: () => void;
   showNotificationModal: boolean;
   closeNotificationModal: () => void;
 }
@@ -22,23 +21,52 @@ interface ModalsProps {
 const Modals: React.FC<ModalsProps> = ({
   showLoginModal,
   closeLoginModal,
-  makePinModal,
-  closeMakePinModal,
+  createPinModal,
+  closeCreatePinModal,
   showNotificationModal,
   closeNotificationModal,
 }) => {
   const { userID, loading } = useAuth();
   return (
     <>
-    <Modal isOpen={showLoginModal} onCloseModal={closeLoginModal} backdropDismiss={false} hideCloseButton={!userID}>
-      <LoginModal closeLoginModal={closeLoginModal} />
-    </Modal>
-    <Modal isOpen={makePinModal} onCloseModal={closeMakePinModal}>
-      <MakePinModal />
-    </Modal>
-    <Modal isOpen={showNotificationModal} onCloseModal={closeNotificationModal}>
-      <NotificationModal />
-    </Modal>
+      <IonModal
+        isOpen={showLoginModal}
+        onDidDismiss={closeLoginModal}
+        backdropDismiss={!!userID}
+      >
+        <div className="modal-content">
+          <LoginModal closeLoginModal={closeLoginModal} />
+        </div>
+      </IonModal>
+      <IonModal isOpen={createPinModal} onDidDismiss={closeCreatePinModal}>
+        <div className="modal-content">
+          <IonButton
+            className="close-button"
+            onClick={closeCreatePinModal}
+            fill="clear"
+            shape="round"
+          >
+            <IonIcon slot="icon-only" icon={close} />
+          </IonButton>
+          <CreatePinModal onClose={closeCreatePinModal} />
+        </div>
+      </IonModal>
+      <IonModal
+        isOpen={showNotificationModal}
+        onDidDismiss={closeNotificationModal}
+      >
+        <div className="modal-content">
+          <IonButton
+            className="close-button"
+            onClick={closeNotificationModal}
+            fill="clear"
+            shape="round"
+          >
+            <IonIcon slot="icon-only" icon={close} />
+          </IonButton>
+          <NotificationModal />
+        </div>
+      </IonModal>
     </>
   );
 };
