@@ -61,7 +61,8 @@
     },
     "pin": {
       "img_alt": "Bruger avatar",
-      "report": "Rapporter pin"
+      "report_user": "Anmeld bruger",
+      "report_pin": "Anmeld pin"
     },
     "warning": {
       "card_title": "Advarsel",

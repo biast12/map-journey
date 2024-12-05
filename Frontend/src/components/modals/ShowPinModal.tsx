@@ -9,7 +9,7 @@ import {
   IonIcon,
 } from "@ionic/react";
 import { Clipboard } from "@ionic-native/clipboard";
-import { shareSocialOutline } from "ionicons/icons";
+import { shareSocialOutline, logoGoogle} from "ionicons/icons";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import useAuth from "../../hooks/ProviderContext";
@@ -27,9 +27,24 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
   if (!pinData) return null;
   const { t } = useTranslation();
   const { userID, role } = useAuth();
-  const [reportModal, setReportModal] = useState(false);
-  const openReportModal = () => setReportModal(true);
-  const closeReportModal = () => setReportModal(false);
+  const [reportPinModal, setReportPinModal] = useState(false);
+  const openReportPinModal = () => setReportPinModal(true);
+  const closeReportPinModal = () => setReportPinModal(false);
+  const [reportUserModal, setReportUserModal] = useState(false);
+  const openReportUserModal = () => setReportUserModal(true);
+  const closeReportUserModal = () => setReportUserModal(false);
+
+  const openGoogleCoordinates = () => {
+    const url = `https://www.google.com/maps/search/?api=1&query=${pinData.latitude},${pinData.longitude}`;
+  
+    if (navigator.userAgent.match(/(Android)/)) {
+      // Open in Google Maps app on mobile devices
+      window.location.href = `geo:${pinData.latitude},${pinData.longitude}?q=${pinData.latitude},${pinData.longitude}`;
+    } else {
+      // Open in a new window on desktop
+      window.open(url, '_blank');
+    }
+  };
 
   const copySharedLink = async () => {
     const domain = "https://mapjourney.biast12.info";
@@ -67,6 +82,9 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
         <div>
           <img alt={t("modals.pin.img_alt")} src={pinData.profile.avatar} />
           <p>{pinData.profile.name}</p>
+          <IonButton onClick={openGoogleCoordinates}>
+            <IonIcon icon={logoGoogle} />
+          </IonButton>
           <IonButton onClick={copySharedLink}>
             <IonIcon icon={shareSocialOutline} />
           </IonButton>
@@ -74,16 +92,27 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
       </IonCardContent>
       {!(userID == pinData.profile.id) && (
         <div id="showPinCardButtons">
-          <IonButton disabled={pinData.reported} onClick={openReportModal}>
-            {t("modals.pin.report")}
+          <IonButton disabled={pinData.reported} onClick={openReportUserModal}>
+            {t("modals.pin.report_user")}
+          </IonButton>
+          <IonButton disabled={pinData.reported} onClick={openReportPinModal}>
+            {t("modals.pin.report_pin")}
           </IonButton>
         </div>
       )}
-
-      <IonModal isOpen={reportModal} onDidDismiss={closeReportModal}>
+      <IonModal isOpen={reportUserModal} onDidDismiss={closeReportUserModal}>
         <div className="modal-content">
           <ReportModal
-            closeReportModal={closeReportModal}
+            closeReportModal={closeReportUserModal}
+            reported_id={pinData.profile.id}
+            reportedType="user"
+          />
+        </div>
+      </IonModal>
+      <IonModal isOpen={reportPinModal} onDidDismiss={closeReportPinModal}>
+        <div className="modal-content">
+          <ReportModal
+            closeReportModal={closeReportPinModal}
             reported_id={pinData.id}
             reportedType="pin"
           />

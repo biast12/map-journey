@@ -61,7 +61,8 @@
     },
     "pin": {
       "img_alt": "Benutzeravatar",
-      "report": "Pin melden"
+      "report_user": "Benutzer melden",
+      "report_pin": "Pin melden"
     },
     "warning": {
       "card_title": "Warnung",

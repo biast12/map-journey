@@ -61,7 +61,8 @@
     },
     "pin": {
       "img_alt": "User avatar",
-      "report": "Report pin"
+      "report_user": "Report user",
+      "report_pin": "Report pin"
     },
     "warning": {
       "card_title": "Warning",
