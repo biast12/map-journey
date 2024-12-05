@@ -93,7 +93,7 @@
           "cancel": "Annuller"
         }
       },
-      "accounts": {
+      "account": {
         "card_title": "Konto",
         "img_alt": "Bruger avatar",
         "username": "Brugernavn",

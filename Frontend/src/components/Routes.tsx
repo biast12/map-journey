@@ -16,7 +16,7 @@ import TermsOfService from "../pages/TermsOfService"
 
 /* Settings Pages */
 import General from "../pages/settings/General";
-import Account from "../pages/settings/Accounts";
+import Account from "../pages/settings/Account";
 import Pins from "../pages/settings/Pins";
 import ErrorPage from "../pages/ErrorPage";
 

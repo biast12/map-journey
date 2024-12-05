@@ -94,7 +94,7 @@
           "cancel": "Abbrechen"
         }
       },
-      "accounts": {
+      "account": {
         "card_title": "Konto",
         "img_alt": "Benutzeravatar",
         "username": "Benutzername",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   IonHeader,
   IonToolbar,
@@ -11,7 +11,12 @@ import {
   IonModal,
   IonAlert,
 } from "@ionic/react";
-import { settingsOutline, personOutline, logOutOutline, navigateOutline } from "ionicons/icons";
+import {
+  settingsOutline,
+  personOutline,
+  logOutOutline,
+  navigateOutline,
+} from "ionicons/icons";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../hooks/ProviderContext";
 import { useTranslation } from "react-i18next";
@@ -21,6 +26,14 @@ const Settings: React.FC = () => {
   const { clearAuthToken, clearRoleToken } = useAuth();
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  useEffect(() => {
+    document.title = "Map Journey - Settings";
+
+    return () => {
+      document.title = "Map Journey";
+    };
+  }, []);
 
   const handleLogout = async () => {
     await clearAuthToken();

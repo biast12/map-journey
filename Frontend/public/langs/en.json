@@ -93,7 +93,7 @@
           "cancel": "Cancel"
         }
       },
-      "accounts": {
+      "account": {
         "card_title": "Account",
         "img_alt": "User avatar",
         "username": "Username",

@@ -1,12 +1,20 @@
-
+import { useEffect } from "react";
 
 /* Components */
-import PinsManagement from "../../components/admin/PinsManagement"
+import PinsManagement from "../../components/admin/PinsManagement";
 
-import "./Pins.scss"
+import "./Pins.scss";
 
 const Pins = () => {
-    return <PinsManagement url={"pins"}/>
-}
+  useEffect(() => {
+    document.title = "Map Journey - Pins Settings";
 
-export default Pins
+    return () => {
+      document.title = "Map Journey";
+    };
+  }, []);
+
+  return <PinsManagement url={"pins"} />;
+};
+
+export default Pins;
