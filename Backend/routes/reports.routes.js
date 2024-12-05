@@ -251,6 +251,37 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
 
     if (reportError) throw reportError;
 
+    const entityField = reported_user_id
+      ? "reported_user_id"
+      : "reported_pin_id";
+    const entityId = reported_user_id || reported_pin_id;
+
+    const { data: totalReports, error: totalReportsError } = await supabase
+      .from("reports")
+      .select("id", { count: "exact" })
+      .eq(entityField, entityId);
+
+    if (totalReportsError) {
+      console.error("Error counting reports:", totalReportsError);
+      return res.status(500).json({ message: "Error counting reports" });
+    }
+
+    if (totalReports.length >= Maxnumber) {
+      const updateTable = reported_user_id ? "profile" : "pins";
+
+      const { error: updateError } = await supabase
+        .from(updateTable)
+        .update({ status: "reported" })
+        .eq(id, entityId);
+
+      if (updateError) {
+        console.error("Error updating status:", updateError);
+        return res
+          .status(500)
+          .json({ message: "Failed to update status after reports." });
+      }
+    }
+
     res.status(201).json({ message: "Report created successfully" });
   } catch (error) {
     console.error("Error during report creation:", error);
@@ -284,49 +315,6 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
 
     const { reported_user_id, reported_pin_id } = report;
 
-    if (reported_pin_id) {
-      const { data: pin, error: pinFetchError } = await supabase
-        .from("pins")
-        .select("profile_id")
-        .eq("id", reported_pin_id)
-        .single();
-
-      if (pinFetchError) throw pinFetchError;
-
-      if (pin && pin.profile_id === reported_user_id) {
-        const { data: pinOwner, error: pinOwnerFetchError } = await supabase
-          .from("users")
-          .select("role")
-          .eq("id", pin.profile_id)
-          .single();
-
-        if (pinOwnerFetchError) throw pinOwnerFetchError;
-
-        if (pinOwner.role === "admin") {
-          return res.status(403).json({
-            message: "Cannot perform actions on pins owned by admin users",
-          });
-        }
-      }
-    }
-
-    if (reported_user_id) {
-      // Check if the reported user is an admin
-      const { data: reportedUser, error: userFetchError } = await supabase
-        .from("users")
-        .select("role")
-        .eq("id", reported_user_id)
-        .single();
-
-      if (userFetchError) throw userFetchError;
-
-      if (reportedUser.role === "admin") {
-        return res
-          .status(403)
-          .json({ message: "Cannot perform actions on admin users" });
-      }
-    }
-
     switch (action) {
       case "dismiss":
         const { data: deletedReport, error: deleteReportError } = await supabase
@@ -343,7 +331,7 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
           const { count: profileReportCount, error: profileCountError } =
             await supabase
               .from("reports")
-              .select("*", { count: "exact" })
+              .select("*", { count: "exact", head: true })
               .eq("reported_user_id", reported_user_id)
               .eq("active", true);
 
@@ -358,7 +346,11 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
 
             if (profileError) throw profileError;
 
-            if (profileData.status !== "private") {
+            if (
+              profileData.status !== "warning" &&
+              profileData.status !== "banned" &&
+              profileData.status !== "private"
+            ) {
               const { error: updateProfileError } = await supabase
                 .from("profile")
                 .update({ status: "private" })
@@ -372,22 +364,26 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
         if (reported_pin_id) {
           const { count: pinReportCount, error: pinCountError } = await supabase
             .from("reports")
-            .select("*", { count: "exact" })
+            .select("*", { count: "exact", head: true })
             .eq("reported_pin_id", reported_pin_id)
             .eq("active", true);
 
           if (pinCountError) throw pinCountError;
 
-          if (pinReportCount < Maxnumber) {
-            const { data: pinData, error: pinError } = await supabase
+          if (pinReportCount >= Maxnumber) {
+            const { data: pinData, error: pinDataError } = await supabase
               .from("pins")
               .select("status")
               .eq("id", reported_pin_id)
               .single();
 
-            if (pinError) throw pinError;
+            if (pinDataError) throw pinDataError;
 
-            if (pinData.status !== "private") {
+            if (
+              pinData.status !== "warning" &&
+              pinData.status !== "banned" &&
+              pinData.status !== "private"
+            ) {
               const { error: updatePinError } = await supabase
                 .from("pins")
                 .update({ status: "private" })
@@ -419,8 +415,8 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
           }
 
           if (
-            userProfile.status !== "reported" &&
-            userProfile.status !== "warning"
+            userProfile.status !== "warning" &&
+            userProfile.status !== "banned"
           ) {
             const { error: updateUserError } = await supabase
               .from("profile")
@@ -492,8 +488,8 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
             }
 
             if (
-              profileData.status !== "reported" &&
-              profileData.status !== "warning"
+              profileData.status !== "warning" &&
+              profileData.status !== "banned"
             ) {
               const { error: updateProfileError } = await supabase
                 .from("profile")
@@ -560,6 +556,21 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
             }
           }
 
+          const { error: deleteUserReportsError } = await supabase
+            .from("reports")
+            .delete()
+            .eq("reported_user_id", reported_user_id);
+
+          if (deleteUserReportsError) {
+            console.error(
+              "Error deleting user reports:",
+              deleteUserReportsError
+            );
+            return res
+              .status(500)
+              .json({ message: "Error deleting user reports" });
+          }
+
           const { data: userPins, error: pinsFetchError } = await supabase
             .from("pins")
             .select("id")
@@ -572,128 +583,99 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
               .json({ message: "Error fetching user's pins" });
           }
 
-          const { error: updatePinsError } = await supabase
-            .from("pins")
-            .update({ status: "banned" })
-            .eq("profile_id", reported_user_id);
+          if (userPins && userPins.length > 0) {
+            const pinIds = userPins.map((pin) => pin.id);
 
-          if (updatePinsError) {
-            console.error("Error banning user's pins:", updatePinsError);
-            return res
-              .status(500)
-              .json({ message: "Error banning user's pins" });
+            const { error: deletePinReportsError } = await supabase
+              .from("reports")
+              .delete()
+              .in("reported_pin_id", pinIds);
+
+            if (deletePinReportsError) {
+              console.error(
+                "Error deleting pin reports:",
+                deletePinReportsError
+              );
+              return res
+                .status(500)
+                .json({ message: "Error deleting pin reports" });
+            }
           }
 
-          const { error: deleteReportsErrorUser } = await supabase
-            .from("reports")
+          const { error: deleteUserPinsError } = await supabase
+            .from("pins")
             .delete()
-            .eq("reported_user_id", reported_user_id);
+            .eq("profile_id", reported_user_id);
 
-          if (deleteReportsErrorUser) {
-            console.error(
-              "Error deleting user reports:",
-              deleteReportsErrorUser
-            );
+          if (deleteUserPinsError) {
+            console.error("Error deleting user's pins:", deleteUserPinsError);
             return res
               .status(500)
-              .json({ message: "Error deleting user reports" });
+              .json({ message: "Error deleting user's pins" });
           }
 
           return res.status(200).json({
-            message:
-              "User banned, all associated pins set to banned, and user reports deleted",
-            userPins,
+            message: "User banned, all associated reports and pins deleted",
           });
         }
 
         if (reported_pin_id) {
           const { data: pinData, error: pinError } = await supabase
             .from("pins")
-            .select("id, profile_id")
+            .select("profile_id")
             .eq("id", reported_pin_id)
             .single();
 
-          if (pinError) {
+          if (pinError || !pinData) {
             console.error("Error fetching pin:", pinError);
             return res.status(500).json({ message: "Error fetching pin" });
           }
 
-          if (pinData) {
-            const { profile_id } = pinData;
+          const { profile_id } = pinData;
 
-            const { data: profileData, error: profileError } = await supabase
-              .from("profile")
-              .select("status")
-              .eq("id", profile_id)
-              .single();
+          const { error: updateProfileError } = await supabase
+            .from("profile")
+            .update({ status: "banned" })
+            .eq("id", profile_id);
 
-            if (profileError) {
-              console.error("Error fetching user profile:", profileError);
-              return res
-                .status(500)
-                .json({ message: "Error fetching user profile" });
-            }
-
-            if (profileData.status !== "banned") {
-              const { error: updateProfileError } = await supabase
-                .from("profile")
-                .update({ status: "banned" })
-                .eq("id", profile_id);
-
-              if (updateProfileError) {
-                console.error("Error banning user:", updateProfileError);
-                return res.status(500).json({ message: "Error banning user" });
-              }
-            }
-
-            const { error: deleteReportsErrorPin } = await supabase
-              .from("reports")
-              .delete()
-              .eq("reported_pin_id", reported_pin_id);
-
-            if (deleteReportsErrorPin) {
-              console.error(
-                "Error deleting pin reports:",
-                deleteReportsErrorPin
-              );
-              return res
-                .status(500)
-                .json({ message: "Error deleting pin reports" });
-            }
-
-            const { data: deletedPinData, error: deletePinError } =
-              await supabase.from("pins").delete().eq("id", reported_pin_id);
-
-            if (deletePinError) {
-              console.error("Error deleting pin:", deletePinError);
-              return res.status(500).json({ message: "Error deleting pin" });
-            }
-
-            const { error: updateAllPinsError } = await supabase
-              .from("pins")
-              .update({ status: "banned" })
-              .eq("profile_id", profile_id);
-
-            if (updateAllPinsError) {
-              console.error(
-                "Error banning all pins for user:",
-                updateAllPinsError
-              );
-              return res
-                .status(500)
-                .json({ message: "Error banning user's pins" });
-            }
-
-            return res.status(200).json({
-              message:
-                "Pin deleted, user's profile and pins set to banned, and reports deleted",
-              deletedPinData,
-            });
+          if (updateProfileError) {
+            console.error("Error banning user:", updateProfileError);
+            return res
+              .status(500)
+              .json({ message: "Error banning user profile" });
           }
+
+          const { error: deletePinReportsError } = await supabase
+            .from("reports")
+            .delete()
+            .or(
+              `reported_pin_id.eq.${reported_pin_id}, reported_user_id.eq.${profile_id}`
+            );
+
+          if (deletePinReportsError) {
+            console.error("Error deleting reports:", deletePinReportsError);
+            return res
+              .status(500)
+              .json({ message: "Error deleting pin or user reports" });
+          }
+
+          const { error: deleteUserPinsError } = await supabase
+            .from("pins")
+            .delete()
+            .eq("profile_id", profile_id);
+
+          if (deleteUserPinsError) {
+            console.error("Error deleting pins:", deleteUserPinsError);
+            return res
+              .status(500)
+              .json({ message: "Error deleting user's pins" });
+          }
+
+          return res.status(200).json({
+            message: "User and all associated pins banned and deleted",
+          });
         }
-
         break;
-
       default:
         return res.status(400).json({ message: "Invalid action" });
     }

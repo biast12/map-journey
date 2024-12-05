@@ -317,7 +317,6 @@ router.put("/:id/:userid", checkUserRole("admin"), async (req, res) => {
       updatedFields.role = role;
     }
 
-    // Update the user in the database
     const { data, error } = await supabase
       .from("profile")
       .update(updatedFields)
@@ -359,7 +358,6 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
 
     const { settings_id } = profile;
 
-    // Step 2: Fetch all the user's pins
     const { data: pins, error: fetchPinsError } = await supabase
       .from("pins")
       .select("id")
