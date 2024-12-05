@@ -34,5 +34,6 @@ yarn-error.log*
 package-lock.json
 
 # Ionic capacitor
+/icons
 /android
 /ios
