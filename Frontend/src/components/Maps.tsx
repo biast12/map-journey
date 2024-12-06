@@ -14,7 +14,7 @@ import { Extent, createEmpty, extend } from "ol/extent.js";
 import { IonButton, IonIcon, IonImg, IonModal } from "@ionic/react";
 import { MousePosition, defaults as defaultControls } from "ol/control.js";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer.js";
-import { fromLonLat, toLonLat } from "ol/proj";
+import { fromLonLat } from "ol/proj";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -53,7 +53,7 @@ const clusterStrokeColor = "#fff"; // Color of the cluster circle stroke
 const clusterTextColor = "#fff"; // Color of the text/number inside the cluster circle
 
 const mousePositionControl = new MousePosition({
-  coordinateFormat: createStringXY(4),
+  coordinateFormat: createStringXY(6),
   projection: "EPSG:4326",
   className: "custom-mouse-position",
   target: document.getElementById("mouse-position") as HTMLElement,
@@ -112,8 +112,6 @@ function Map({ APIurl, pinID }: MapProps) {
   /* Functions */
   const openShowPinModal = () => setShowPinModal(true);
   const closeShowPinModal = () => setShowPinModal(false);
-
-  const {userID} = useAuth();
 
   useEffect(() => {
     makeRequest(`pins/${APIurl}`);
