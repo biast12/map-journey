@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const checkApiKey = require("../utils/apiKeyCheck");
 const generateUniqueId = require("../utils/uuid-generator");
 const checkUserRole = require("../utils/checkUserRole");
+const deleteImageFromBucket = require("../utils/deleteBucketIMGs");
 
 router.use(checkApiKey);
 
@@ -343,7 +344,7 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
   try {
     const { data: profile, error: fetchProfileError } = await supabase
       .from("profile")
-      .select("settings_id")
+      .select("settings_id, avatar, banner")
       .eq("id", userID)
       .single();
 
@@ -356,7 +357,7 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const { settings_id } = profile;
+    const { settings_id, avatar, banner } = profile;
 
     const { data: pins, error: fetchPinsError } = await supabase
       .from("pins")
@@ -411,6 +412,20 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
         console.error("Error deleting user settings:", deleteSettingsError);
         return res.status(500).json({ error: "Error deleting user settings" });
       }
+    }
+
+    const imagesToDelete = [];
+    console.log(avatar, banner);
+    if (avatar) {
+      imagesToDelete.push(avatar);
+    }
+    if (banner) {
+      imagesToDelete.push(banner);
+    }
+
+    if (imagesToDelete.length > 0) {
+      console.log("trying to delete items", imagesToDelete);
+      await deleteImageFromBucket(imagesToDelete);
     }
 
     const { error: deleteProfileError } = await supabase

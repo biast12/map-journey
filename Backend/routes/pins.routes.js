@@ -4,6 +4,7 @@ const supabase = require("../supabaseClient");
 const checkApiKey = require("../utils/apiKeyCheck");
 const generateUniqueId = require("../utils/uuid-generator");
 const checkUserRole = require("../utils/checkUserRole");
+const deleteImageFromBucket = require("../utils/deleteBucketIMGs");
 
 router.use(checkApiKey);
 
@@ -214,12 +215,29 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
 
     if (pinError) {
       console.error("Error creating pin:", pinError);
+
+      try {
+        await deleteImageFromBucket(imgurls);
+        console.log("Pin image deleted from storage after creation failure.");
+      } catch (imageDeleteError) {
+        console.error("Error deleting image from storage:", imageDeleteError);
+        return res.status(500).json({ error: "Error deleting pin image from storage" });
+      }
+
       return res.status(500).json({ error: "Error creating pin" });
     }
 
     res.status(201).json({ message: "Pin created successfully" });
   } catch (error) {
     console.error("Error during pin creation:", error);
+
+    try {
+      await deleteImageFromBucket(imgurls);
+      console.log("Pin image deleted from storage after unexpected error.");
+    } catch (imageDeleteError) {
+      console.error("Error deleting image from storage:", imageDeleteError);
+    }
+
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -314,7 +332,7 @@ router.delete("/:id/:pinid", checkUserRole("user"), async (req, res) => {
 
     const { data: pin, error: pinCheckError } = await supabase
       .from("pins")
-      .select("profile_id")
+      .select("profile_id, imgurls")
       .eq("id", pinID)
       .single();
 
@@ -324,6 +342,16 @@ router.delete("/:id/:pinid", checkUserRole("user"), async (req, res) => {
 
     if (pin.profile_id !== userID) {
       return res.status(403).json({ error: "Unauthorized to delete this pin" });
+    }
+
+    const imagesToDelete = [];
+    if (pin.imgurls) {
+      imagesToDelete.push(pin.imgurls);
+    }
+
+    if (imagesToDelete.length > 0) {
+      console.log("trying to delete items", imagesToDelete);
+      await deleteImageFromBucket(imagesToDelete);
     }
 
     const { error: deleteReportsError } = await supabase
@@ -346,12 +374,11 @@ router.delete("/:id/:pinid", checkUserRole("user"), async (req, res) => {
       return res.status(500).json({ error: "Error deleting pin" });
     }
 
-    res.status(200).send("Pin deleted successfully");
+    res.status(200).send("Pin and associated image deleted successfully");
   } catch (error) {
     console.error("Error during pin deletion:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 module.exports = router;
