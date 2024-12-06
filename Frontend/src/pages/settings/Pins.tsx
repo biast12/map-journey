@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { IonContent, IonGrid } from "@ionic/react";
 
 /* Components */
 import PinsManagement from "../../components/admin/PinsManagement";
@@ -14,7 +15,14 @@ const Pins = () => {
     };
   }, []);
 
-  return <PinsManagement url={"pins"} />;
+  return (
+    <IonContent>
+      <IonGrid fixed>
+        <h1>Your Pins</h1>
+        <PinsManagement url={"pins"} />
+      </IonGrid>
+    </IonContent>
+  );
 };
 
 export default Pins;

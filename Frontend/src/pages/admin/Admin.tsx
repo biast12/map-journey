@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import { IonContent, IonGrid } from "@ionic/react";
 
 import UserManagement from "../../components/admin/UserManagement";
+import PinsManagement from "../../components/admin/PinsManagement";
 import ReportManagement from "../../components/admin/ReportManagement";
 import NotificationManagement from "../../components/admin/NotificationManagement";
-import PinsManagement from "../../components/admin/PinsManagement";
 
 import "./Admin.scss";
 
@@ -18,7 +18,7 @@ const Page = () => {
   }, []);
 
   return (
-    <IonContent id="adminContent">
+    <IonContent>
       <IonGrid fixed>
         <h1>Dashboard</h1>
 
