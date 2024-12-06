@@ -11,6 +11,7 @@ import {
   IonAlert,
 } from "@ionic/react";
 import { pencilSharp, trashOutline, close } from "ionicons/icons";
+import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 /* Hooks */
@@ -37,6 +38,7 @@ interface UserDataProps {
 
 const Account: React.FC<UserDataProps> = ({ userData }) => {
   const { t } = useTranslation();
+  const history = useHistory();
 
   /* States */
   const [username, setUsername] = useState(userData.name);
@@ -47,8 +49,9 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
 
   /* Hooks */
   const { makeRequest, isLoading, error } = useRequestData();
+  const { makeRequest: deleteMakeRequest } = useRequestData();
   const { takePhoto, photoUrl, handleUpload, removeImage } = useImageHandler();
-  const { role } = useAuth();
+  const { role, clearAuthToken, clearRoleToken } = useAuth();
 
   useEffect(() => {
     document.title = "Map Journey - Account Settings";
@@ -196,6 +199,11 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
                 handler: () => {
                   handleDeleteAccount({
                     data: { id: userData.id, avatar: userData.avatar },
+                    makeRequest: deleteMakeRequest,
+                    removeImage,
+                    clearAuthToken,
+                    clearRoleToken,
+                    history,
                   });
                 },
               },
