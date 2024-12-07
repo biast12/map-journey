@@ -3,7 +3,7 @@
   "required_fields": "Alle felter er påkrævet.",
   "profanityFilter": "Din indtastning indeholder upassende sprog.",
   "header": {
-    "error_page_message": "Kunne ikke hente bruger!"
+    "error_message": "Kunne ikke hente bruger!"
   },
   "footer": {
     "global_map": "Globalt Kort",
@@ -35,7 +35,7 @@
       "submit": "Opret bruger",
       "close": "Luk",
       "failed": "Brugeroprettelse mislykkedes!",
-      "error_page_message": "Kunne ikke oprette bruger"
+      "error_message": "Kunne ikke oprette bruger"
     },
     "login": {
       "card_title": "Login",
@@ -45,12 +45,12 @@
       "password_placeholder": "Din adgangskode her",
       "submit": "Login",
       "create_user": "Opret bruger",
-      "failed": "Login mislykkedes",
-      "error_page_message": "Kunne ikke logge ind"
+      "failed": "Login mislykkedes"
     },
     "notification": {
       "card_title": "Notifikationer",
-      "error_page_message": "Kunne ikke hente notifikationer"
+      "error_message": "Kunne ikke hente notifikationer",
+      "error_read_message": "Kunne ikke læse alle notifikationer"
     },
     "report": {
       "card_title": "Rapportering",
@@ -58,8 +58,7 @@
       "submit": "Indsend Rapport",
       "close": "Luk",
       "successful": "Rapporteret succesfuldt",
-      "failed": "Rapportering af {{type}} mislykkedes!",
-      "error_page_message": "Kunne ikke rapportere"
+      "failed": "Rapportering af {{type}} mislykkedes!"
     },
     "pin": {
       "img_alt": "Bruger avatar",
@@ -77,7 +76,6 @@
       "delete": {
         "header": "Slet Konto",
         "message": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
-        "yes": "Ja",
         "cancel": "Annuller"
       }
     }
@@ -88,10 +86,9 @@
         "card_title": "Indstillinger",
         "account": "Konto",
         "general": "Generelt",
-        "Logout": {
+        "logout": {
           "header": "Log ud",
           "message": "Er du sikker på, at du vil logge ud?",
-          "yes": "Ja",
           "cancel": "Annuller"
         }
       },
@@ -105,12 +102,9 @@
         "submit": "Gem",
         "successful": "Konto opdateret succesfuldt",
         "failed": "Kontoopdatering mislykkedes!",
-        "error_fetch": "Fejl ved opdatering af brugerdata",
-        "error_page_message": "Kunne ikke hente brugere",
-        "Delete": {
+        "delete": {
           "header": "Slet",
           "message": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
-          "yes": "Ja",
           "cancel": "Annuller"
         }
       },
@@ -123,7 +117,7 @@
         "language_placeholder": "Vælg Sprog",
         "notification": "Aktiver Notifikationer",
         "submit": "Gem",
-        "error_page_message": "Kunne ikke hente indstillinger"
+        "error_message": "Kunne ikke hente indstillinger"
       }
     },
     "errorpage": {
@@ -133,7 +127,7 @@
   },
   "map": {
     "pin_alt": "Pin Ikon",
-    "error_page_message": "Kunne ikke hente pins"
+    "error_message": "Kunne ikke hente pins"
   },
   "privacy_policy": {
     "title": "Privatlivspolitik",

@@ -3,7 +3,7 @@
   "required_fields": "All fields are required.",
   "profanityFilter": "Your input contains inappropriate language.",
   "header": {
-    "error_page_message": "Failed fetching user! Please try again later"
+    "error_message": "Failed fetching user! Please try again later"
   },
   "footer": {
     "global_map": "Global Map",
@@ -35,7 +35,7 @@
       "submit": "Create user",
       "close": "Close",
       "failed": "User creation failed!",
-      "error_page_message": "Failed to create user"
+      "error_message": "Failed to create user"
     },
     "login": {
       "card_title": "Login",
@@ -45,12 +45,12 @@
       "password_placeholder": "Your password here",
       "submit": "Login",
       "create_user": "Create user",
-      "failed": "Login failed!",
-      "error_page_message": "Failed to login"
+      "failed": "Login failed!"
     },
     "notification": {
       "card_title": "Notifications",
-      "error_page_message": "Failed to get notifications"
+      "error_message": "Failed to fetch notifications",
+      "error_read_message": "Failed to read all notifications"
     },
     "report": {
       "card_title": "Reporting",
@@ -58,8 +58,7 @@
       "submit": "Submit Report",
       "close": "Close",
       "successful": "Reported successfully",
-      "failed": "Reporting {{type}} failed!",
-      "error_page_message": "Failed to report"
+      "failed": "Reporting {{type}} failed!"
     },
     "pin": {
       "img_alt": "User avatar",
@@ -77,7 +76,6 @@
       "delete": {
         "header": "Delete Account",
         "message": "Are you sure you want to delete your account? This action cannot be undone.",
-        "yes": "Yes",
         "cancel": "Cancel"
       }
     }
@@ -91,7 +89,6 @@
         "logout": {
           "header": "Logout",
           "message": "Are you sure you want to logout?",
-          "yes": "Yes",
           "cancel": "Cancel"
         }
       },
@@ -105,12 +102,9 @@
         "submit": "Save",
         "successful": "Account updated successfully",
         "failed": "Account update failed!",
-        "error_fetch": "Error updating user data",
-        "error_page_message": "Failed to get users",
         "delete": {
           "header": "Delete Account",
           "message": "Are you sure you want to delete your account? This action cannot be undone.",
-          "yes": "Yes",
           "cancel": "Cancel"
         }
       },
@@ -123,7 +117,7 @@
         "language_placeholder": "Select Language",
         "notification": "Enable Notifications",
         "submit": "Save",
-        "error_page_message": "Failed to get settings"
+        "error_message": "Failed to get settings"
       }
     },
     "errorpage": {
@@ -133,7 +127,7 @@
   },
   "map": {
     "pin_alt": "Pin Icon",
-    "error_page_message": "Failed to get pins"
+    "error_message": "Failed to get pins"
   },
   "privacy_policy": {
     "title": "Privacy Policy",

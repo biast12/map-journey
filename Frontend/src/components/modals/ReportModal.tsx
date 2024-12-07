@@ -74,7 +74,7 @@ const ReportModal = ({
         { "Content-Type": "application/json" },
         payload
       );
-      showToastMessage(t("modals.report.success"));
+      showToastMessage(t("modals.report.successful"));
       closeReportModal();
       role === "admin" && console.log("Reported successfully");
     } catch (error) {

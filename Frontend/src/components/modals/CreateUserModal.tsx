@@ -81,7 +81,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
         { name, email, password }
       );
     } catch (error) {
-      showToastMessage(t("modals.create_user.error_page_message"));
+      showToastMessage(t("modals.create_user.error_message"));
     }
   }
 

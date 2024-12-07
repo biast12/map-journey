@@ -97,7 +97,7 @@ const WarningModal: React.FC<WarningModalProps> = ({
           buttons={[
             {
               text: t("modals.warning.delete.cancel"),
-              role: t("modals.warning.delete.cancel").toLocaleLowerCase(),
+              role: "cancel",
               handler: () => {
                 setShowDeleteModal(false);
               },

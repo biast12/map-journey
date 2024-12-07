@@ -107,11 +107,12 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
         { "Content-Type": "application/json" },
         updatedData
       );
+      showToastMessage(t("pages.settings.account.successful"));
     } catch (error) {
       await removeImage(userData.avatar).catch((error) =>
         console.error("Error removing old image:", error)
       );
-      showToastMessage(t("pages.settings.account.error_fetch"));
+      showToastMessage(t("pages.settings.account.failed"));
     }
   };
 

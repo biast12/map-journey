@@ -3,7 +3,7 @@
   "required_fields": "Alle Felder sind erforderlich.",
   "profanityFilter": "Ihre Eingabe enthält unangemessene Sprache.",
   "header": {
-    "error_page_message": "Benutzer konnte nicht abgerufen werden! Bitte versuchen Sie es später erneut"
+    "error_message": "Benutzer konnte nicht abgerufen werden! Bitte versuchen Sie es später erneut"
   },
   "footer": {
     "global_map": "Globale Karte",
@@ -35,7 +35,7 @@
       "submit": "Benutzer erstellen",
       "close": "Schließen",
       "failed": "Benutzererstellung fehlgeschlagen!",
-      "error_page_message": "Benutzer konnte nicht erstellt werden"
+      "error_message": "Benutzer konnte nicht erstellt werden"
     },
     "login": {
       "card_title": "Anmelden",
@@ -45,12 +45,12 @@
       "password_placeholder": "Ihr Passwort hier",
       "submit": "Anmelden",
       "create_user": "Benutzer erstellen",
-      "failed": "Anmeldung fehlgeschlagen!",
-      "error_page_message": "Anmeldung fehlgeschlagen"
+      "failed": "Anmeldung fehlgeschlagen!"
     },
     "notification": {
       "card_title": "Benachrichtigungen",
-      "error_page_message": "Benachrichtigungen konnten nicht abgerufen werden"
+      "error_message": "Fehler beim Abrufen der Benachrichtigungen",
+      "error_read_message": "Fehler beim Lesen aller Benachrichtigungen"
     },
     "report": {
       "card_title": "Berichterstattung",
@@ -58,8 +58,7 @@
       "submit": "Bericht einreichen",
       "close": "Schließen",
       "successful": "Erfolgreich gemeldet",
-      "failed": "Berichterstattung von {{type}} fehlgeschlagen!",
-      "error_page_message": "Bericht konnte nicht erstellt werden"
+      "failed": "Berichterstattung von {{type}} fehlgeschlagen!"
     },
     "pin": {
       "img_alt": "Benutzeravatar",
@@ -77,7 +76,6 @@
       "delete": {
         "header": "Konto löschen",
         "message": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
-        "yes": "Ja",
         "cancel": "Abbrechen"
       }
     }
@@ -88,11 +86,9 @@
         "card_title": "Einstellungen",
         "account": "Konto",
         "general": "Allgemein",
-        "Logout": {
+        "logout": {
           "header": "Abmelden",
           "message": "Sind Sie sicher, dass Sie sich abmelden möchten?",
-
-          "yes": "Ja",
           "cancel": "Abbrechen"
         }
       },
@@ -106,12 +102,9 @@
         "submit": "Speichern",
         "successful": "Konto erfolgreich aktualisiert",
         "failed": "Kontoaktualisierung fehlgeschlagen!",
-        "error_fetch": "Fehler beim Aktualisieren der Benutzerdaten",
-        "error_page_message": "Benutzer konnten nicht abgerufen werden",
-        "Delete": {
+        "delete": {
           "header": "Löschen",
           "message": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
-          "yes": "Ja",
           "cancel": "Abbrechen"
         }
       },
@@ -124,7 +117,7 @@
         "language_placeholder": "Sprache auswählen",
         "notification": "Benachrichtigungen aktivieren",
         "submit": "Speichern",
-        "error_page_message": "Einstellungen konnten nicht abgerufen werden"
+        "error_message": "Einstellungen konnten nicht abgerufen werden"
       }
     },
     "errorpage": {
@@ -134,7 +127,7 @@
   },
   "map": {
     "pin_alt": "Pin-Symbol",
-    "error_page_message": "Pins konnten nicht abgerufen werden"
+    "error_message": "Pins konnten nicht abgerufen werden"
   },
   "privacy_policy": {
     "title": "Datenschutzrichtlinie",

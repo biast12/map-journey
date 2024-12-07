@@ -37,7 +37,7 @@ const NotificationModal: React.FC = () => {
       try {
         await makeRequest(`notification/all/${userID}`);
       } catch (error) {
-        showToastMessage("Failed to fetch notifications");
+        showToastMessage(t("modals.notification.error_message"));
       }
     };
 
@@ -51,7 +51,7 @@ const NotificationModal: React.FC = () => {
           await makeRequestReset(`notification/readall/${userID}`, "POST");
           role === "admin" && console.log("All notifications are now read");
         } catch (error) {
-          showToastMessage("Failed to read all notifications");
+          showToastMessage(t("modals.notification.error_read_message"));
         }
       }
     };
