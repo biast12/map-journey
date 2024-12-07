@@ -3,7 +3,7 @@
   "required_fields": "Alle felter er påkrævet.",
   "profanityFilter": "Din indtastning indeholder upassende sprog.",
   "header": {
-    "error_page_message": "Kunne ikke hente bruger! Prøv igen senere"
+    "error_page_message": "Kunne ikke hente bruger!"
   },
   "footer": {
     "global_map": "Globalt Kort",
@@ -34,8 +34,8 @@
       "agree_to_terms_required": "Du skal acceptere vilkårene for brug",
       "submit": "Opret bruger",
       "close": "Luk",
-      "failed": "Brugeroprettelse mislykkedes! Tjek indtastningerne",
-      "error_page_message": "Kunne ikke oprette bruger, prøv igen senere"
+      "failed": "Brugeroprettelse mislykkedes!",
+      "error_page_message": "Kunne ikke oprette bruger"
     },
     "login": {
       "card_title": "Login",
@@ -45,13 +45,12 @@
       "password_placeholder": "Din adgangskode her",
       "submit": "Login",
       "create_user": "Opret bruger",
-      "successful": "Login succesfuld",
-      "failed": "Login mislykkedes! Tjek indtastningerne",
-      "error_page_message": "Kunne ikke logge ind, prøv igen senere"
+      "failed": "Login mislykkedes",
+      "error_page_message": "Kunne ikke logge ind"
     },
     "notification": {
       "card_title": "Notifikationer",
-      "error_page_message": "Kunne ikke hente notifikationer, prøv igen senere"
+      "error_page_message": "Kunne ikke hente notifikationer"
     },
     "report": {
       "card_title": "Rapportering",
@@ -59,8 +58,8 @@
       "submit": "Indsend Rapport",
       "close": "Luk",
       "successful": "Rapporteret succesfuldt",
-      "failed": "Rapportering af {{type}} mislykkedes! Tjek indtastningerne",
-      "error_page_message": "Kunne ikke rapportere, prøv igen senere"
+      "failed": "Rapportering af {{type}} mislykkedes!",
+      "error_page_message": "Kunne ikke rapportere"
     },
     "pin": {
       "img_alt": "Bruger avatar",
@@ -105,9 +104,9 @@
         "required_fields": "Brugernavn og e-mail felter er påkrævet",
         "submit": "Gem",
         "successful": "Konto opdateret succesfuldt",
-        "failed": "Kontoopdatering mislykkedes! Tjek indtastningerne",
+        "failed": "Kontoopdatering mislykkedes!",
         "error_fetch": "Fejl ved opdatering af brugerdata",
-        "error_page_message": "Kunne ikke hente brugere, prøv igen senere",
+        "error_page_message": "Kunne ikke hente brugere",
         "Delete": {
           "header": "Slet",
           "message": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
@@ -124,7 +123,7 @@
         "language_placeholder": "Vælg Sprog",
         "notification": "Aktiver Notifikationer",
         "submit": "Gem",
-        "error_page_message": "Kunne ikke hente indstillinger, prøv igen senere"
+        "error_page_message": "Kunne ikke hente indstillinger"
       }
     },
     "errorpage": {
@@ -134,7 +133,7 @@
   },
   "map": {
     "pin_alt": "Pin Ikon",
-    "error_page_message": "Kunne ikke hente pins, prøv venligst igen senere"
+    "error_page_message": "Kunne ikke hente pins"
   },
   "privacy_policy": {
     "title": "Privatlivspolitik",

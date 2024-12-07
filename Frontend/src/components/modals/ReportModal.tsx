@@ -10,13 +10,16 @@ import {
 } from "@ionic/react";
 import { useState, FormEvent, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import "./ReportModal.scss";
 
+/* Hooks */
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
-import Error from "../Error";
-import Loader from "../Loader";
+
+/* Components */
 import Toast, { showToastMessage } from "../Toast";
+import Loader from "../Loader";
+
+import "./ReportModal.scss";
 
 interface ReportedProps {
   closeReportModal: () => void;
@@ -41,7 +44,7 @@ const ReportModal = ({
   const textInput = useRef<HTMLIonInputElement>(null);
 
   /* Hooks */
-  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { makeRequest, isLoading } = useRequestData();
   const { userID, role } = useAuth();
 
   useEffect(() => {
@@ -71,30 +74,18 @@ const ReportModal = ({
         { "Content-Type": "application/json" },
         payload
       );
-    } catch (error) {
-      showToastMessage(t("modals.report.failed", { type: reportedType }));
-    } finally {
-      role === "admin" && console.log("Report created successfully");
-      setIsSubmitting(false);
-    }
-  }
-
-  useEffect(() => {
-    if (data) {
       showToastMessage(t("modals.report.success"));
       closeReportModal();
       role === "admin" && console.log("Reported successfully");
-    } else if (error) {
+    } catch (error) {
       showToastMessage(t("modals.report.failed", { type: reportedType }));
     }
-  }, [error, data]);
+  }
 
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && (
-        <Error message={t("modals.report.error_page_message")} />
-      )}
+      <Toast />
       <IonCard>
         <IonCardHeader>
           <IonCardTitle>

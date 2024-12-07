@@ -21,9 +21,8 @@ import handleDeleteAccount from "../../utils/handleDeleteAccount";
 import { useAuth } from "../../hooks/ProviderContext";
 
 /* Components */
-import Loader from "../../components/Loader";
-import Error from "../../components/Error";
 import Toast, { showToastMessage } from "../../components/Toast";
+import Loader from "../../components/Loader";
 
 import "./Account.scss";
 
@@ -48,7 +47,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   /* Hooks */
-  const { makeRequest, isLoading, error } = useRequestData();
+  const { makeRequest, isLoading } = useRequestData();
   const { makeRequest: deleteMakeRequest } = useRequestData();
   const { takePhoto, photoUrl, handleUpload, removeImage } = useImageHandler();
   const { role, clearAuthToken, clearRoleToken } = useAuth();
@@ -101,19 +100,17 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
 
     role === "admin" && console.log("Updated data:", updatedData);
 
-    await makeRequest(
-      `users/${userData.id}`,
-      "PUT",
-      { "Content-Type": "application/json" },
-      updatedData
-    );
-
-    if (!error) {
-      showToastMessage(t("pages.settings.account.successful"));
+    try {
+      await makeRequest(
+        `users/${userData.id}`,
+        "PUT",
+        { "Content-Type": "application/json" },
+        updatedData
+      );
+    } catch (error) {
       await removeImage(userData.avatar).catch((error) =>
         console.error("Error removing old image:", error)
       );
-    } else {
       showToastMessage(t("pages.settings.account.error_fetch"));
     }
   };
@@ -121,9 +118,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && (
-        <Error message={t("pages.settings.account.error_page_message")} />
-      )}
+      <Toast />
       <IonHeader>
         <IonToolbar>
           <IonTitle>{t("pages.settings.account.card_title")}</IonTitle>

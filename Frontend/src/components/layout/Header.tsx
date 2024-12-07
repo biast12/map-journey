@@ -17,8 +17,8 @@ import { useAuth } from "../../hooks/ProviderContext";
 
 /* Components */
 import WarningModal from "../modals/WarningModal";
+import Toast, { showToastMessage } from "../Toast";
 import Loader from "../Loader";
-import Error from "../Error";
 
 interface HeaderProps {
   openNotificationModal: () => void;
@@ -28,7 +28,7 @@ let getNewNotifications: () => string[] | null;
 
 const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   const { t } = useTranslation();
-  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { makeRequest, data, isLoading } = useRequestData();
   const { userID, role, loading } = useAuth();
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [hasWarningModalOpened, setHasWarningModalOpened] = useState(false);
@@ -38,9 +38,17 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   const closeWarningModal = () => setShowWarningModal(false);
 
   useEffect(() => {
-    if (userID && !loading) {
-      makeRequest(`users/${userID}`);
-    }
+    const fetchData = async () => {
+      if (userID && !loading) {
+        try {
+          await makeRequest(`users/${userID}`);
+        } catch (error) {
+          showToastMessage(t("header.error_page_message"));
+        }
+      }
+    };
+
+    fetchData();
   }, [userID, loading, isNotificationModalOpen]);
 
   useEffect(() => {
@@ -69,9 +77,7 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && (
-        <Error message={t("header.error_page_message")} />
-      )}
+      <Toast />
       {userID && (
         <IonHeader>
           <IonToolbar>

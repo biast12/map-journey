@@ -8,9 +8,9 @@ import useAuth from "../../hooks/ProviderContext";
 
 /* Components */
 import EditUserModal from "../modals/EditUserModal";
+import Toast, { showToastMessage } from "../Toast";
 import UserColumn from "./UserColumn";
 import Loader from "../Loader";
-import Error from "../Error";
 
 import "./UserManagement.scss";
 
@@ -52,26 +52,42 @@ const UserManagement = () => {
       status: form.status.value,
     };
 
-    await editMakeRequest(`users/${userID}/${userData.id}`, "PUT", undefined, body);
-    makeRequest(`users/all/${userID}`);
+    try {
+      await editMakeRequest(`users/${userID}/${userData.id}`, "PUT", undefined, body);
+      await makeRequest(`users/all/${userID}`);
 
-    setShowEditModal(false);
-    setSelectedUser(null);
-    setHandlingRequest(false);
+      setShowEditModal(false);
+      setSelectedUser(null);
+      setHandlingRequest(false);
+    } catch (error) {
+      showToastMessage("Failed to edit user");
+    }
   }
   async function handleUserDelete(userData: UserData) {
     setHandlingRequest(true);
 
-    await delMakeRequest(`users/${userData.id}`, "DELETE");
-    makeRequest(`users/all/${userID}`);
+    try {
+      await delMakeRequest(`users/${userData.id}`, "DELETE");
+      await makeRequest(`users/all/${userID}`);
 
-    setShowDeleteModal(false);
-    setSelectedUser(null);
-    setHandlingRequest(false);
+      setShowDeleteModal(false);
+      setSelectedUser(null);
+      setHandlingRequest(false);
+    } catch (error) {
+      showToastMessage("Failed to delete user");
+    }
   }
 
   useEffect(() => {
-    makeRequest(`users/all/${userID}`);
+    const fetchData = async () => {
+      try {
+        await makeRequest(`users/all/${userID}`);
+      } catch (error) {
+        showToastMessage("Failed to fetch user data");
+      }
+    };
+
+    fetchData();
   }, []);
 
   function filterData(userData: UserData) {
@@ -91,8 +107,8 @@ const UserManagement = () => {
 
   return (
     <>
-      {error || delError || editError && <Error message="Error" />}
       {delIsLoading || editIsLoading && <Loader />}
+      <Toast />
       {selectedUser && (
         <EditUserModal
           userData={selectedUser}

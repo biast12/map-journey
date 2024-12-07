@@ -7,15 +7,15 @@ import useAuth from "../../hooks/ProviderContext";
 
 /* Components */
 import EditPinModal from "../modals/EditPinModal";
+import Toast, { showToastMessage } from "../Toast";
 import PinsColumn from "./PinsColumn";
 import Loader from "../Loader";
-import Error from "../Error";
 
 import "./PinsManagement.scss";
 
 const PinsManagement = ({ url }: { url: string }) => {
-  const { makeRequest, data, error, isLoading } = useRequestData();
-  const { makeRequest: delMakeRequest, error: delError, isLoading: delIsLoading } = useRequestData();
+  const { makeRequest, data, isLoading } = useRequestData();
+  const { makeRequest: delMakeRequest, isLoading: delIsLoading } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [selectedPin, setSelectedPin] = useState<null | PinData>(null);
@@ -29,14 +29,27 @@ const PinsManagement = ({ url }: { url: string }) => {
   const { userID, role } = useAuth();
 
   async function handleDeletePin(pinData: PinData) {
-    await delMakeRequest(`pins/${pinData.id}/${userID}`, "DELETE")
+    try {
+      await delMakeRequest(`pins/${pinData.id}/${userID}`, "DELETE")
 
-    setSelectedPin(null);
-    setShowModal(false);
+      setSelectedPin(null);
+      setShowModal(false);
+      await makeRequest(`${url}/${userID}`);
+    } catch (error) {
+      showToastMessage("Failed to delete pin");
+    }
   }
 
   useEffect(() => {
-    makeRequest(`${url}/${userID}`);
+    const fetchData = async () => {
+      try {
+        await makeRequest(`${url}/${userID}`);
+      } catch (error) {
+        showToastMessage("Failed to fetch user data");
+      }
+    };
+
+    fetchData();
   }, []);
 
   function filterData(pinData: PinData) {
@@ -56,8 +69,8 @@ const PinsManagement = ({ url }: { url: string }) => {
 
   return (
     <>
-      {error || delError && <Error message="Error" />}
       {delIsLoading && <Loader />}
+      <Toast />
       <IonAlert
         isOpen={showAlert}
         onDidDismiss={() => setShowAlert(false)}

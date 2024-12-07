@@ -9,15 +9,19 @@ import {
 } from "@ionic/react";
 import { FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+
+/* Hooks */
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
-import "./LoginModal.scss";
-import Error from "../Error";
-import Loader from "../Loader";
+
+/* Components */
 import Toast, { showToastMessage } from "../Toast";
+import Loader from "../Loader";
 
 /* Modal */
 import CreateUserModal from "./CreateUserModal";
+
+import "./LoginModal.scss";
 
 interface LoginProps {
   closeLoginModal: () => void;
@@ -28,7 +32,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
   const [createUserModal, setCreateUserModal] = useState(false);
 
   const { t } = useTranslation();
-  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { makeRequest, data, isLoading } = useRequestData();
   const { storeAuthToken, storeRoleToken, clearAuthToken, clearRoleToken } =
     useAuth();
 
@@ -44,26 +48,26 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
       return;
     }
 
-    await makeRequest(
-      "users/login",
-      "POST",
-      { "Content-Type": "application/json" },
-      { email, password }
-    );
-  }
-  useEffect(() => {
-    if (data) {
-      setLoginSuccess(true);
-      showToastMessage(t("modals.login.success"));
-      storeAuthToken(data.user.id);
-      storeRoleToken(data.user.role);
-      closeLoginModal();
-    } else if (error) {
+    try {
+      await makeRequest(
+        "users/login",
+        "POST",
+        { "Content-Type": "application/json" },
+        { email, password }
+      );
+    } catch (error) {
       setLoginSuccess(false);
       clearAuthToken();
       clearRoleToken();
     }
-  }, [data, error]);
+  }
+  useEffect(() => {
+    if (data) {
+      storeAuthToken(data.user.id);
+      storeRoleToken(data.user.role);
+      closeLoginModal();
+    }
+  }, [data]);
 
   const openCreateUserModal = () => setCreateUserModal(true);
   const closeCreateUserModal = () => setCreateUserModal(false);
@@ -71,9 +75,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && (
-        <Error message={t("modals.login.error_page_message")} />
-      )}
+      <Toast />
       <IonCard>
         <IonCardHeader>
           <IonCardTitle>{t("modals.login.card_title")}</IonCardTitle>
@@ -124,7 +126,6 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
             />
           </div>
         </IonModal>
-        <Toast />
       </IonCard>
     </>
   );

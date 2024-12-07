@@ -34,8 +34,8 @@
       "agree_to_terms_required": "Sie müssen den Nutzungsbedingungen zustimmen",
       "submit": "Benutzer erstellen",
       "close": "Schließen",
-      "failed": "Benutzererstellung fehlgeschlagen! Überprüfen Sie die Eingaben",
-      "error_page_message": "Benutzer konnte nicht erstellt werden, bitte versuchen Sie es später erneut"
+      "failed": "Benutzererstellung fehlgeschlagen!",
+      "error_page_message": "Benutzer konnte nicht erstellt werden"
     },
     "login": {
       "card_title": "Anmelden",
@@ -45,13 +45,12 @@
       "password_placeholder": "Ihr Passwort hier",
       "submit": "Anmelden",
       "create_user": "Benutzer erstellen",
-      "successful": "Anmeldung erfolgreich",
-      "failed": "Anmeldung fehlgeschlagen! Überprüfen Sie die Eingaben",
-      "error_page_message": "Anmeldung fehlgeschlagen, bitte versuchen Sie es später erneut"
+      "failed": "Anmeldung fehlgeschlagen!",
+      "error_page_message": "Anmeldung fehlgeschlagen"
     },
     "notification": {
       "card_title": "Benachrichtigungen",
-      "error_page_message": "Benachrichtigungen konnten nicht abgerufen werden, bitte versuchen Sie es später erneut"
+      "error_page_message": "Benachrichtigungen konnten nicht abgerufen werden"
     },
     "report": {
       "card_title": "Berichterstattung",
@@ -59,8 +58,8 @@
       "submit": "Bericht einreichen",
       "close": "Schließen",
       "successful": "Erfolgreich gemeldet",
-      "failed": "Berichterstattung von {{type}} fehlgeschlagen! Überprüfen Sie die Eingaben",
-      "error_page_message": "Bericht konnte nicht erstellt werden, bitte versuchen Sie es später erneut"
+      "failed": "Berichterstattung von {{type}} fehlgeschlagen!",
+      "error_page_message": "Bericht konnte nicht erstellt werden"
     },
     "pin": {
       "img_alt": "Benutzeravatar",
@@ -106,9 +105,9 @@
         "required_fields": "Benutzername und E-Mail-Felder sind erforderlich",
         "submit": "Speichern",
         "successful": "Konto erfolgreich aktualisiert",
-        "failed": "Kontoaktualisierung fehlgeschlagen! Überprüfen Sie die Eingaben",
+        "failed": "Kontoaktualisierung fehlgeschlagen!",
         "error_fetch": "Fehler beim Aktualisieren der Benutzerdaten",
-        "error_page_message": "Benutzer konnten nicht abgerufen werden, bitte versuchen Sie es später erneut",
+        "error_page_message": "Benutzer konnten nicht abgerufen werden",
         "Delete": {
           "header": "Löschen",
           "message": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
@@ -125,7 +124,7 @@
         "language_placeholder": "Sprache auswählen",
         "notification": "Benachrichtigungen aktivieren",
         "submit": "Speichern",
-        "error_page_message": "Einstellungen konnten nicht abgerufen werden, bitte versuchen Sie es später erneut"
+        "error_page_message": "Einstellungen konnten nicht abgerufen werden"
       }
     },
     "errorpage": {
@@ -135,7 +134,7 @@
   },
   "map": {
     "pin_alt": "Pin-Symbol",
-    "error_page_message": "Pins konnten nicht abgerufen werden, bitte versuchen Sie es später erneut"
+    "error_page_message": "Pins konnten nicht abgerufen werden"
   },
   "privacy_policy": {
     "title": "Datenschutzrichtlinie",
