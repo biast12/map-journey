@@ -18,6 +18,28 @@ ion-toolbar {
   }
 }
 
+html, .inner-scroll.scroll-y {
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: #222;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #444; 
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #555; 
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: #444 #222;
+}
+
 .IonButtonContainer {
   display: flex;
   float: right;

@@ -18,7 +18,8 @@
       "location": "Ort",
       "description": "Beschreibung",
       "description_placeholder": "Ihre Beschreibung hier",
-      "visibility": "Öffentlich",
+      "public": "Öffentlich",
+      "private": "Privat",
       "submit": "Bestätigen"
     },
     "create_user": {
@@ -126,6 +127,9 @@
         "notification": "Benachrichtigungen aktivieren",
         "submit": "Speichern",
         "error_page_message": "Einstellungen konnten nicht abgerufen werden, bitte versuchen Sie es später erneut"
+      },
+      "pins": {
+        "card_title": "Ihre Pins"
       }
     },
     "errorpage": {

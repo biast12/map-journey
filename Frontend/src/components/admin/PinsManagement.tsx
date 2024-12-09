@@ -42,7 +42,7 @@ const PinsManagement = ({ url }: { url: string }) => {
 
   useEffect(() => {
     makeRequest(`${url}/${userID}`);
-  }, []);
+  }, [userID]);
 
   function filterData(pinData: PinData) {
     if (
