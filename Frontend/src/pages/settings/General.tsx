@@ -18,8 +18,8 @@ import useRequestData from "../../hooks/useRequestData";
 import { changeLanguage } from "../../utils/i18n";
 
 /* Components */
+import Toast, { showToastMessage } from "../../components/Toast";
 import Loader from "../../components/Loader";
-import Error from "../../components/Error";
 
 import "./General.scss";
 
@@ -51,7 +51,7 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
   const [languages, setLanguages] = useState<{ [key: string]: string }>({});
 
   /* Hooks */
-  const { makeRequest, error, isLoading } = useRequestData();
+  const { makeRequest, isLoading } = useRequestData();
 
   const themes: Themes = {
     default: "Default",
@@ -107,26 +107,24 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
       notification: notification,
     };
 
-    await makeRequest(
-      `settings/${userData.id}`,
-      "PUT",
-      { "Content-Type": "application/json" },
-      updatedData
-    );
-
-    if (!error) {
+    try {
+      await makeRequest(
+        `settings/${userData.id}`,
+        "PUT",
+        { "Content-Type": "application/json" },
+        updatedData
+      );
       changeLanguage(updatedData.language);
-    } else {
-      console.error("Error updating settings");
+      showToastMessage(t("pages.settings.general.successful"), "success");
+    } catch (error) {
+      showToastMessage(t("pages.settings.general.error_message"), "error");
     }
   };
 
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && (
-        <Error message={t("pages.settings.general.error_page_message")} />
-      )}
+      <Toast />
       <IonHeader>
         <IonToolbar>
           <IonTitle>{t("pages.settings.general.card_title")}</IonTitle>

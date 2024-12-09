@@ -3,7 +3,7 @@
   "required_fields": "All fields are required.",
   "profanityFilter": "Your input contains inappropriate language.",
   "header": {
-    "error_page_message": "Failed fetching user! Please try again later"
+    "error_message": "Failed fetching user! Please try again later"
   },
   "footer": {
     "global_map": "Global Map",
@@ -18,6 +18,8 @@
       "location": "Location",
       "description": "Description",
       "description_placeholder": "Your description here",
+      "successful": "Pin created successfully",
+      "error_message": "Failed to create pin",
       "public": "Public",
       "private": "Private",
       "submit": "Confirm"
@@ -35,8 +37,8 @@
       "agree_to_terms_required": "You must agree to the terms of service",
       "submit": "Create user",
       "close": "Close",
-      "failed": "User creation failed! Check the inputs",
-      "error_page_message": "Failed to create user, please try again later"
+      "failed": "User creation failed!",
+      "error_message": "Failed to create user"
     },
     "login": {
       "card_title": "Login",
@@ -46,13 +48,12 @@
       "password_placeholder": "Your password here",
       "submit": "Login",
       "create_user": "Create user",
-      "successful": "Login successful",
-      "failed": "Login failed! Check the inputs",
-      "error_page_message": "Failed to login, please try again later"
+      "failed": "Login failed!"
     },
     "notification": {
       "card_title": "Notifications",
-      "error_page_message": "Failed to get notifications, please try again later"
+      "error_message": "Failed to fetch notifications",
+      "error_read_message": "Failed to read all notifications"
     },
     "report": {
       "card_title": "Reporting",
@@ -60,11 +61,12 @@
       "submit": "Submit Report",
       "close": "Close",
       "successful": "Reported successfully",
-      "failed": "Reporting {{type}} failed! Check the inputs",
-      "error_page_message": "Failed to report, please try again later"
+      "failed": "Reporting {{type}} failed!"
     },
     "pin": {
       "img_alt": "User avatar",
+      "link_copied": "Link copied",
+      "error_copying_link": "Error copying link",
       "report_user": "Report user",
       "report_pin": "Report pin"
     },
@@ -79,7 +81,6 @@
       "delete": {
         "header": "Delete Account",
         "message": "Are you sure you want to delete your account? This action cannot be undone.",
-        "yes": "Yes",
         "cancel": "Cancel"
       }
     }
@@ -93,7 +94,6 @@
         "logout": {
           "header": "Logout",
           "message": "Are you sure you want to logout?",
-          "yes": "Yes",
           "cancel": "Cancel"
         }
       },
@@ -106,13 +106,10 @@
         "required_fields": "Username and Email fields are required",
         "submit": "Save",
         "successful": "Account updated successfully",
-        "failed": "Account update failed! Check the inputs",
-        "error_fetch": "Error updating user data",
-        "error_page_message": "Failed to get users, please try again later",
+        "failed": "Account update failed!",
         "delete": {
           "header": "Delete Account",
           "message": "Are you sure you want to delete your account? This action cannot be undone.",
-          "yes": "Yes",
           "cancel": "Cancel"
         }
       },
@@ -124,8 +121,9 @@
         "language": "Language",
         "language_placeholder": "Select Language",
         "notification": "Enable Notifications",
-        "submit": "Save",
-        "error_page_message": "Failed to get settings, please try again later"
+        "successful": "Settings updated successfully",
+        "error_message": "Failed to get settings",
+        "submit": "Save"
       },
       "pins": {
         "card_title": "Your Pins"
@@ -138,7 +136,7 @@
   },
   "map": {
     "pin_alt": "Pin Icon",
-    "error_page_message": "Failed to get pins, please try again later"
+    "error_message": "Failed to get pins"
   },
   "privacy_policy": {
     "title": "Privacy Policy",

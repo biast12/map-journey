@@ -7,9 +7,9 @@ import useAuth from "../../hooks/ProviderContext";
 
 /* Components */
 import ReportActionModal from "../modals/ReportActionModal";
+import Toast, { showToastMessage } from "../Toast";
 import ReportColumn from "./ReportColumn";
 import Loader from "../Loader";
-import Error from "../Error";
 
 import "./ReportManagement.scss";
 
@@ -20,12 +20,8 @@ type ReportSearchOptions = {
 };
 
 const ReportManagement = () => {
-  const { makeRequest, data, error, isLoading } = useRequestData();
-  const {
-    makeRequest: rpMakeRequest,
-    error: rpError,
-    isLoading: rpIsLoading,
-  } = useRequestData();
+  const { makeRequest, data, isLoading } = useRequestData();
+  const { makeRequest: rpMakeRequest, isLoading: rpIsLoading } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedReport, setSelectedReport] = useState<null | ReportData>(null);
   const [searchOptions, setSearchOptions] = useState<ReportSearchOptions>({
@@ -36,24 +32,28 @@ const ReportManagement = () => {
 
   const { userID } = useAuth();
 
-  async function handleReportAction(
-    reportData: ReportData,
-    action: "dismiss" | "warn" | "ban"
-  ) {
-    await rpMakeRequest(
-      `reports/${userID}/${reportData.id}`,
-      "POST",
-      undefined,
-      { action: action }
-    );
+  async function handleReportAction(reportData: ReportData, action: "dismiss" | "warn" | "ban") {
+    try {
+      await rpMakeRequest(`reports/${userID}/${reportData.id}`, "POST", undefined, { action: action });
 
-    makeRequest(`reports/all/${userID}`);
-    setSelectedReport(null);
-    setShowModal(false);
+      await makeRequest(`reports/all/${userID}`);
+      setSelectedReport(null);
+      setShowModal(false);
+    } catch (error) {
+      showToastMessage("Failed to perform action", "error");
+    }
   }
 
   useEffect(() => {
-    makeRequest(`reports/all/${userID}`);
+    const fetchData = async () => {
+      try {
+        await makeRequest(`reports/all/${userID}`);
+      } catch (error) {
+        showToastMessage("Failed to fetch reports", "error");
+      }
+    };
+
+    fetchData();
   }, []);
 
   function filterData(reportData: ReportData) {
@@ -95,16 +95,9 @@ const ReportManagement = () => {
 
   return (
     <>
-      {error || (rpError && <Error message="Error" />)}
       {rpIsLoading && <Loader />}
-      {selectedReport && (
-        <ReportActionModal
-          selectedReport={selectedReport}
-          showModal={showModal}
-          setShowModal={setShowModal}
-          handleReportAction={handleReportAction}
-        />
-      )}
+      <Toast />
+      {selectedReport && <ReportActionModal selectedReport={selectedReport} showModal={showModal} setShowModal={setShowModal} handleReportAction={handleReportAction} />}
       <article className="searchOptions">
         <section>
           <label htmlFor="searchParams">Search </label>

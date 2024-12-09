@@ -7,8 +7,8 @@ import useAuth from "../../hooks/ProviderContext";
 
 /* Components */
 import NotificationColumn from "./NotificationColumn";
+import Toast, { showToastMessage } from "../Toast";
 import Loader from "../Loader";
-import Error from "../Error";
 
 import "./NotificationManagement.scss";
 
@@ -24,14 +24,14 @@ const NotificationManagement = () => {
   });
   const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false);
   const [selectedNotif, setSelectedNotif] = useState<NotificationData | null>(null);
-  const { data, error, isLoading, makeRequest } = useRequestData();
+  const { makeRequest, data, isLoading } = useRequestData();
   const {
     makeRequest: createMakeRequest,
     data: createData,
     error: createError,
     isLoading: createIsLoading
   } = useRequestData();
-  const { makeRequest: delMakeRequest, error: delError, isLoading: delIsLoading } = useRequestData();
+  const { makeRequest: delMakeRequest, isLoading: delIsLoading } = useRequestData();
 
   const { userID } = useAuth();
 
@@ -43,26 +43,42 @@ const NotificationManagement = () => {
       text: form.newsText.value,
     };
 
-    await createMakeRequest(`notification/${userID}`, "POST", undefined, body);
+    try {
+      await createMakeRequest(`notification/${userID}`, "POST", undefined, body);
 
-    setShowDeleteAlert(false);
-    setSelectedNotif(null);
-    makeRequest("notification/all/" + userID);
+      setShowDeleteAlert(false);
+      setSelectedNotif(null);
+      await makeRequest("notification/all/" + userID);
+    } catch (error) {
+      showToastMessage("Failed to create news", "error");
+    }
   }
 
   async function handleDeleteNews(notifData: NotificationData) {
-    await delMakeRequest(`notification/${userID}/${notifData.id}`, "DELETE");
-    makeRequest("notification/all/" + userID);
+    try {
+      await delMakeRequest(`notification/${userID}/${notifData.id}`, "DELETE");
+      await makeRequest("notification/all/" + userID);
+    } catch (error) {
+      showToastMessage("Failed to delete news", "error");
+    }
   }
 
   useEffect(() => {
-    makeRequest("notification/all/" + userID);
+    const fetchData = async () => {
+      try {
+        await makeRequest("notification/all/" + userID);
+      } catch (error) {
+        showToastMessage("Failed to fetch news", "error");
+      }
+    };
+  
+    fetchData();
   }, []);
 
   return (
     <>
-      {error || createError || delError && <Error message="Error" />}
       {createIsLoading || delIsLoading && <Loader />}
+      <Toast />
       <IonAlert
         isOpen={showDeleteAlert}
         onDidDismiss={() => setShowDeleteAlert(false)}

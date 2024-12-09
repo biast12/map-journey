@@ -1,6 +1,7 @@
+import { useEffect, useState } from "react";
+import { IonButton, IonIcon, IonImg, IonModal } from "@ionic/react";
+import { useTranslation } from "react-i18next";
 import "ol/ol.css";
-import "./Maps.scss"; // Import the SCSS file
-
 import {
   Circle as CircleStyle,
   Fill,
@@ -11,26 +12,29 @@ import {
 } from "ol/style.js";
 import { Cluster, OSM, Vector as VectorSource } from "ol/source.js";
 import { Extent, createEmpty, extend } from "ol/extent.js";
-import { IonButton, IonIcon, IonImg, IonModal } from "@ionic/react";
 import { MousePosition, defaults as defaultControls } from "ol/control.js";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer.js";
 import { fromLonLat } from "ol/proj";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 
 import Feature from "ol/Feature";
 import { FeatureLike } from "ol/Feature";
 import { default as OlMap } from "ol/Map";
 import Point from "ol/geom/Point";
-import ShowPinModal from "../components/modals/ShowPinModal";
 import View from "ol/View";
 import { close } from "ionicons/icons";
 import { createStringXY } from "ol/coordinate.js";
 import { Geolocation } from "@capacitor/geolocation";
+
+/* Hooks */
 import useRequestData from "../hooks/useRequestData";
 import useAuth from "../hooks/ProviderContext";
+
+/* Components */
+import ShowPinModal from "../components/modals/ShowPinModal";
+import Toast, { showToastMessage } from "./Toast";
 import Loader from "./Loader";
-import Error from "./Error";
+
+import "./Maps.scss";
 
 interface MapProps {
   APIurl: string;
@@ -106,7 +110,7 @@ function Map({ APIurl, pinID }: MapProps) {
   const [selectedPin, setSelectedPin] = useState<PinData | null>(null);
 
   /* Hooks */
-  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { makeRequest, data, isLoading } = useRequestData();
   const { role } = useAuth();
 
   /* Functions */
@@ -114,7 +118,15 @@ function Map({ APIurl, pinID }: MapProps) {
   const closeShowPinModal = () => setShowPinModal(false);
 
   useEffect(() => {
-    makeRequest(`pins/${APIurl}`);
+    const fetchData = async () => {
+      try {
+        await makeRequest(`pins/${APIurl}`);
+      } catch (error) {
+        showToastMessage(t("map.error_message"), "error");
+      }
+    };
+
+    fetchData();
   }, [APIurl]);
 
   useEffect(() => {
@@ -222,7 +234,7 @@ function Map({ APIurl, pinID }: MapProps) {
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && <Error message={t("map.error_page_message")} />}
+      <Toast />
       {data && (
         <div id="map">
           {/* Preload the image cause else React/Ionic will not load it and add it to "the public folder" */}

@@ -3,7 +3,7 @@
   "required_fields": "Alle felter er påkrævet.",
   "profanityFilter": "Din indtastning indeholder upassende sprog.",
   "header": {
-    "error_page_message": "Kunne ikke hente bruger! Prøv igen senere"
+    "error_message": "Kunne ikke hente bruger!"
   },
   "footer": {
     "global_map": "Globalt Kort",
@@ -18,6 +18,8 @@
       "location": "Placering",
       "description": "Beskrivelse",
       "description_placeholder": "Din beskrivelse her",
+      "successful": "Pin oprettet succesfuldt",
+      "error_message": "Kunne ikke oprette pin",
       "public": "Offentlig",
       "private": "Privat",
       "submit": "Bekræft"
@@ -35,8 +37,8 @@
       "agree_to_terms_required": "Du skal acceptere vilkårene for brug",
       "submit": "Opret bruger",
       "close": "Luk",
-      "failed": "Brugeroprettelse mislykkedes! Tjek indtastningerne",
-      "error_page_message": "Kunne ikke oprette bruger, prøv igen senere"
+      "failed": "Brugeroprettelse mislykkedes!",
+      "error_message": "Kunne ikke oprette bruger"
     },
     "login": {
       "card_title": "Login",
@@ -46,13 +48,12 @@
       "password_placeholder": "Din adgangskode her",
       "submit": "Login",
       "create_user": "Opret bruger",
-      "successful": "Login succesfuld",
-      "failed": "Login mislykkedes! Tjek indtastningerne",
-      "error_page_message": "Kunne ikke logge ind, prøv igen senere"
+      "failed": "Login mislykkedes"
     },
     "notification": {
       "card_title": "Notifikationer",
-      "error_page_message": "Kunne ikke hente notifikationer, prøv igen senere"
+      "error_message": "Kunne ikke hente notifikationer",
+      "error_read_message": "Kunne ikke læse alle notifikationer"
     },
     "report": {
       "card_title": "Rapportering",
@@ -60,11 +61,12 @@
       "submit": "Indsend Rapport",
       "close": "Luk",
       "successful": "Rapporteret succesfuldt",
-      "failed": "Rapportering af {{type}} mislykkedes! Tjek indtastningerne",
-      "error_page_message": "Kunne ikke rapportere, prøv igen senere"
+      "failed": "Rapportering af {{type}} mislykkedes!"
     },
     "pin": {
       "img_alt": "Bruger avatar",
+      "link_copied": "Link kopieret",
+      "error_copying_link": "Fejl ved kopiering af link",
       "report_user": "Anmeld bruger",
       "report_pin": "Anmeld pin"
     },
@@ -79,7 +81,6 @@
       "delete": {
         "header": "Slet Konto",
         "message": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
-        "yes": "Ja",
         "cancel": "Annuller"
       }
     }
@@ -90,10 +91,9 @@
         "card_title": "Indstillinger",
         "account": "Konto",
         "general": "Generelt",
-        "Logout": {
+        "logout": {
           "header": "Log ud",
           "message": "Er du sikker på, at du vil logge ud?",
-          "yes": "Ja",
           "cancel": "Annuller"
         }
       },
@@ -106,17 +106,11 @@
         "required_fields": "Brugernavn og e-mail felter er påkrævet",
         "submit": "Gem",
         "successful": "Konto opdateret succesfuldt",
-        "failed": "Kontoopdatering mislykkedes! Tjek indtastningerne",
-        "error_fetch": "Fejl ved opdatering af brugerdata",
-        "error_page_message": "Kunne ikke hente brugere, prøv igen senere",
-        "Delete": {
+        "failed": "Kontoopdatering mislykkedes!",
+        "delete": {
           "header": "Slet",
           "message": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
-          "yes": "Ja",
           "cancel": "Annuller"
-        },
-        "pins": {
-          "card_title": "Dine Pins"
         }
       },
       "general": {
@@ -127,8 +121,12 @@
         "language": "Sprog",
         "language_placeholder": "Vælg Sprog",
         "notification": "Aktiver Notifikationer",
-        "submit": "Gem",
-        "error_page_message": "Kunne ikke hente indstillinger, prøv igen senere"
+        "successful": "Indstillinger opdateret succesfuldt",
+        "error_message": "Kunne ikke hente indstillinger",
+        "submit": "Gem"
+      },
+      "pins": {
+        "card_title": "Dine Pins"
       }
     },
     "errorpage": {
@@ -138,7 +136,7 @@
   },
   "map": {
     "pin_alt": "Pin Ikon",
-    "error_page_message": "Kunne ikke hente pins, prøv venligst igen senere"
+    "error_message": "Kunne ikke hente pins"
   },
   "privacy_policy": {
     "title": "Privatlivspolitik",

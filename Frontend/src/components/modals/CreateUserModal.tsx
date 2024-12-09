@@ -21,9 +21,8 @@ import useAuth from "../../hooks/ProviderContext";
 import profanityFilter from "../../utils/profanityFilter";
 
 /* Components */
-import Loader from "../Loader";
-import Error from "../Error";
 import Toast, { showToastMessage } from "../Toast";
+import Loader from "../Loader";
 
 import "./CreateUserModal.scss";
 
@@ -53,7 +52,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
     formEvent.preventDefault();
 
     if (!agreeToTerms) {
-      showToastMessage(t("modals.create_user.agree_to_terms_required"));
+      showToastMessage(t("modals.create_user.agree_to_terms_required"), "warning");
       return;
     }
 
@@ -68,18 +67,22 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
     }
 
     if (profanityFilter(name as string)) {
-      showToastMessage(t("profanityFilter"));
+      showToastMessage(t("profanityFilter"), "warning");
       return;
     }
 
     role === "admin" && console.log("formData: ", formData);
 
-    await makeRequest(
-      "users",
-      "POST",
-      { "Content-Type": "application/json" },
-      { name, email, password }
-    );
+    try {
+      await makeRequest(
+        "users",
+        "POST",
+        { "Content-Type": "application/json" },
+        { name, email, password }
+      );
+    } catch (error) {
+      showToastMessage(t("modals.create_user.error_message"), "error");
+    }
   }
 
   useEffect(() => {
@@ -91,7 +94,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
       closeLoginModal();
     } else if (error) {
       setCreateSuccess(false);
-      showToastMessage("User creation failed");
+      showToastMessage("User creation failed", "error");
       clearAuthToken();
       clearRoleToken();
     }
@@ -100,9 +103,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   return (
     <>
       {isLoading && <Loader />}
-      {!isLoading && error && (
-        <Error message={t("modals.create_user.error_page_message")} />
-      )}
+      <Toast />
       <IonCard>
         <IonCardHeader>
           <IonCardTitle>{t("modals.create_user.card_title")}</IonCardTitle>
@@ -176,7 +177,6 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
         >
           {t("modals.create_user.close")}
         </IonButton>
-        <Toast />
       </IonCard>
     </>
   );
