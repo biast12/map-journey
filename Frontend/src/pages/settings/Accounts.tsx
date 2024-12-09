@@ -47,7 +47,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
 
   /* Hooks */
   const { makeRequest, isLoading, error } = useRequestData();
-  const { takePhoto, photoUrl, handleUpload, removeImage } = useImageHandler();
+  const { takePhoto, photoUrl, handleUpload } = useImageHandler();
   const { role } = useAuth();
 
   useEffect(() => {
@@ -99,9 +99,6 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
 
     if (!error) {
       showToastMessage(t("pages.settings.accounts.successful"));
-      await removeImage(userData.avatar).catch((error) =>
-        console.error("Error removing old image:", error)
-      );
     } else {
       showToastMessage(t("pages.settings.accounts.error_fetch"));
     }

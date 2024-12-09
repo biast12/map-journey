@@ -297,6 +297,7 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
 
     if (userProfileError) {
       console.error("Error fetching user profile:", userProfileError);
+      await deleteImageFromBucket(imgurls);
       return res.status(500).json({ error: "Error fetching user profile" });
     }
 
@@ -327,12 +328,14 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
 
     if (updateError) {
       console.error("Error updating pin:", updateError);
+      await deleteImageFromBucket(imgurls);
       return res.status(500).json({ error: "Error updating pin" });
     }
 
     res.status(200).json({ message: "Pin updated successfully" });
   } catch (error) {
     console.error("Error during pin update:", error);
+    await deleteImageFromBucket(imgurls);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -374,15 +377,7 @@ router.delete("/:id/:pinid", checkUserRole("user"), async (req, res) => {
       return res.status(403).json({ error: "Unauthorized to delete this pin" });
     }
 
-    const imagesToDelete = [];
-    if (pin.imgurls) {
-      imagesToDelete.push(pin.imgurls);
-    }
-
-    if (imagesToDelete.length > 0) {
-      console.log("trying to delete items", imagesToDelete);
-      await deleteImageFromBucket(imagesToDelete);
-    }
+    await deleteImageFromBucket(pin.imgurls);
 
     const { error: deleteReportsError } = await supabase
       .from("reports")

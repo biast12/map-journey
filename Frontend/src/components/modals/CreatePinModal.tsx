@@ -48,7 +48,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
   /* Hooks */
   const { makeRequest } = useRequestData();
   const { userID, role } = useAuth();
-  const { photoUrl, takePhoto, handleUpload, removeImage } = useImageHandler();
+  const { photoUrl, takePhoto, handleUpload } = useImageHandler();
 
   useEffect(() => {
     const refs = [
@@ -97,12 +97,11 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
       role === "admin" && console.log("formData:", formData);
 
       await makeRequest(`pins/${userID}`, "POST", undefined, formData);
-      onClose();
-    } catch (error) {
-      await removeImage(fileName);
-    } finally {
       role === "admin" && console.log("Pin created successfully");
       setIsSubmitting(false);
+      onClose();
+    } catch (error) {
+      
     }
   };
 

@@ -706,8 +706,6 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
               }
 
               const imgurls = userPins.map((pin) => pin.imgurls )
-              console.log(imgurls);
-
               await deleteImageFromBucket(imgurls);
             }
 
