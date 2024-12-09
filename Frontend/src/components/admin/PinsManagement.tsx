@@ -29,10 +29,11 @@ const PinsManagement = ({ url }: { url: string }) => {
   const { userID, role } = useAuth();
 
   async function handleDeletePin(pinData: PinData) {
-    await delMakeRequest(`pins/${pinData.id}/${userID}`, "DELETE")
+    await delMakeRequest(`pins/${userID}/${pinData.id}`, "DELETE");
 
     setSelectedPin(null);
     setShowModal(false);
+    makeRequest(`${url}/${userID}`);
   }
 
   useEffect(() => {
@@ -56,7 +57,7 @@ const PinsManagement = ({ url }: { url: string }) => {
 
   return (
     <>
-      {error || delError && <Error message="Error" />}
+      {error || (delError && <Error message="Error" />)}
       {delIsLoading && <Loader />}
       <IonAlert
         isOpen={showAlert}
@@ -65,7 +66,14 @@ const PinsManagement = ({ url }: { url: string }) => {
         message="Deleting is a permanent action!"
         buttons={["Cancel", { text: "Confirm", handler: () => handleDeletePin(selectedPin!) }]}
       />
-      {selectedPin && <EditPinModal selectedPin={selectedPin} showModal={showModal} setShowModal={setShowModal} setShowAlert={setShowAlert} />}
+      {selectedPin && (
+        <EditPinModal
+          selectedPin={selectedPin}
+          showModal={showModal}
+          setShowModal={setShowModal}
+          setShowAlert={setShowAlert}
+        />
+      )}
       <article className="searchOptions">
         <section>
           <label htmlFor="searchParams">Search </label>
@@ -121,8 +129,10 @@ const PinsManagement = ({ url }: { url: string }) => {
               }}
             />
           ))
+        ) : isLoading ? (
+          <p>Loading...</p>
         ) : (
-          isLoading ? <p>Loading...</p> : <p>No data</p>
+          <p>No data</p>
         )}
       </IonRow>
     </>
