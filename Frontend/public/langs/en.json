@@ -18,9 +18,10 @@
       "location": "Location",
       "description": "Description",
       "description_placeholder": "Your description here",
-      "visibility": "Public",
       "successful": "Pin created successfully",
       "error_message": "Failed to create pin",
+      "public": "Public",
+      "private": "Private",
       "submit": "Confirm"
     },
     "create_user": {
@@ -121,6 +122,9 @@
         "successful": "Settings updated successfully",
         "error_message": "Failed to get settings",
         "submit": "Save"
+      },
+      "pins": {
+        "card_title": "Your Pins"
       }
     },
     "errorpage": {

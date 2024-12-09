@@ -65,19 +65,31 @@ const ReportManagement = () => {
       return reportData.id
         .toString()
         .toLowerCase()
-        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
+        .match(
+          searchOptions.search
+            .toLowerCase()
+            .replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+        );
     }
 
     if (searchOptions.searchBy === "name") {
       return reportData.reporting_user.name
         .toLowerCase()
-        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
+        .match(
+          searchOptions.search
+            .toLowerCase()
+            .replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+        );
     }
 
     if (searchOptions.searchBy === "text") {
       return reportData.text
         .toLowerCase()
-        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
+        .match(
+          searchOptions.search
+            .toLowerCase()
+            .replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+        );
     }
   }
 
@@ -116,21 +128,30 @@ const ReportManagement = () => {
       </article>
       <IonRow id="reportsRow">
         {data ? (
-          data
-            .sort((a: ReportData, b: ReportData) => new Date(b.date).getTime() - new Date(a.date).getTime())
-            .filter(filterData)
-            .map((reportData: ReportData) => (
-              <ReportColumn
-                key={reportData.id}
-                reportData={reportData}
-                onManageClick={(e) => {
-                  setSelectedReport(reportData);
-                  setShowModal(true);
-                }}
-              />
-            ))
+          data.filter(filterData).length === 0 ? (
+            <p>No reports found</p>
+          ) : (
+            data
+              .sort(
+                (a: ReportData, b: ReportData) =>
+                  new Date(b.date).getTime() - new Date(a.date).getTime()
+              )
+              .filter(filterData)
+              .map((reportData: ReportData) => (
+                <ReportColumn
+                  key={reportData.id}
+                  reportData={reportData}
+                  onManageClick={(e) => {
+                    setSelectedReport(reportData);
+                    setShowModal(true);
+                  }}
+                />
+              ))
+          )
+        ) : isLoading ? (
+          <p>Loading...</p>
         ) : (
-          isLoading ? <p>Loading...</p> : <p>No data</p>
+          <p>No data</p>
         )}
       </IonRow>
     </>

@@ -53,7 +53,10 @@ const PinsManagement = ({ url }: { url: string }) => {
   }, []);
 
   function filterData(pinData: PinData) {
-    if (searchOptions.status !== "all" && pinData.status !== searchOptions.status) {
+    if (
+      searchOptions.status !== "all" &&
+      pinData.status !== searchOptions.status
+    ) {
       return false;
     }
 
@@ -63,7 +66,11 @@ const PinsManagement = ({ url }: { url: string }) => {
       return pinData[searchOptions.searchBy]
         .toString()
         .toLowerCase()
-        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
+        .match(
+          searchOptions.search
+            .toLowerCase()
+            .replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+        );
     }
   }
 
@@ -76,9 +83,19 @@ const PinsManagement = ({ url }: { url: string }) => {
         onDidDismiss={() => setShowAlert(false)}
         header="Are you sure?"
         message="Deleting is a permanent action!"
-        buttons={["Cancel", { text: "Confirm", handler: () => handleDeletePin(selectedPin!) }]}
+        buttons={[
+          "Cancel",
+          { text: "Confirm", handler: () => handleDeletePin(selectedPin!) },
+        ]}
       />
-      {selectedPin && <EditPinModal selectedPin={selectedPin} showModal={showModal} setShowModal={setShowModal} setShowAlert={setShowAlert} />}
+      {selectedPin && (
+        <EditPinModal
+          selectedPin={selectedPin}
+          showModal={showModal}
+          setShowModal={setShowModal}
+          setShowAlert={setShowAlert}
+        />
+      )}
       <article className="searchOptions">
         <section>
           <label htmlFor="searchParams">Search </label>
@@ -124,18 +141,24 @@ const PinsManagement = ({ url }: { url: string }) => {
       </article>
       <IonRow id="pinsRow">
         {data ? (
-          data.filter(filterData).map((pinData: PinData) => (
-            <PinsColumn
-              key={pinData.id}
-              pinData={pinData}
-              onManageClick={() => {
-                setSelectedPin(pinData);
-                setShowModal(true);
-              }}
-            />
-          ))
+          data.filter(filterData).length === 0 ? (
+            <p>No pins found</p>
+          ) : (
+            data.filter(filterData).map((pinData: PinData) => (
+              <PinsColumn
+                key={pinData.id}
+                pinData={pinData}
+                onManageClick={() => {
+                  setSelectedPin(pinData);
+                  setShowModal(true);
+                }}
+              />
+            ))
+          )
+        ) : isLoading ? (
+          <p>Loading...</p>
         ) : (
-          isLoading ? <p>Loading...</p> : <p>No data</p>
+          <p>No data</p>
         )}
       </IonRow>
     </>

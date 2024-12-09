@@ -49,7 +49,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
   /* Hooks */
   const { makeRequest, isLoading } = useRequestData();
   const { makeRequest: deleteMakeRequest } = useRequestData();
-  const { takePhoto, photoUrl, handleUpload, removeImage } = useImageHandler();
+  const { takePhoto, photoUrl, handleUpload } = useImageHandler();
   const { role, clearAuthToken, clearRoleToken } = useAuth();
 
   useEffect(() => {
@@ -196,7 +196,6 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
                   handleDeleteAccount({
                     data: { id: userData.id, avatar: userData.avatar },
                     makeRequest: deleteMakeRequest,
-                    removeImage,
                     clearAuthToken,
                     clearRoleToken,
                     history,

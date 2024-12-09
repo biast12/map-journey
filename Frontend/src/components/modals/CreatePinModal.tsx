@@ -48,7 +48,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
   /* Hooks */
   const { makeRequest } = useRequestData();
   const { userID, role } = useAuth();
-  const { photoUrl, takePhoto, handleUpload, removeImage } = useImageHandler();
+  const { photoUrl, takePhoto, handleUpload } = useImageHandler();
 
   useEffect(() => {
     const refs = [
@@ -197,11 +197,15 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
         />
       </IonItem>
       <IonItem>
-        <label>{`${t("modals.create_pin.visibility")}:`}</label>
         <IonToggle
           checked={status}
+          enableOnOffLabels={true}
           onIonChange={(e) => setStatus(e.detail.checked)}
-        />
+        >
+          {status
+            ? t("modals.create_pin.public")
+            : t("modals.create_pin.private")}:
+        </IonToggle>
       </IonItem>
       <div id="confirmButton">
         <IonButton onClick={handleConfirm} ref={confirmButton}>

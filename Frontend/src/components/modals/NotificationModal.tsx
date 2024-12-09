@@ -107,8 +107,10 @@ const NotificationModal: React.FC = () => {
                 >
                   <IonLabel>
                     <h2>{notification.title}</h2>
-                    <p>{notification.text}</p>
-                    <small>{notification.date}</small>
+                    <section>
+                      {notification.text.split("\n").map((text: string)=><p>{text}</p>)}
+                    </section>
+                    <small>{new Date(notification.date).toDateString()}</small>
                   </IonLabel>
                 </IonItem>
               ))}

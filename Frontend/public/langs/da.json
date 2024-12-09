@@ -18,9 +18,10 @@
       "location": "Placering",
       "description": "Beskrivelse",
       "description_placeholder": "Din beskrivelse her",
-      "visibility": "Offentlig",
       "successful": "Pin oprettet succesfuldt",
       "error_message": "Kunne ikke oprette pin",
+      "public": "Offentlig",
+      "private": "Privat",
       "submit": "Bekræft"
     },
     "create_user": {
@@ -108,6 +109,9 @@
           "header": "Slet",
           "message": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
           "cancel": "Annuller"
+        },
+        "pins": {
+          "card_title": "Dine Pins"
         }
       },
       "general": {
