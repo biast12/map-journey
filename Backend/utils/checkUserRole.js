@@ -15,8 +15,15 @@ const checkUserRole = (requiredRole) => {
         .eq("id", userID)
         .single();
 
-      if (error || !user) {
-        console.error("Error fetching user role:", error || "User not found");
+      if (error) {
+        if (error.code === "PGRST116") {
+          return res.status(401).send("Unauthorized: User not found");
+        }
+        console.error("Error fetching user role:", error);
+        return res.status(500).send("Server error during authorization");
+      }
+
+      if (!user) {
         return res.status(401).send("Unauthorized: User not found");
       }
 

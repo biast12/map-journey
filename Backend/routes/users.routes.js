@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const checkApiKey = require("../utils/apiKeyCheck");
 const generateUniqueId = require("../utils/uuid-generator");
 const checkUserRole = require("../utils/checkUserRole");
+const deleteImageFromBucket = require("../utils/deleteBucketIMGs");
 
 router.use(checkApiKey);
 
@@ -227,6 +228,7 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
 
     if (fetchError) {
       console.error("Error fetching user status:", fetchError);
+      await deleteImageFromBucket(avatar);
       return res.status(500).json({ error: "Error fetching user status" });
     }
 
@@ -260,12 +262,14 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
 
     if (error) {
       console.error("Error updating user:", error);
+      await deleteImageFromBucket(avatar);
       return res.status(500).json({ error: "Error updating user" });
     }
 
     res.status(200).json({ message: "User updated successfully", user: data });
   } catch (error) {
     console.error("Error during user update:", error);
+    await deleteImageFromBucket(avatar);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -339,7 +343,7 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
   try {
     const { data: profile, error: fetchProfileError } = await supabase
       .from("profile")
-      .select("settings_id")
+      .select("settings_id, avatar, banner")
       .eq("id", userID)
       .single();
 
@@ -352,7 +356,7 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const { settings_id } = profile;
+    const { settings_id, avatar, banner } = profile;
 
     const { data: pins, error: fetchPinsError } = await supabase
       .from("pins")
@@ -366,6 +370,8 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
 
     if (pins.length > 0) {
       const pinIds = pins.map((pin) => pin.id);
+      const imgurls = userPins.map((pin) => pin.imgurls )
+      await deleteImageFromBucket(imgurls);
       const { error: deletePinReportsError } = await supabase
         .from("reports")
         .delete()
@@ -408,6 +414,8 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
         return res.status(500).json({ error: "Error deleting user settings" });
       }
     }
+
+    await deleteImageFromBucket([avatar, banner]);
 
     const { error: deleteProfileError } = await supabase
       .from("profile")

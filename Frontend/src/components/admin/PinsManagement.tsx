@@ -29,7 +29,7 @@ const PinsManagement = ({ url }: { url: string }) => {
   const { userID, role } = useAuth();
 
   async function handleDeletePin(pinData: PinData) {
-    await delMakeRequest(`pins/${pinData.id}/${userID}`, "DELETE")
+    await delMakeRequest(`pins/${userID}/${pinData.id}`, "DELETE")
 
     setSelectedPin(null);
     setShowModal(false);
@@ -37,7 +37,7 @@ const PinsManagement = ({ url }: { url: string }) => {
 
   useEffect(() => {
     makeRequest(`${url}/${userID}`);
-  }, []);
+  }, [userID]);
 
   function filterData(pinData: PinData) {
     if (searchOptions.status !== "all" && pinData.status !== searchOptions.status) {

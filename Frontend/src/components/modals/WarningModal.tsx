@@ -42,7 +42,7 @@ const WarningModal: React.FC<WarningModalProps> = ({
 
   useEffect(() => {
     if (data.status === "warning") {
-      makeRequest(`users/seen/${userID}`);
+      makeRequest(`reports/seen/${userID}`, 'POST');
     }
   }, []);
 
