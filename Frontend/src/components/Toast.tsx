@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { IonToast } from "@ionic/react";
-import { alertCircle } from "ionicons/icons";
+import { checkmarkCircleOutline, alertCircle } from "ionicons/icons";
 import "./Toast.scss";
 
-let showToastMessage: (message: string) => void;
+type ToastType = "error" | "warning" | "success" | "default";
+
+let showToastMessage: (message: string, type?: ToastType) => void;
 
 const Toast = () => {
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
+  const [toastType, setToastType] = useState<ToastType>("default");
 
-  showToastMessage = (message: string) => {
+  showToastMessage = (message: string, type?: ToastType) => {
     setToastMessage(message);
+    type && setToastType(type);
     setShowToast(true);
   };
 
@@ -20,11 +24,11 @@ const Toast = () => {
         isOpen={showToast}
         onDidDismiss={() => setShowToast(false)}
         message={toastMessage}
-        icon={alertCircle}
+        icon={toastType === "success" ? checkmarkCircleOutline : alertCircle}
         position="middle"
         swipeGesture="vertical"
         text-wrap={true}
-        className="custom-toast"
+        className={`custom-toast ${toastType}-toast`}
         duration={5000}
         buttons={[
           {

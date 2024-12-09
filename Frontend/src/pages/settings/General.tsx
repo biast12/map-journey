@@ -115,8 +115,9 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
         updatedData
       );
       changeLanguage(updatedData.language);
+      showToastMessage(t("pages.settings.general.successful"), "success");
     } catch (error) {
-      showToastMessage(t("pages.settings.general.error_message"));
+      showToastMessage(t("pages.settings.general.error_message"), "error");
     }
   };
 

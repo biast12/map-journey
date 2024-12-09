@@ -19,6 +19,8 @@
       "description": "Beskrivelse",
       "description_placeholder": "Din beskrivelse her",
       "visibility": "Offentlig",
+      "successful": "Pin oprettet succesfuldt",
+      "error_message": "Kunne ikke oprette pin",
       "submit": "Bekræft"
     },
     "create_user": {
@@ -116,8 +118,9 @@
         "language": "Sprog",
         "language_placeholder": "Vælg Sprog",
         "notification": "Aktiver Notifikationer",
-        "submit": "Gem",
-        "error_message": "Kunne ikke hente indstillinger"
+        "successful": "Indstillinger opdateret succesfuldt",
+        "error_message": "Kunne ikke hente indstillinger",
+        "submit": "Gem"
       }
     },
     "errorpage": {

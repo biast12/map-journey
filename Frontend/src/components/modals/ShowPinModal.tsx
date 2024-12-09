@@ -47,7 +47,7 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
   };
 
   const copySharedLink = async () => {
-    const domain = "https://mapjourney.biast12.info";
+    const domain = "https://map-journey.com";
     const url = `${domain}/globalmap?pin=${pinData.id}`;
 
     if (navigator.clipboard) {

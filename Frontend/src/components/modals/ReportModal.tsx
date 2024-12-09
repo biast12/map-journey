@@ -74,11 +74,11 @@ const ReportModal = ({
         { "Content-Type": "application/json" },
         payload
       );
-      showToastMessage(t("modals.report.successful"));
+      showToastMessage(t("modals.report.successful"), "success");
       closeReportModal();
       role === "admin" && console.log("Reported successfully");
     } catch (error) {
-      showToastMessage(t("modals.report.failed", { type: reportedType }));
+      showToastMessage(t("modals.report.failed", { type: reportedType }), "error");
     }
   }
 

@@ -36,7 +36,7 @@ const PinsManagement = ({ url }: { url: string }) => {
       setShowModal(false);
       await makeRequest(`${url}/${userID}`);
     } catch (error) {
-      showToastMessage("Failed to delete pin");
+      showToastMessage("Failed to delete pin", "error");
     }
   }
 
@@ -45,7 +45,7 @@ const PinsManagement = ({ url }: { url: string }) => {
       try {
         await makeRequest(`${url}/${userID}`);
       } catch (error) {
-        showToastMessage("Failed to fetch user data");
+        showToastMessage("Failed to fetch user data", "error");
       }
     };
 

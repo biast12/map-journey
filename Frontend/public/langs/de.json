@@ -19,6 +19,8 @@
       "description": "Beschreibung",
       "description_placeholder": "Ihre Beschreibung hier",
       "visibility": "Öffentlich",
+      "successful": "Pin erfolgreich erstellt",
+      "error_message": "Pin konnte nicht erstellt werden",
       "submit": "Bestätigen"
     },
     "create_user": {
@@ -116,8 +118,9 @@
         "language": "Sprache",
         "language_placeholder": "Sprache auswählen",
         "notification": "Benachrichtigungen aktivieren",
-        "submit": "Speichern",
-        "error_message": "Einstellungen konnten nicht abgerufen werden"
+        "successful": "Einstellungen erfolgreich aktualisiert",
+        "error_message": "Einstellungen konnten nicht abgerufen werden",
+        "submit": "Speichern"
       }
     },
     "errorpage": {

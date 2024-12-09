@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Route, Redirect, Switch, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 /* Hooks */
 import useRequestData from "../hooks/useRequestData";
@@ -14,6 +15,8 @@ import Settings from "../pages/settings";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import TermsOfService from "../pages/TermsOfService"
 
+import Toast, { showToastMessage } from "../components/Toast";
+
 /* Settings Pages */
 import General from "../pages/settings/General";
 import Account from "../pages/settings/Account";
@@ -21,14 +24,23 @@ import Pins from "../pages/settings/Pins";
 import ErrorPage from "../pages/ErrorPage";
 
 export const Routes = () => {
-  const { makeRequest, data, error, isLoading } = useRequestData();
+  const { t } = useTranslation();
+  const { makeRequest, data, isLoading } = useRequestData();
   const { userID, role, loading, storeAuthToken, storeRoleToken } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
-    if (userID && !loading) {
-      makeRequest(`users/${userID}`);
-    }
+    const fetchData = async () => {
+      if (userID && !loading) {
+        try {
+          await makeRequest(`users/${userID}`);
+        } catch (error) {
+          showToastMessage(t("header.error_message"), "error");
+        }
+      }
+    };
+
+    fetchData();
   }, [userID, loading]);
 
   useEffect(() => {

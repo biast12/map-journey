@@ -40,7 +40,7 @@ const ReportManagement = () => {
       setSelectedReport(null);
       setShowModal(false);
     } catch (error) {
-      showToastMessage("Failed to perform action");
+      showToastMessage("Failed to perform action", "error");
     }
   }
 
@@ -49,7 +49,7 @@ const ReportManagement = () => {
       try {
         await makeRequest(`reports/all/${userID}`);
       } catch (error) {
-        showToastMessage("Failed to fetch reports");
+        showToastMessage("Failed to fetch reports", "error");
       }
     };
 

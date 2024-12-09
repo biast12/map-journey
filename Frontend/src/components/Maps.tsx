@@ -122,7 +122,7 @@ function Map({ APIurl, pinID }: MapProps) {
       try {
         await makeRequest(`pins/${APIurl}`);
       } catch (error) {
-        showToastMessage(t("map.error_message"));
+        showToastMessage(t("map.error_message"), "error");
       }
     };
 

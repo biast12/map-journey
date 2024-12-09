@@ -43,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
         try {
           await makeRequest(`users/${userID}`);
         } catch (error) {
-          showToastMessage(t("header.error_message"));
+          showToastMessage(t("header.error_message"), "error");
         }
       }
     };

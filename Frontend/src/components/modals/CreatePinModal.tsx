@@ -74,7 +74,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
     }
 
     if (profanityFilter(title) || profanityFilter(description)) {
-      showToastMessage(t("profanityFilter"));
+      showToastMessage(t("profanityFilter"), "warning");
       return;
     }
 
@@ -98,11 +98,11 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
 
       await makeRequest(`pins/${userID}`, "POST", undefined, formData);
       onClose();
+      showToastMessage(t("modals.create_pin.successful"), "success");
+      setIsSubmitting(false);
     } catch (error) {
       await removeImage(fileName);
-    } finally {
-      role === "admin" && console.log("Pin created successfully");
-      setIsSubmitting(false);
+      showToastMessage(t("modals.create_pin.error_message"), "error");
     }
   };
 

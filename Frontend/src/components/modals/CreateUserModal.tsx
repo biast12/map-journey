@@ -52,7 +52,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
     formEvent.preventDefault();
 
     if (!agreeToTerms) {
-      showToastMessage(t("modals.create_user.agree_to_terms_required"));
+      showToastMessage(t("modals.create_user.agree_to_terms_required"), "warning");
       return;
     }
 
@@ -67,7 +67,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
     }
 
     if (profanityFilter(name as string)) {
-      showToastMessage(t("profanityFilter"));
+      showToastMessage(t("profanityFilter"), "warning");
       return;
     }
 
@@ -81,7 +81,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
         { name, email, password }
       );
     } catch (error) {
-      showToastMessage(t("modals.create_user.error_message"));
+      showToastMessage(t("modals.create_user.error_message"), "error");
     }
   }
 
@@ -94,7 +94,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
       closeLoginModal();
     } else if (error) {
       setCreateSuccess(false);
-      showToastMessage("User creation failed");
+      showToastMessage("User creation failed", "error");
       clearAuthToken();
       clearRoleToken();
     }

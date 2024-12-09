@@ -19,6 +19,8 @@
       "description": "Description",
       "description_placeholder": "Your description here",
       "visibility": "Public",
+      "successful": "Pin created successfully",
+      "error_message": "Failed to create pin",
       "submit": "Confirm"
     },
     "create_user": {
@@ -116,8 +118,9 @@
         "language": "Language",
         "language_placeholder": "Select Language",
         "notification": "Enable Notifications",
-        "submit": "Save",
-        "error_message": "Failed to get settings"
+        "successful": "Settings updated successfully",
+        "error_message": "Failed to get settings",
+        "submit": "Save"
       }
     },
     "errorpage": {

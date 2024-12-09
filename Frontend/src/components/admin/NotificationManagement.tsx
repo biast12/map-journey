@@ -50,7 +50,7 @@ const NotificationManagement = () => {
       setSelectedNotif(null);
       await makeRequest("notification/all/" + userID);
     } catch (error) {
-      showToastMessage("Failed to create news");
+      showToastMessage("Failed to create news", "error");
     }
   }
 
@@ -59,7 +59,7 @@ const NotificationManagement = () => {
       await delMakeRequest(`notification/${userID}/${notifData.id}`, "DELETE");
       await makeRequest("notification/all/" + userID);
     } catch (error) {
-      showToastMessage("Failed to delete news");
+      showToastMessage("Failed to delete news", "error");
     }
   }
 
@@ -68,7 +68,7 @@ const NotificationManagement = () => {
       try {
         await makeRequest("notification/all/" + userID);
       } catch (error) {
-        showToastMessage("Failed to fetch news");
+        showToastMessage("Failed to fetch news", "error");
       }
     };
   

@@ -23,9 +23,9 @@ type UserSearchOptions = {
 };
 
 const UserManagement = () => {
-  const { makeRequest, data, error, isLoading } = useRequestData();
-  const { makeRequest: delMakeRequest, error: delError, isLoading: delIsLoading } = useRequestData();
-  const { makeRequest: editMakeRequest, error: editError, isLoading: editIsLoading } = useRequestData();
+  const { makeRequest, data, isLoading } = useRequestData();
+  const { makeRequest: delMakeRequest, isLoading: delIsLoading } = useRequestData();
+  const { makeRequest: editMakeRequest, isLoading: editIsLoading } = useRequestData();
 
   const [selectedUser, setSelectedUser] = useState<null | UserData>(null);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
@@ -60,7 +60,7 @@ const UserManagement = () => {
       setSelectedUser(null);
       setHandlingRequest(false);
     } catch (error) {
-      showToastMessage("Failed to edit user");
+      showToastMessage("Failed to edit user", "error");
     }
   }
   async function handleUserDelete(userData: UserData) {
@@ -74,7 +74,7 @@ const UserManagement = () => {
       setSelectedUser(null);
       setHandlingRequest(false);
     } catch (error) {
-      showToastMessage("Failed to delete user");
+      showToastMessage("Failed to delete user", "error");
     }
   }
 
@@ -83,7 +83,7 @@ const UserManagement = () => {
       try {
         await makeRequest(`users/all/${userID}`);
       } catch (error) {
-        showToastMessage("Failed to fetch user data");
+        showToastMessage("Failed to fetch user data", "error");
       }
     };
 
