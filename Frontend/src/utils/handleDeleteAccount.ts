@@ -1,19 +1,20 @@
-import { useHistory } from "react-router-dom";
-import useAuth from "../hooks/ProviderContext";
-import useRequestData from "../hooks/useRequestData";
-
 interface DeleteAccountProps {
   data: {
     id: string;
     avatar: string;
   };
+  makeRequest: (url: string, method: string) => Promise<void>;
+  clearAuthToken: () => Promise<void>;
+  clearRoleToken: () => Promise<void>;
+  history: any;
 }
-
-const handleDeleteAccount = async ({ data }: DeleteAccountProps) => {
-  const history = useHistory();
-  const { clearAuthToken, clearRoleToken } = useAuth();
-  const { makeRequest } = useRequestData();
-
+const handleDeleteAccount = async ({
+  data,
+  makeRequest,
+  clearAuthToken,
+  clearRoleToken,
+  history,
+}: DeleteAccountProps) => {
   try {
     await makeRequest(`users/${data.id}`, "DELETE");
     await clearAuthToken();

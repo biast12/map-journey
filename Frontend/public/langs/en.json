@@ -18,7 +18,8 @@
       "location": "Location",
       "description": "Description",
       "description_placeholder": "Your description here",
-      "visibility": "Public",
+      "public": "Public",
+      "private": "Private",
       "submit": "Confirm"
     },
     "create_user": {
@@ -29,6 +30,9 @@
       "email_placeholder": "Your email here",
       "password": "Password",
       "password_placeholder": "Your password here",
+      "agree_to_terms": "I agree to the",
+      "terms_of_service": "terms of service",
+      "agree_to_terms_required": "You must agree to the terms of service",
       "submit": "Create user",
       "close": "Close",
       "failed": "User creation failed! Check the inputs",
@@ -93,7 +97,7 @@
           "cancel": "Cancel"
         }
       },
-      "accounts": {
+      "account": {
         "card_title": "Account",
         "img_alt": "User avatar",
         "username": "Username",
@@ -122,6 +126,9 @@
         "notification": "Enable Notifications",
         "submit": "Save",
         "error_page_message": "Failed to get settings, please try again later"
+      },
+      "pins": {
+        "card_title": "Your Pins"
       }
     },
     "errorpage": {

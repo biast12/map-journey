@@ -10,9 +10,11 @@ import {
   IonIcon,
 } from "@ionic/react";
 import { trashOutline } from "ionicons/icons";
+import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useAuth from "../../hooks/ProviderContext";
 import useRequestData from "../../hooks/useRequestData";
+import useImageHandler from "../../hooks/useImageHandler";
 import handleDeleteAccount from "../../utils/handleDeleteAccount";
 import "./WarningModal.scss";
 
@@ -30,8 +32,11 @@ const WarningModal: React.FC<WarningModalProps> = ({
   closeWarningModal,
 }) => {
   const { t } = useTranslation();
-  const { userID } = useAuth();
+  const history = useHistory();
+  const { userID, clearAuthToken, clearRoleToken } = useAuth();
   const { makeRequest } = useRequestData();
+  const { makeRequest: deleteMakeRequest } = useRequestData();
+  const { removeImage } = useImageHandler();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -55,10 +60,10 @@ const WarningModal: React.FC<WarningModalProps> = ({
           {data.status === "warning"
             ? t("modals.warning.warning")
             : data.status === "reported"
-              ? t("modals.warning.reported")
-              : data.status === "banned"
-                ? t("modals.warning.banned")
-                : null}
+            ? t("modals.warning.reported")
+            : data.status === "banned"
+            ? t("modals.warning.banned")
+            : null}
         </p>
         <p>{t("modals.warning.support")}</p>
       </IonCardContent>
@@ -102,6 +107,11 @@ const WarningModal: React.FC<WarningModalProps> = ({
               handler: () => {
                 handleDeleteAccount({
                   data: { id: data.id, avatar: data.avatar },
+                  makeRequest: deleteMakeRequest,
+                  removeImage,
+                  clearAuthToken,
+                  clearRoleToken,
+                  history,
                 });
               },
             },

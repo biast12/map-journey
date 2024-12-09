@@ -18,7 +18,8 @@
       "location": "Placering",
       "description": "Beskrivelse",
       "description_placeholder": "Din beskrivelse her",
-      "visibility": "Offentlig",
+      "public": "Offentlig",
+      "private": "Privat",
       "submit": "Bekræft"
     },
     "create_user": {
@@ -29,6 +30,9 @@
       "email_placeholder": "Din email her",
       "password": "Adgangskode",
       "password_placeholder": "Din adgangskode her",
+      "agree_to_terms": "Jeg accepterer",
+      "terms_of_service": "vilkårene for brug",
+      "agree_to_terms_required": "Du skal acceptere vilkårene for brug",
       "submit": "Opret bruger",
       "close": "Luk",
       "failed": "Brugeroprettelse mislykkedes! Tjek indtastningerne",
@@ -93,7 +97,7 @@
           "cancel": "Annuller"
         }
       },
-      "accounts": {
+      "account": {
         "card_title": "Konto",
         "img_alt": "Bruger avatar",
         "username": "Brugernavn",
@@ -110,6 +114,9 @@
           "message": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
           "yes": "Ja",
           "cancel": "Annuller"
+        },
+        "pins": {
+          "card_title": "Dine Pins"
         }
       },
       "general": {

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { RouteComponentProps } from "react-router";
 import { useTranslation } from "react-i18next";
 import useAuth from "../hooks/ProviderContext";
@@ -12,6 +13,15 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = ({ match }) => {
   const { t } = useTranslation();
   const { role } = useAuth();
   role === "admin" && console.log(match);
+
+  useEffect(() => {
+    document.title = "Map Journey - Error!";
+
+    return () => {
+      document.title = "Map Journey";
+    };
+  }, []);
+
   return (
     <div id="errorContainer">
       <h1>

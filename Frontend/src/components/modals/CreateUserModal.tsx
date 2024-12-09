@@ -6,15 +6,26 @@ import {
   IonButton,
   IonInput,
   IonInputPasswordToggle,
+  IonItem,
+  IonLabel,
+  IonCheckbox,
+  IonText,
 } from "@ionic/react";
 import { useTranslation } from "react-i18next";
+
+/* Hooks */
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
+
+/* Utils */
 import profanityFilter from "../../utils/profanityFilter";
-import "./CreateUserModal.scss";
+
+/* Components */
 import Loader from "../Loader";
 import Error from "../Error";
 import Toast, { showToastMessage } from "../Toast";
+
+import "./CreateUserModal.scss";
 
 interface CreateUserProps {
   closeCreateUserModal: () => void;
@@ -26,6 +37,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   closeLoginModal,
 }) => {
   const [createSuccess, setCreateSuccess] = useState<boolean | null>(null);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   const { t } = useTranslation();
   const { makeRequest, isLoading, data, error } = useRequestData();
@@ -39,6 +51,11 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
 
   async function handleCreateUser(formEvent: FormEvent) {
     formEvent.preventDefault();
+
+    if (!agreeToTerms) {
+      showToastMessage(t("modals.create_user.agree_to_terms_required"));
+      return;
+    }
 
     const formData = new FormData(formEvent.target as HTMLFormElement);
     const name = formData.get("name");
@@ -120,8 +137,27 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
           >
             <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
           </IonInput>
+          <IonItem lines="none">
+            <IonCheckbox
+              slot="start"
+              checked={agreeToTerms}
+              onIonChange={() => setAgreeToTerms(!agreeToTerms)}
+            />
+            <IonLabel>
+              {t("modals.create_user.agree_to_terms")}{" "}
+              <a
+                href="https://map-journey.com/terms-of-service"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t("modals.create_user.terms_of_service")}
+              </a>
+            </IonLabel>
+          </IonItem>
           {createSuccess === false && (
-            <p id="createFailed">{t("modals.create_user.failed")}</p>
+            <IonText color="danger">
+              <p id="createFailed">{t("modals.create_user.failed")}</p>
+            </IonText>
           )}
           <IonButton
             type="submit"

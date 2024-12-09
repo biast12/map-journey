@@ -58,6 +58,14 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
   };
 
   useEffect(() => {
+    document.title = "Map Journey - General Settings";
+
+    return () => {
+      document.title = "Map Journey";
+    };
+  }, []);
+
+  useEffect(() => {
     const importLanguages = async () => {
       const languageFiles = import.meta.glob<{ lang: string }>(
         "/public/langs/*.json"

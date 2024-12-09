@@ -295,10 +295,6 @@ router.put("/:id/:userid", checkUserRole("admin"), async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    if (currentUser.status === "banned") {
-      return res.status(403).json({ error: "Cannot update a banned user" });
-    }
-
     const updatedFields = {};
     if (avatar) updatedFields.avatar = avatar;
     if (name) updatedFields.name = name;
@@ -306,9 +302,9 @@ router.put("/:id/:userid", checkUserRole("admin"), async (req, res) => {
     if (password) updatedFields.password = await bcrypt.hash(password, 10);
 
     if (status) {
-      const allowedStatuses = ["public", "private"];
+      const allowedStatuses = ["public", "private", "warning", "banned"];
       if (!allowedStatuses.includes(status)) {
-        return res.status(400).json({ error: "Invalid status value. Allowed values are 'public' or 'private'." });
+        return res.status(400).json({ error: "Invalid status value." });
       }
       updatedFields.status = status;
     }

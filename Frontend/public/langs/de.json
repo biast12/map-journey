@@ -18,7 +18,8 @@
       "location": "Ort",
       "description": "Beschreibung",
       "description_placeholder": "Ihre Beschreibung hier",
-      "visibility": "Öffentlich",
+      "public": "Öffentlich",
+      "private": "Privat",
       "submit": "Bestätigen"
     },
     "create_user": {
@@ -29,6 +30,9 @@
       "email_placeholder": "Ihre E-Mail hier",
       "password": "Passwort",
       "password_placeholder": "Ihr Passwort hier",
+      "agree_to_terms": "Ich stimme den",
+      "terms_of_service": "Nutzungsbedingungen zu",
+      "agree_to_terms_required": "Sie müssen den Nutzungsbedingungen zustimmen",
       "submit": "Benutzer erstellen",
       "close": "Schließen",
       "failed": "Benutzererstellung fehlgeschlagen! Überprüfen Sie die Eingaben",
@@ -94,7 +98,7 @@
           "cancel": "Abbrechen"
         }
       },
-      "accounts": {
+      "account": {
         "card_title": "Konto",
         "img_alt": "Benutzeravatar",
         "username": "Benutzername",
@@ -123,6 +127,9 @@
         "notification": "Benachrichtigungen aktivieren",
         "submit": "Speichern",
         "error_page_message": "Einstellungen konnten nicht abgerufen werden, bitte versuchen Sie es später erneut"
+      },
+      "pins": {
+        "card_title": "Ihre Pins"
       }
     },
     "errorpage": {

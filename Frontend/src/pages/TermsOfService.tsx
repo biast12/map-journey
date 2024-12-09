@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   IonContent,
   IonHeader,
@@ -11,6 +11,14 @@ import "./TOS&PP.scss";
 
 const TermsOfService: React.FC = () => {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    document.title = "Map Journey - Terms Of Service";
+
+    return () => {
+      document.title = "Map Journey";
+    };
+  }, []);
 
   const sections = [
     "introduction",

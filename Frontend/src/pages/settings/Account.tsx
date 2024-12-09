@@ -11,6 +11,7 @@ import {
   IonAlert,
 } from "@ionic/react";
 import { pencilSharp, trashOutline, close } from "ionicons/icons";
+import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 /* Hooks */
@@ -24,7 +25,7 @@ import Loader from "../../components/Loader";
 import Error from "../../components/Error";
 import Toast, { showToastMessage } from "../../components/Toast";
 
-import "./Accounts.scss";
+import "./Account.scss";
 
 interface UserDataProps {
   userData: {
@@ -37,6 +38,7 @@ interface UserDataProps {
 
 const Account: React.FC<UserDataProps> = ({ userData }) => {
   const { t } = useTranslation();
+  const history = useHistory();
 
   /* States */
   const [username, setUsername] = useState(userData.name);
@@ -47,8 +49,17 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
 
   /* Hooks */
   const { makeRequest, isLoading, error } = useRequestData();
+  const { makeRequest: deleteMakeRequest } = useRequestData();
   const { takePhoto, photoUrl, handleUpload } = useImageHandler();
-  const { role } = useAuth();
+  const { role, clearAuthToken, clearRoleToken } = useAuth();
+
+  useEffect(() => {
+    document.title = "Map Journey - Account Settings";
+
+    return () => {
+      document.title = "Map Journey";
+    };
+  }, []);
 
   useEffect(() => {
     if (photoUrl) {
@@ -80,7 +91,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
     };
 
     if (!updatedData.name || !updatedData.email) {
-      showToastMessage(t("pages.settings.accounts.required_fields"));
+      showToastMessage(t("pages.settings.account.required_fields"));
       return;
     }
 
@@ -100,7 +111,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
     if (!error) {
       showToastMessage(t("pages.settings.accounts.successful"));
     } else {
-      showToastMessage(t("pages.settings.accounts.error_fetch"));
+      showToastMessage(t("pages.settings.account.error_fetch"));
     }
   };
 
@@ -108,11 +119,11 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
     <>
       {isLoading && <Loader />}
       {!isLoading && error && (
-        <Error message={t("pages.settings.accounts.error_page_message")} />
+        <Error message={t("pages.settings.account.error_page_message")} />
       )}
       <IonHeader>
         <IonToolbar>
-          <IonTitle>{t("pages.settings.accounts.card_title")}</IonTitle>
+          <IonTitle>{t("pages.settings.account.card_title")}</IonTitle>
           <IonButton slot="end" routerLink="/settings" fill="clear">
             <IonIcon icon={close} />
           </IonButton>
@@ -122,7 +133,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
         <div className="imageContainer">
           <img
             id="showPinImage"
-            alt={t("pages.settings.accounts.img_alt")}
+            alt={t("pages.settings.account.img_alt")}
             src={avatar}
             onClick={async () => {
               await takePhoto();
@@ -133,14 +144,14 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
           <div className="inlineTags">
             <IonInput
               value={username}
-              placeholder={t("pages.settings.accounts.username")}
+              placeholder={t("pages.settings.account.username")}
               onIonChange={(e) => setUsername(e.detail.value!)}
             />
           </div>
           <div className="inlineTags">
             <IonInput
               value={email}
-              placeholder={t("pages.settings.accounts.email")}
+              placeholder={t("pages.settings.account.email")}
               onIonChange={(e) => setEmail(e.detail.value!)}
             />
           </div>
@@ -148,17 +159,17 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
             <IonInput
               value={password}
               type="password"
-              placeholder={t("pages.settings.accounts.password")}
+              placeholder={t("pages.settings.account.password")}
               onIonChange={(e) => setPassword(e.detail.value!)}
             />
           </div>
           <IonButton onClick={handleSave} disabled={isLoading}>
             <IonIcon icon={pencilSharp}></IonIcon>
-            {t("pages.settings.accounts.submit")}
+            {t("pages.settings.account.submit")}
           </IonButton>
           <IonButton color="danger" onClick={() => setShowDeleteModal(true)}>
             <IonIcon icon={trashOutline}></IonIcon>
-            {t("pages.settings.accounts.delete.header")}
+            {t("pages.settings.account.delete.header")}
           </IonButton>
         </div>
         <IonModal
@@ -168,23 +179,27 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
           <IonAlert
             isOpen={showDeleteModal}
             onDidDismiss={() => setShowDeleteModal(false)}
-            header={t("pages.settings.accounts.delete.header")}
-            message={t("pages.settings.accounts.delete.message")}
+            header={t("pages.settings.account.delete.header")}
+            message={t("pages.settings.account.delete.message")}
             buttons={[
               {
-                text: t("pages.settings.accounts.delete.cancel"),
+                text: t("pages.settings.account.delete.cancel"),
                 role: t(
-                  "pages.settings.accounts.delete.cancel"
+                  "pages.settings.account.delete.cancel"
                 ).toLocaleLowerCase(),
                 handler: () => {
                   setShowDeleteModal(false);
                 },
               },
               {
-                text: t("pages.settings.accounts.delete.header"),
+                text: t("pages.settings.account.delete.header"),
                 handler: () => {
                   handleDeleteAccount({
                     data: { id: userData.id, avatar: userData.avatar },
+                    makeRequest: deleteMakeRequest,
+                    clearAuthToken,
+                    clearRoleToken,
+                    history,
                   });
                 },
               },
