@@ -7,7 +7,6 @@ const checkUserRole = require("../utils/checkUserRole");
 
 router.use(checkApiKey);
 
-
 // Root route
 router.get("/", (req, res) => {
   res.json({
@@ -139,7 +138,5 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-
 
 module.exports = router;

@@ -91,8 +91,6 @@ router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   }
 });
 
-
-
 // Get pins by user ID
 router.get("/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
@@ -157,7 +155,6 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
   }
 });
 
-
 // Create a new pin
 router.post("/:id", checkUserRole("user"), async (req, res) => {
   const profile_id = req.params.id;
@@ -197,6 +194,39 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
         .json({ error: "You are banned and cannot create a pin." });
     }
 
+    let adjustedLongitude = parseFloat(longitude);
+    let adjustedLatitude = parseFloat(latitude);
+    let isUnique = false;
+
+    while (!isUnique) {
+      console.log("Checking Longitude:", adjustedLongitude.toFixed(7));
+      console.log("Checking Latitude:", adjustedLatitude.toFixed(7));
+
+      const { data: existingPin } = await supabase
+        .from("pins")
+        .select("id")
+        .eq("longitude", adjustedLongitude.toFixed(7))
+        .eq("latitude", adjustedLatitude.toFixed(7))
+        .single();
+
+      if (existingPin) {
+        console.log(
+          `Conflict found at Longitude: ${adjustedLongitude.toFixed(7)}, Latitude: ${adjustedLatitude.toFixed(7)}`
+        );
+
+        adjustedLongitude += (Math.random() > 0.5 ? 1 : -1) * 0.000005;
+        adjustedLatitude += (Math.random() > 0.5 ? 1 : -1) * 0.000005;
+
+        adjustedLongitude = parseFloat(adjustedLongitude.toFixed(7));
+        adjustedLatitude = parseFloat(adjustedLatitude.toFixed(7));
+      } else {
+        isUnique = true;
+        console.log(
+          `Unique coordinates found: Longitude: ${adjustedLongitude.toFixed(7)}, Latitude: ${adjustedLatitude.toFixed(7)}`
+        );
+      }
+    }
+
     const uniqueId = await generateUniqueId();
 
     const pinData = {
@@ -205,8 +235,8 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
       title,
       description,
       location,
-      longitude,
-      latitude,
+      longitude: adjustedLongitude.toFixed(7),
+      latitude: adjustedLatitude.toFixed(7),
       imgurls,
       status: status === "true" ? "public" : "private",
     };
