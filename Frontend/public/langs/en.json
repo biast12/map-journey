@@ -18,7 +18,8 @@
       "location": "Location",
       "description": "Description",
       "description_placeholder": "Your description here",
-      "visibility": "Public",
+      "public": "Public",
+      "private": "Private",
       "submit": "Confirm"
     },
     "create_user": {
@@ -125,6 +126,9 @@
         "notification": "Enable Notifications",
         "submit": "Save",
         "error_page_message": "Failed to get settings, please try again later"
+      },
+      "pins": {
+        "card_title": "Your Pins"
       }
     },
     "errorpage": {

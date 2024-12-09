@@ -1,5 +1,15 @@
 import { useEffect } from "react";
-import { IonContent, IonGrid } from "@ionic/react";
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonGrid,
+} from "@ionic/react";
+import { close } from "ionicons/icons";
+import { useTranslation } from "react-i18next";
 
 /* Components */
 import PinsManagement from "../../components/admin/PinsManagement";
@@ -7,6 +17,8 @@ import PinsManagement from "../../components/admin/PinsManagement";
 import "./Pins.scss";
 
 const Pins = () => {
+  const { t } = useTranslation();
+
   useEffect(() => {
     document.title = "Map Journey - Pins Settings";
 
@@ -16,12 +28,21 @@ const Pins = () => {
   }, []);
 
   return (
-    <IonContent>
-      <IonGrid fixed>
-        <h1>Your Pins</h1>
-        <PinsManagement url={"pins"} />
-      </IonGrid>
-    </IonContent>
+    <>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>{t("pages.settings.pins.card_title")}</IonTitle>
+          <IonButton slot="end" routerLink="/settings" fill="clear">
+            <IonIcon icon={close} />
+          </IonButton>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent>
+        <IonGrid fixed>
+          <PinsManagement url={"pins"} />
+        </IonGrid>
+      </IonContent>
+    </>
   );
 };
 
