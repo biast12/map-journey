@@ -15,7 +15,7 @@ const NotificationColumn = ({ notifData, onDeleteUserClick }: { notifData: Notif
         </div>
         <div className="notifInfo">
           <p>Title: {notifData.title}</p>
-          <p>Text: {notifData.text}</p>
+          <p>{notifData.text.split("\n").map((text: string)=><p>{text}</p>)}</p>
         </div>
       </section>
       <section className="reportText"></section>

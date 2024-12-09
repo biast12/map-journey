@@ -37,7 +37,8 @@ const EditUserModal = ({ userData, showModal, setShowModal, onSubmit }: EditUser
           <select defaultValue={userData.status} name="status" title="Status">
             <option value="public">Public</option>
             <option value="private">Private</option>
-            <option value="reported">Reported</option>
+            <option value="warning">Warned</option>
+            <option value="banned">Banned</option>
           </select>
           <IonButton className="submitButton" type="submit">
             Save changes
