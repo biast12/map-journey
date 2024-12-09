@@ -21,7 +21,11 @@ type ReportSearchOptions = {
 
 const ReportManagement = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { makeRequest: rpMakeRequest, error: rpError, isLoading: rpIsLoading } = useRequestData();
+  const {
+    makeRequest: rpMakeRequest,
+    error: rpError,
+    isLoading: rpIsLoading,
+  } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedReport, setSelectedReport] = useState<null | ReportData>(null);
   const [searchOptions, setSearchOptions] = useState<ReportSearchOptions>({
@@ -32,8 +36,16 @@ const ReportManagement = () => {
 
   const { userID } = useAuth();
 
-  async function handleReportAction(reportData: ReportData, action: "dismiss" | "warn" | "ban") {
-    await rpMakeRequest(`reports/${userID}/${reportData.id}`, "POST", undefined, { action: action });
+  async function handleReportAction(
+    reportData: ReportData,
+    action: "dismiss" | "warn" | "ban"
+  ) {
+    await rpMakeRequest(
+      `reports/${userID}/${reportData.id}`,
+      "POST",
+      undefined,
+      { action: action }
+    );
 
     makeRequest(`reports/all/${userID}`);
     setSelectedReport(null);
@@ -53,27 +65,46 @@ const ReportManagement = () => {
       return reportData.id
         .toString()
         .toLowerCase()
-        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
+        .match(
+          searchOptions.search
+            .toLowerCase()
+            .replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+        );
     }
 
     if (searchOptions.searchBy === "name") {
       return reportData.reporting_user.name
         .toLowerCase()
-        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
+        .match(
+          searchOptions.search
+            .toLowerCase()
+            .replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+        );
     }
 
     if (searchOptions.searchBy === "text") {
       return reportData.text
         .toLowerCase()
-        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
+        .match(
+          searchOptions.search
+            .toLowerCase()
+            .replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+        );
     }
   }
 
   return (
     <>
-      {error || rpError && <Error message="Error" />}
+      {error || (rpError && <Error message="Error" />)}
       {rpIsLoading && <Loader />}
-      {selectedReport && <ReportActionModal selectedReport={selectedReport} showModal={showModal} setShowModal={setShowModal} handleReportAction={handleReportAction} />}
+      {selectedReport && (
+        <ReportActionModal
+          selectedReport={selectedReport}
+          showModal={showModal}
+          setShowModal={setShowModal}
+          handleReportAction={handleReportAction}
+        />
+      )}
       <article className="searchOptions">
         <section>
           <label htmlFor="searchParams">Search </label>
@@ -104,21 +135,30 @@ const ReportManagement = () => {
       </article>
       <IonRow id="reportsRow">
         {data ? (
-          data
-            .sort((a: ReportData, b: ReportData) => new Date(b.date).getTime() - new Date(a.date).getTime())
-            .filter(filterData)
-            .map((reportData: ReportData) => (
-              <ReportColumn
-                key={reportData.id}
-                reportData={reportData}
-                onManageClick={(e) => {
-                  setSelectedReport(reportData);
-                  setShowModal(true);
-                }}
-              />
-            ))
+          data.filter(filterData).length === 0 ? (
+            <p>No reports found</p>
+          ) : (
+            data
+              .sort(
+                (a: ReportData, b: ReportData) =>
+                  new Date(b.date).getTime() - new Date(a.date).getTime()
+              )
+              .filter(filterData)
+              .map((reportData: ReportData) => (
+                <ReportColumn
+                  key={reportData.id}
+                  reportData={reportData}
+                  onManageClick={(e) => {
+                    setSelectedReport(reportData);
+                    setShowModal(true);
+                  }}
+                />
+              ))
+          )
+        ) : isLoading ? (
+          <p>Loading...</p>
         ) : (
-          isLoading ? <p>Loading...</p> : <p>No data</p>
+          <p>No data</p>
         )}
       </IonRow>
     </>

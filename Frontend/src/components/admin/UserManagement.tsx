@@ -19,13 +19,21 @@ type UserSearchOptions = {
   searchBy: "id" | "name";
   sortBy: "id" | "name";
   role: "all" | "user" | "admin";
-  status: "all" | "public" | "private" | "reported" | "warning" | "banned"
+  status: "all" | "public" | "private" | "reported" | "warning" | "banned";
 };
 
 const UserManagement = () => {
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { makeRequest: delMakeRequest, error: delError, isLoading: delIsLoading } = useRequestData();
-  const { makeRequest: editMakeRequest, error: editError, isLoading: editIsLoading } = useRequestData();
+  const {
+    makeRequest: delMakeRequest,
+    error: delError,
+    isLoading: delIsLoading,
+  } = useRequestData();
+  const {
+    makeRequest: editMakeRequest,
+    error: editError,
+    isLoading: editIsLoading,
+  } = useRequestData();
 
   const [selectedUser, setSelectedUser] = useState<null | UserData>(null);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
@@ -52,7 +60,12 @@ const UserManagement = () => {
       status: form.status.value,
     };
 
-    await editMakeRequest(`users/${userID}/${userData.id}`, "PUT", undefined, body);
+    await editMakeRequest(
+      `users/${userID}/${userData.id}`,
+      "PUT",
+      undefined,
+      body
+    );
     makeRequest(`users/all/${userID}`);
 
     setShowEditModal(false);
@@ -75,7 +88,12 @@ const UserManagement = () => {
   }, []);
 
   function filterData(userData: UserData) {
-    if ((searchOptions.role !== "all" && userData.role !== searchOptions.role) || (searchOptions.status !== "all" && userData.status !== searchOptions.status) || userData.id === userID) {
+    if (
+      (searchOptions.role !== "all" && userData.role !== searchOptions.role) ||
+      (searchOptions.status !== "all" &&
+        userData.status !== searchOptions.status) ||
+      userData.id === userID
+    ) {
       return false;
     }
 
@@ -85,14 +103,18 @@ const UserManagement = () => {
       return userData[searchOptions.searchBy]
         .toString()
         .toLowerCase()
-        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
+        .match(
+          searchOptions.search
+            .toLowerCase()
+            .replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+        );
     }
   }
 
   return (
     <>
-      {error || delError || editError && <Error message="Error" />}
-      {delIsLoading || editIsLoading && <Loader />}
+      {error || delError || (editError && <Error message="Error" />)}
+      {delIsLoading || (editIsLoading && <Loader />)}
       {selectedUser && (
         <EditUserModal
           userData={selectedUser}
@@ -107,7 +129,10 @@ const UserManagement = () => {
         backdropDismiss={!handlingRequest}
         header="Are you sure?"
         message="Deleting is a permanent action!"
-        buttons={["Cancel", { text: "Confirm", handler: () => handleUserDelete(selectedUser!) }]}
+        buttons={[
+          "Cancel",
+          { text: "Confirm", handler: () => handleUserDelete(selectedUser!) },
+        ]}
       />
 
       <article className="searchOptions">
@@ -157,7 +182,13 @@ const UserManagement = () => {
             name="statusParams"
             title="Status"
             onChange={(e) => {
-              const value = e.target.value as "all" | "public" | "private" | "reported" | "warning" | "banned";
+              const value = e.target.value as
+                | "all"
+                | "public"
+                | "private"
+                | "reported"
+                | "warning"
+                | "banned";
               setSearchOptions({ ...searchOptions, status: value });
             }}
           >
@@ -172,24 +203,30 @@ const UserManagement = () => {
       </article>
       <IonRow id="userRow">
         {data ? (
-          data.filter(filterData).map((userData: UserData) => (
-            <UserColumn
-              key={userData.id}
-              userData={userData}
-              onEditUserClick={() => {
-                if (handlingRequest) return;
-                setSelectedUser(userData);
-                setShowEditModal(true);
-              }}
-              onDeleteUserClick={() => {
-                if (handlingRequest) return;
-                setSelectedUser(userData);
-                setShowDeleteModal(true);
-              }}
-            />
-          ))
+          data.filter(filterData).length === 0 ? (
+            <p>No users found</p>
+          ) : (
+            data.filter(filterData).map((userData: UserData) => (
+              <UserColumn
+                key={userData.id}
+                userData={userData}
+                onEditUserClick={() => {
+                  if (handlingRequest) return;
+                  setSelectedUser(userData);
+                  setShowEditModal(true);
+                }}
+                onDeleteUserClick={() => {
+                  if (handlingRequest) return;
+                  setSelectedUser(userData);
+                  setShowDeleteModal(true);
+                }}
+              />
+            ))
+          )
+        ) : isLoading ? (
+          <p>Loading...</p>
         ) : (
-          isLoading ? <p>Loading...</p> : <p>No data</p>
+          <p>No data</p>
         )}
       </IonRow>
     </>

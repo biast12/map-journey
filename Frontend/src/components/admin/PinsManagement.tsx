@@ -15,7 +15,11 @@ import "./PinsManagement.scss";
 
 const PinsManagement = ({ url }: { url: string }) => {
   const { makeRequest, data, error, isLoading } = useRequestData();
-  const { makeRequest: delMakeRequest, error: delError, isLoading: delIsLoading } = useRequestData();
+  const {
+    makeRequest: delMakeRequest,
+    error: delError,
+    isLoading: delIsLoading,
+  } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [selectedPin, setSelectedPin] = useState<null | PinData>(null);
@@ -29,10 +33,11 @@ const PinsManagement = ({ url }: { url: string }) => {
   const { userID, role } = useAuth();
 
   async function handleDeletePin(pinData: PinData) {
-    await delMakeRequest(`pins/${userID}/${pinData.id}`, "DELETE")
+    await delMakeRequest(`pins/${userID}/${pinData.id}`, "DELETE");
 
     setSelectedPin(null);
     setShowModal(false);
+    makeRequest(`${url}/${userID}`);
   }
 
   useEffect(() => {
@@ -40,7 +45,10 @@ const PinsManagement = ({ url }: { url: string }) => {
   }, [userID]);
 
   function filterData(pinData: PinData) {
-    if (searchOptions.status !== "all" && pinData.status !== searchOptions.status) {
+    if (
+      searchOptions.status !== "all" &&
+      pinData.status !== searchOptions.status
+    ) {
       return false;
     }
 
@@ -50,22 +58,36 @@ const PinsManagement = ({ url }: { url: string }) => {
       return pinData[searchOptions.searchBy]
         .toString()
         .toLowerCase()
-        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
+        .match(
+          searchOptions.search
+            .toLowerCase()
+            .replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+        );
     }
   }
 
   return (
     <>
-      {error || delError && <Error message="Error" />}
+      {error || (delError && <Error message="Error" />)}
       {delIsLoading && <Loader />}
       <IonAlert
         isOpen={showAlert}
         onDidDismiss={() => setShowAlert(false)}
         header="Are you sure?"
         message="Deleting is a permanent action!"
-        buttons={["Cancel", { text: "Confirm", handler: () => handleDeletePin(selectedPin!) }]}
+        buttons={[
+          "Cancel",
+          { text: "Confirm", handler: () => handleDeletePin(selectedPin!) },
+        ]}
       />
-      {selectedPin && <EditPinModal selectedPin={selectedPin} showModal={showModal} setShowModal={setShowModal} setShowAlert={setShowAlert} />}
+      {selectedPin && (
+        <EditPinModal
+          selectedPin={selectedPin}
+          showModal={showModal}
+          setShowModal={setShowModal}
+          setShowAlert={setShowAlert}
+        />
+      )}
       <article className="searchOptions">
         <section>
           <label htmlFor="searchParams">Search </label>
@@ -111,18 +133,24 @@ const PinsManagement = ({ url }: { url: string }) => {
       </article>
       <IonRow id="pinsRow">
         {data ? (
-          data.filter(filterData).map((pinData: PinData) => (
-            <PinsColumn
-              key={pinData.id}
-              pinData={pinData}
-              onManageClick={() => {
-                setSelectedPin(pinData);
-                setShowModal(true);
-              }}
-            />
-          ))
+          data.filter(filterData).length === 0 ? (
+            <p>No pins found</p>
+          ) : (
+            data.filter(filterData).map((pinData: PinData) => (
+              <PinsColumn
+                key={pinData.id}
+                pinData={pinData}
+                onManageClick={() => {
+                  setSelectedPin(pinData);
+                  setShowModal(true);
+                }}
+              />
+            ))
+          )
+        ) : isLoading ? (
+          <p>Loading...</p>
         ) : (
-          isLoading ? <p>Loading...</p> : <p>No data</p>
+          <p>No data</p>
         )}
       </IonRow>
     </>
