@@ -4,8 +4,13 @@ import { trashBin } from "ionicons/icons";
 
 import "./NotificationColumn.scss";
 
-const NotificationColumn = ({ notifData, onDeleteUserClick }: { notifData: NotificationData, onDeleteUserClick: (e: MouseEvent, notifData: NotificationData) => void }) => {
-
+const NotificationColumn = ({
+  notifData,
+  onDeleteUserClick,
+}: {
+  notifData: NotificationData;
+  onDeleteUserClick: (e: MouseEvent, notifData: NotificationData) => void;
+}) => {
   return (
     <IonCol class="notifColumn" size="12">
       <section className="notifCon">
@@ -15,11 +20,16 @@ const NotificationColumn = ({ notifData, onDeleteUserClick }: { notifData: Notif
         </div>
         <div className="notifInfo">
           <p>Title: {notifData.title}</p>
-          <p>{notifData.text.split("\n").map((text: string)=><p>{text}</p>)}</p>
+          {notifData.text.split("\n").map((text: string, index: number) => (
+            <p key={index}>{text}</p>
+          ))}
         </div>
       </section>
       <section className="reportText"></section>
-      <IonButton color="danger" onClick={(e) => onDeleteUserClick(e, notifData)}>
+      <IonButton
+        color="danger"
+        onClick={(e) => onDeleteUserClick(e, notifData)}
+      >
         <IonIcon aria-hidden="true" icon={trashBin} />
       </IonButton>
     </IonCol>
