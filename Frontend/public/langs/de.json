@@ -65,6 +65,8 @@
     },
     "pin": {
       "img_alt": "Benutzeravatar",
+      "link_copied": "Link kopiert",
+      "error_copying_link": "Fehler beim Kopieren des Links",
       "report_user": "Benutzer melden",
       "report_pin": "Pin melden"
     },

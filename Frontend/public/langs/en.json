@@ -65,6 +65,8 @@
     },
     "pin": {
       "img_alt": "User avatar",
+      "link_copied": "Link copied",
+      "error_copying_link": "Error copying link",
       "report_user": "Report user",
       "report_pin": "Report pin"
     },

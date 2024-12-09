@@ -14,7 +14,6 @@ import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useAuth from "../../hooks/ProviderContext";
 import useRequestData from "../../hooks/useRequestData";
-import useImageHandler from "../../hooks/useImageHandler";
 import handleDeleteAccount from "../../utils/handleDeleteAccount";
 import "./WarningModal.scss";
 
@@ -36,7 +35,6 @@ const WarningModal: React.FC<WarningModalProps> = ({
   const { userID, clearAuthToken, clearRoleToken } = useAuth();
   const { makeRequest } = useRequestData();
   const { makeRequest: deleteMakeRequest } = useRequestData();
-  const { removeImage } = useImageHandler();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -108,7 +106,6 @@ const WarningModal: React.FC<WarningModalProps> = ({
                 handleDeleteAccount({
                   data: { id: data.id, avatar: data.avatar },
                   makeRequest: deleteMakeRequest,
-                  removeImage,
                   clearAuthToken,
                   clearRoleToken,
                   history,

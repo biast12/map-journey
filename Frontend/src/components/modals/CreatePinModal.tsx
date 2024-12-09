@@ -101,7 +101,6 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
       showToastMessage(t("modals.create_pin.successful"), "success");
       setIsSubmitting(false);
     } catch (error) {
-      await removeImage(fileName);
       showToastMessage(t("modals.create_pin.error_message"), "error");
     }
   };

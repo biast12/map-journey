@@ -65,6 +65,8 @@
     },
     "pin": {
       "img_alt": "Bruger avatar",
+      "link_copied": "Link kopieret",
+      "error_copying_link": "Fejl ved kopiering af link",
       "report_user": "Anmeld bruger",
       "report_pin": "Anmeld pin"
     },
@@ -109,9 +111,6 @@
           "header": "Slet",
           "message": "Er du sikker på, at du vil slette din konto? Denne handling kan ikke fortrydes.",
           "cancel": "Annuller"
-        },
-        "pins": {
-          "card_title": "Dine Pins"
         }
       },
       "general": {
@@ -125,6 +124,9 @@
         "successful": "Indstillinger opdateret succesfuldt",
         "error_message": "Kunne ikke hente indstillinger",
         "submit": "Gem"
+      },
+      "pins": {
+        "card_title": "Dine Pins"
       }
     },
     "errorpage": {

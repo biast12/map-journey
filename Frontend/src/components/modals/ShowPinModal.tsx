@@ -16,7 +16,8 @@ import useAuth from "../../hooks/ProviderContext";
 
 import "./ShowPinModal.scss";
 
-/* Modal */
+/* Components */
+import Toast, { showToastMessage } from "../Toast";
 import ReportModal from "./ReportModal";
 
 interface ShowPinModalProps {
@@ -53,16 +54,18 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
     if (navigator.clipboard) {
       try {
         await navigator.clipboard.writeText(url);
-        role === "admin" && console.log("Link copied to clipboard");
+        showToastMessage(t("modals.pin.link_copied"), "success");
       } catch (err) {
+        showToastMessage(t("modals.pin.error_copying_link"), "error");
         console.error("Error copying link to clipboard", err);
       }
     } else {
       Clipboard.copy(url)
         .then(() => {
-          role === "admin" && console.log("Link copied to clipboard");
+          showToastMessage(t("modals.pin.link_copied"), "success");
         })
         .catch((err) => {
+          showToastMessage(t("modals.pin.error_copying_link"), "error");
           console.error("Error copying link to clipboard", err);
         });
     }
@@ -70,6 +73,7 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
 
   return (
     <IonCard>
+      <Toast />
       <IonCardHeader>
         <IonCardTitle>{pinData.title}</IonCardTitle>
         <div>
