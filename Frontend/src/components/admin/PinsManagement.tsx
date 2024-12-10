@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IonRow } from "@ionic/react";
+import { IonCol, IonRow } from "@ionic/react";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
@@ -78,8 +78,8 @@ const PinsManagement = ({ url }: { url: string }) => {
           onEdit={onEdit}
         />
       )}
-      <article className="searchOptions">
-        <section>
+      <IonRow className="searchOptions">
+        <IonCol>
           <label htmlFor="searchParams">Search </label>
           <input
             name="searchParams"
@@ -89,8 +89,8 @@ const PinsManagement = ({ url }: { url: string }) => {
               setSearchOptions({ ...searchOptions, search: e.target.value });
             }}
           />
-        </section>
-        <section>
+        </IonCol>
+        <IonCol>
           <label htmlFor="searchByParams">Search by </label>
           <select
             name="searchByParams"
@@ -104,8 +104,8 @@ const PinsManagement = ({ url }: { url: string }) => {
             {role === "admin" && <option value="id">Id</option>}
             <option value="description">Description</option>
           </select>
-        </section>
-        <section>
+        </IonCol>
+        <IonCol>
           <label htmlFor="statusParams">Status </label>
           <select
             name="statusParams"
@@ -119,8 +119,8 @@ const PinsManagement = ({ url }: { url: string }) => {
             <option value="public">Public</option>
             <option value="private">Private</option>
           </select>
-        </section>
-      </article>
+        </IonCol>
+      </IonRow>
       <IonRow id="pinsRow">
         {data ? (
           data.filter(filterData).length === 0 ? (

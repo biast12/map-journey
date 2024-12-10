@@ -1,5 +1,5 @@
 import { MouseEvent } from "react";
-import { IonButton, IonCol } from "@ionic/react";
+import { IonButton, IonCol, IonRow } from "@ionic/react";
 
 import useAuth from "../../hooks/ProviderContext";
 
@@ -10,22 +10,20 @@ const PinsColumn = ({ pinData, onManageClick }: { pinData: PinData; onManageClic
 
   return (
     <IonCol size="12" className="pinsColumn">
-      <section className="pinsCon">
-        <div className="pinsId">
-          {role === "admin" && (
-            <p>Id: {pinData.id}</p>
-          )}
-          <p>Date: {new Date(pinData.date).toUTCString()}</p>
-        </div>
+      <IonRow className="pinsCon">
+        <IonCol size="12" className="pinsId">
+          <IonRow>
+            <IonCol size="12" sizeMd="6" sizeLg="4">{role === "admin" && <p>Id: {pinData.id}</p>}</IonCol>
+            <IonCol size="12" sizeMd="6" sizeLg="4"><p>Date: {new Date(pinData.date).toUTCString()}</p></IonCol>
+          </IonRow>
+        </IonCol>
         <div className="pinsInfo">
           <p>Title: {pinData.title}</p>
-          {role === "admin" && (
-            <p>User: {pinData.profile.name}</p>
-          )}
+          {role === "admin" && <p>User: {pinData.profile.name}</p>}
           <p>Status: {pinData.status}</p>
           <p>Description: {pinData.description}</p>
         </div>
-      </section>
+      </IonRow>
       <IonButton onClick={onManageClick}>Manage</IonButton>
     </IonCol>
   );

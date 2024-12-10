@@ -50,6 +50,9 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
       status: form.status.value == "public" ? true : false,
     };
 
+    console.log(body)
+    console.log(form.status.value)
+
     if (photoUrl) {
       const { fileName: imageName, publicUrl } = await handleUpload();
       body.imgurls = publicUrl;

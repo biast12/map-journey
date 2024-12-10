@@ -286,7 +286,7 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
   if (longitude) updatedFields.longitude = longitude;
   if (latitude) updatedFields.latitude = latitude;
   if (imgurls) updatedFields.imgurls = imgurls;
-  if (status) updatedFields.status = status === true ? "public" : "private";
+  if (typeof(status) === "boolean") updatedFields.status = status === true ? "public" : "private";
 
   try {
     const { data: userProfile, error: userProfileError } = await supabase

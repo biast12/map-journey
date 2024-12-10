@@ -19,9 +19,11 @@
     }
 
     .pinsId {
-      display: flex;
-      width: 100%;
-      gap: 0.5rem;
+      ion-col {
+        flex-grow: 0;
+       
+      }
+
       p {
         margin-top: 0.5rem;
         font-size: 0.8rem;
