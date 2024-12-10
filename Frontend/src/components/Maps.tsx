@@ -63,10 +63,10 @@ const mousePositionControl = new MousePosition({
   target: document.getElementById("mouse-position") as HTMLElement,
 });
 
-function createStyle(size: number = 0.3) {
+function createStyle(size: number = 0.5) {
   return new Style({
     image: new Icon({
-      anchor: [0.5, 0.96],
+      anchor: [0.5, 0.90],
       crossOrigin: "anonymous",
       src: "icons/ping.webp",
       scale: size,
