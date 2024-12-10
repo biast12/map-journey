@@ -297,7 +297,7 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
 
     if (userProfileError) {
       console.error("Error fetching user profile:", userProfileError);
-      await deleteImageFromBucket(imgurls);
+      if (imgurls) await deleteImageFromBucket(imgurls);
       return res.status(500).json({ error: "Error fetching user profile" });
     }
 
@@ -309,7 +309,7 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
 
     const { data: pin, error: pinCheckError } = await supabase
       .from("pins")
-      .select("profile_id")
+      .select("profile_id, imgurls")
       .eq("id", pinID)
       .single();
 
@@ -321,6 +321,10 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
       return res.status(403).json({ error: "Unauthorized to update this pin" });
     }
 
+    if (imgurls && pin.imgurls && imgurls !== pin.imgurls) {
+      await deleteImageFromBucket(pin.imgurls);
+    }
+
     const { error: updateError } = await supabase
       .from("pins")
       .update(updatedFields)
@@ -328,14 +332,14 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
 
     if (updateError) {
       console.error("Error updating pin:", updateError);
-      await deleteImageFromBucket(imgurls);
+      if (imgurls) await deleteImageFromBucket(imgurls);
       return res.status(500).json({ error: "Error updating pin" });
     }
 
     res.status(200).json({ message: "Pin updated successfully" });
   } catch (error) {
     console.error("Error during pin update:", error);
-    await deleteImageFromBucket(imgurls);
+    if (imgurls) await deleteImageFromBucket(imgurls);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
