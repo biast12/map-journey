@@ -30,7 +30,7 @@ const PinsManagement = ({ url }: { url: string }) => {
 
   async function handleDeletePin(pinData: PinData) {
     try {
-      await delMakeRequest(`pins/${pinData.id}/${userID}`, "DELETE")
+      await delMakeRequest(`pins/${pinData.id}/${userID}`, "DELETE");
 
       setSelectedPin(null);
       setShowModal(false);
@@ -42,15 +42,17 @@ const PinsManagement = ({ url }: { url: string }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        await makeRequest(`${url}/${userID}`);
-      } catch (error) {
-        showToastMessage("Failed to fetch user data", "error");
+      if (userID) {
+        try {
+          await makeRequest(`${url}/${userID}`);
+        } catch (error) {
+          showToastMessage("Failed to fetch user data", "error");
+        }
       }
     };
 
     fetchData();
-  }, []);
+  }, [userID]);
 
   function filterData(pinData: PinData) {
     if (

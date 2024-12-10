@@ -30,7 +30,6 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   const { t } = useTranslation();
   const { makeRequest, data, isLoading } = useRequestData();
   const { userID, role, loading } = useAuth();
-  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [hasWarningModalOpened, setHasWarningModalOpened] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
 
@@ -39,7 +38,7 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (userID && !loading) {
+      if (userID) {
         try {
           await makeRequest(`users/${userID}`);
         } catch (error) {
@@ -49,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
     };
 
     fetchData();
-  }, [userID, loading, isNotificationModalOpen]);
+  }, [userID]);
 
   useEffect(() => {
     if (
@@ -66,7 +65,7 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   }, [data, isLoading]);
 
   const handleOpenNotificationModal = () => {
-    setIsNotificationModalOpen(true);
+    data.news_count = 0;
     openNotificationModal();
   };
 
