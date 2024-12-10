@@ -1,6 +1,6 @@
 "use client";
 import { FormEvent, useEffect, useState } from "react";
-import { IonAlert, IonRow } from "@ionic/react";
+import { IonAlert, IonCol, IonRow } from "@ionic/react";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
@@ -138,8 +138,8 @@ const UserManagement = () => {
         ]}
       />
 
-      <article className="searchOptions">
-        <section>
+      <IonRow className="searchOptions">
+        <IonCol>
           <label htmlFor="searchParams">Search </label>
           <input
             name="searchParams"
@@ -149,8 +149,8 @@ const UserManagement = () => {
               setSearchOptions({ ...searchOptions, search: e.target.value });
             }}
           />
-        </section>
-        <section>
+        </IonCol>
+        <IonCol>
           <label htmlFor="searchByParams">Search by </label>
           <select
             name="searchByParams"
@@ -163,8 +163,8 @@ const UserManagement = () => {
             <option value="name">Name</option>
             <option value="id">Id</option>
           </select>
-        </section>
-        <section>
+        </IonCol>
+        <IonCol>
           <label htmlFor="roleParams">Role </label>
           <select
             name="roleParams"
@@ -178,8 +178,8 @@ const UserManagement = () => {
             <option value="user">User</option>
             <option value="admin">Admin</option>
           </select>
-        </section>
-        <section>
+        </IonCol>
+        <IonCol>
           <label htmlFor="statusParams">Status </label>
           <select
             name="statusParams"
@@ -202,8 +202,8 @@ const UserManagement = () => {
             <option value="warning">Warned</option>
             <option value="banned">Banned</option>
           </select>
-        </section>
-      </article>
+        </IonCol>
+      </IonRow>
       <IonRow id="userRow">
         {data ? (
           data.filter(filterData).length === 0 ? (

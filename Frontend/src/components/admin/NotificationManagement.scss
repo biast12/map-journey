@@ -25,7 +25,12 @@
     }
   }
 }
-
+.searchOptions {
+  ion-col {
+    flex-grow: 0;
+    text-wrap: nowrap;
+  }
+}
 .successText {
   color: rgb(0, 171, 0);
   margin: 0;
