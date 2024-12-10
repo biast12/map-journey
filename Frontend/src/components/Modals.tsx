@@ -26,7 +26,7 @@ const Modals: React.FC<ModalsProps> = ({
   showNotificationModal,
   closeNotificationModal,
 }) => {
-  const { userID, loading } = useAuth();
+  const { userID } = useAuth();
   return (
     <>
       <IonModal

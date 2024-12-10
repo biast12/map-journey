@@ -9,7 +9,7 @@ import {
   IonIcon,
 } from "@ionic/react";
 import { Clipboard } from "@ionic-native/clipboard";
-import { shareSocialOutline, logoGoogle} from "ionicons/icons";
+import { shareSocialOutline, logoGoogle } from "ionicons/icons";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import useAuth from "../../hooks/ProviderContext";
@@ -37,13 +37,13 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
 
   const openGoogleCoordinates = () => {
     const url = `https://www.google.com/maps/search/?api=1&query=${pinData.latitude},${pinData.longitude}`;
-  
+
     if (navigator.userAgent.match(/(Android)/)) {
       // Open in Google Maps app on mobile devices
       window.location.href = `geo:${pinData.latitude},${pinData.longitude}?q=${pinData.latitude},${pinData.longitude}`;
     } else {
       // Open in a new window on desktop
-      window.open(url, '_blank');
+      window.open(url, "_blank");
     }
   };
 
@@ -93,6 +93,12 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
             <IonIcon icon={shareSocialOutline} />
           </IonButton>
         </div>
+        {role === "admin" && (
+          <>
+            <p>Pin ID: {pinData.id}</p>
+            <p>User ID: {pinData.profile.id}</p>
+          </>
+        )}
       </IonCardContent>
       {!(userID == pinData.profile.id) && (
         <div id="showPinCardButtons">

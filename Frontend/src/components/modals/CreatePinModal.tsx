@@ -114,6 +114,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
       const position = await Geolocation.getCurrentPosition();
       const { latitude, longitude } = position.coords;
       const coordinates = fromLonLat([longitude, latitude]);
+      await new Promise((resolve) => setTimeout(resolve, 1001));
       const locationResponse = await fetch(
         `https://nominatim.openstreetmap.org/reverse.php?lat=${latitude}&lon=${longitude}&format=jsonv2`
       );
@@ -141,7 +142,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
   }, []);
 
   return (
-    <IonCard>
+    <IonCard className="create-pin">
       <IonCardHeader>
         <IonCardTitle>{t("modals.create_pin.card_title")}</IonCardTitle>
       </IonCardHeader>
@@ -181,6 +182,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
         <IonButton
           ref={locationButton}
           aria-label="Location"
+          id="locationButton"
           onClick={() => getLocation(true)}
         >
           <IonIcon icon={locationSharp} />

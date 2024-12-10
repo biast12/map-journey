@@ -63,10 +63,10 @@ const mousePositionControl = new MousePosition({
   target: document.getElementById("mouse-position") as HTMLElement,
 });
 
-function createStyle(size: number = 0.5) {
+function createStyle(size: number = 0.3) {
   return new Style({
     image: new Icon({
-      anchor: [0.5, 0.90],
+      anchor: [0.5, 0.9],
       crossOrigin: "anonymous",
       src: "icons/ping.webp",
       scale: size,
@@ -96,7 +96,11 @@ function createClusterStyle(feature: FeatureLike): Style {
       }),
     });
   } else {
-    style = createStyle();
+    if (navigator.userAgent.match(/(Android)/)) {
+      style = createStyle(0.5);
+    } else {
+      style = createStyle();
+    }
   }
   return style;
 }

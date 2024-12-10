@@ -104,7 +104,6 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
           )}
           <IonButton
             type="submit"
-            id="loginButton"
             expand="block"
             disabled={isLoading}
           >
@@ -112,7 +111,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
           </IonButton>
         </form>
         <IonButton
-          id="createUserButton"
+          id="create-user-button"
           expand="block"
           onClick={openCreateUserModal}
         >
