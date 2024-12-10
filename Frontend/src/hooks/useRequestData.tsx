@@ -11,7 +11,7 @@ makeRequest(`users/${id}`, "DELETE");
 // https://api.map-journey.com - Will only be online while Vikings server is online
 // https://map-journey.onrender.com - Will always be online but only use the persion from github
 // http://localhost:8101 - Will only be online while the server is running on your local machine
-const domain = "https://api.map-journey.com";
+const domain = "http://localhost:8101";
 
 interface RequestData {
   makeRequest: (

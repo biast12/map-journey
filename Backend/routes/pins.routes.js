@@ -278,7 +278,7 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
   const pinID = req.params.pinid;
   const { title, description, location, longitude, latitude, imgurls, status } =
     req.body;
-
+    
   const updatedFields = {};
   if (title) updatedFields.title = title;
   if (description) updatedFields.description = description;
@@ -291,7 +291,7 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
   try {
     const { data: userProfile, error: userProfileError } = await supabase
       .from("profile")
-      .select("status")
+      .select("status, role")
       .eq("id", userID)
       .single();
 
@@ -317,7 +317,8 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
       return res.status(404).json({ error: "Pin not found" });
     }
 
-    if (pin.profile_id !== userID) {
+    const isAdmin = userProfile.role === "admin";
+    if (pin.profile_id !== userID && !isAdmin) {
       return res.status(403).json({ error: "Unauthorized to update this pin" });
     }
 
