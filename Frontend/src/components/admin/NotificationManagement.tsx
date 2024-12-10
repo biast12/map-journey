@@ -29,7 +29,7 @@ const NotificationManagement = () => {
     makeRequest: createMakeRequest,
     data: createData,
     error: createError,
-    isLoading: createIsLoading
+    isLoading: createIsLoading,
   } = useRequestData();
   const { makeRequest: delMakeRequest, isLoading: delIsLoading } = useRequestData();
 
@@ -71,13 +71,13 @@ const NotificationManagement = () => {
         showToastMessage("Failed to fetch news", "error");
       }
     };
-  
+
     fetchData();
   }, []);
 
   return (
     <>
-      {createIsLoading || delIsLoading && <Loader />}
+      {createIsLoading || (delIsLoading && <Loader />)}
       <Toast />
       <IonAlert
         isOpen={showDeleteAlert}
@@ -98,35 +98,33 @@ const NotificationManagement = () => {
           {createError && !createIsLoading && <p className="errorText">Failed to create news!</p>}
         </IonCol>
         <IonCol size="12">
-          <IonRow>
-            <article className="searchOptions">
-              <section>
-                <label htmlFor="searchParams">Search </label>
-                <input
-                  name="searchParams"
-                  type="text"
-                  placeholder="Search..."
-                  onChange={(e) => {
-                    setSearchOptions({ ...searchOptions, search: e.target.value });
-                  }}
-                />
-              </section>
-              <section>
-                <label htmlFor="searchByParams">Search by </label>
-                <select
-                  name="searchByParams"
-                  title="searchBy"
-                  onChange={(e) => {
-                    const value = e.target.value as "title" | "text";
-                    setSearchOptions({ ...searchOptions, searchBy: value });
-                  }}
-                >
-                  <option value="title">Title</option>
-                  <option value="text">Text</option>
-                  <option value="id">Id</option>
-                </select>
-              </section>
-            </article>
+          <IonRow className="searchOptions">
+            <IonCol>
+              <label htmlFor="searchParams">Search </label>
+              <input
+                name="searchParams"
+                type="text"
+                placeholder="Search..."
+                onChange={(e) => {
+                  setSearchOptions({ ...searchOptions, search: e.target.value });
+                }}
+              />
+            </IonCol>
+            <IonCol>
+              <label htmlFor="searchByParams">Search by </label>
+              <select
+                name="searchByParams"
+                title="searchBy"
+                onChange={(e) => {
+                  const value = e.target.value as "title" | "text";
+                  setSearchOptions({ ...searchOptions, searchBy: value });
+                }}
+              >
+                <option value="title">Title</option>
+                <option value="text">Text</option>
+                <option value="id">Id</option>
+              </select>
+            </IonCol>
           </IonRow>
           <IonRow id="notifRow">
             {data ? (
@@ -152,8 +150,10 @@ const NotificationManagement = () => {
                     notifData={notifData}
                   />
                 ))
+            ) : isLoading ? (
+              <p>Loading...</p>
             ) : (
-              isLoading ? <p>Loading...</p> : <p>No data</p>
+              <p>No data</p>
             )}
           </IonRow>
         </IonCol>

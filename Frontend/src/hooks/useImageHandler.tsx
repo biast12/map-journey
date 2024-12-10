@@ -4,7 +4,7 @@ import supabase from "./useSupabaseClient";
 
 const useImageHandler = () => {
   const [photoUrl, setPhotoUrl] = useState<string>("");
-  const { takePhoto, photo, uploadImageToStorage, blob } = photoGallery();
+  const { takePhoto, photo, uploadImageToStorage, blob, loading } = photoGallery();
 
   useEffect(() => {
     if (photo && photo.webViewPath) {
@@ -54,6 +54,7 @@ const useImageHandler = () => {
 
   return {
     photoUrl,
+    loading,
     takePhoto,
     handleUpload,
     removeImage,

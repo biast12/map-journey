@@ -21,6 +21,7 @@ import useAuth from "../../hooks/ProviderContext";
 import useImageHandler from "../../hooks/useImageHandler";
 import profanityFilter from "../../utils/profanityFilter";
 import Toast, { showToastMessage } from "../Toast";
+import Loader from "../Loader";
 
 interface CreatePinModalProps {
   onClose: () => void;
@@ -48,7 +49,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
   /* Hooks */
   const { makeRequest } = useRequestData();
   const { userID, role } = useAuth();
-  const { photoUrl, takePhoto, handleUpload } = useImageHandler();
+  const { photoUrl, loading, takePhoto, handleUpload } = useImageHandler();
 
   useEffect(() => {
     const refs = [
@@ -80,11 +81,8 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
 
     setIsSubmitting(true);
 
-    let fileName = "";
-
     try {
-      const { fileName: imageName, publicUrl } = await handleUpload();
-      fileName = imageName;
+      const { publicUrl } = await handleUpload();
 
       const formData = new FormData();
       formData.append("title", title);
@@ -143,6 +141,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
 
   return (
     <IonCard className="create-pin">
+      {loading && <Loader />}
       <IonCardHeader>
         <IonCardTitle>{t("modals.create_pin.card_title")}</IonCardTitle>
       </IonCardHeader>

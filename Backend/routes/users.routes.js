@@ -360,7 +360,7 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
 
     const { data: pins, error: fetchPinsError } = await supabase
       .from("pins")
-      .select("id")
+      .select("id, imgurls")
       .eq("profile_id", userID);
 
     if (fetchPinsError) {
@@ -370,7 +370,7 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
 
     if (pins.length > 0) {
       const pinIds = pins.map((pin) => pin.id);
-      const imgurls = userPins.map((pin) => pin.imgurls )
+      const imgurls = pins.map((pin) => pin.imgurls);
       await deleteImageFromBucket(imgurls);
       const { error: deletePinReportsError } = await supabase
         .from("reports")

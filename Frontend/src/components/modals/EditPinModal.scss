@@ -26,6 +26,10 @@
       align-items: center;
       width: 100%;
 
+      ion-input {
+        text-align: center;
+      }
+
       figure {
         width: 100%;
         display: flex;
@@ -33,7 +37,7 @@
         flex-direction: column;
         margin: 0;
 
-        img {
+        ion-img {
           max-width: 600px;
           max-height: 160px;
           object-position: center;
@@ -51,7 +55,7 @@
       .descriptionText {
         border: 2px solid rgba(23, 23, 23, 0.386);
         border-radius: 3px;
-        padding: 2%;
+        
       }
 
       p {

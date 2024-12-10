@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IonRow } from "@ionic/react";
+import { IonCol, IonRow } from "@ionic/react";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
@@ -98,8 +98,8 @@ const ReportManagement = () => {
       {rpIsLoading && <Loader />}
       <Toast />
       {selectedReport && <ReportActionModal selectedReport={selectedReport} showModal={showModal} setShowModal={setShowModal} handleReportAction={handleReportAction} />}
-      <article className="searchOptions">
-        <section>
+      <IonRow className="searchOptions">
+        <IonCol>
           <label htmlFor="searchParams">Search </label>
           <input
             name="searchParams"
@@ -109,8 +109,8 @@ const ReportManagement = () => {
               setSearchOptions({ ...searchOptions, search: e.target.value });
             }}
           />
-        </section>
-        <section>
+        </IonCol>
+        <IonCol>
           <label htmlFor="searchByParams">Search by </label>
           <select
             name="searchByParams"
@@ -124,8 +124,8 @@ const ReportManagement = () => {
             <option value="id">Id</option>
             <option value="text">Text</option>
           </select>
-        </section>
-      </article>
+        </IonCol>
+      </IonRow>
       <IonRow id="reportsRow">
         {data ? (
           data.filter(filterData).length === 0 ? (

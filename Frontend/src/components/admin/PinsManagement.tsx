@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IonAlert, IonRow } from "@ionic/react";
+import { IonCol, IonRow } from "@ionic/react";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
@@ -9,15 +9,12 @@ import useAuth from "../../hooks/ProviderContext";
 import EditPinModal from "../modals/EditPinModal";
 import Toast, { showToastMessage } from "../Toast";
 import PinsColumn from "./PinsColumn";
-import Loader from "../Loader";
 
 import "./PinsManagement.scss";
 
 const PinsManagement = ({ url }: { url: string }) => {
   const { makeRequest, data, isLoading } = useRequestData();
-  const { makeRequest: delMakeRequest, isLoading: delIsLoading } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [showAlert, setShowAlert] = useState<boolean>(false);
   const [selectedPin, setSelectedPin] = useState<null | PinData>(null);
   const [searchOptions, setSearchOptions] = useState<PinSearchOptions>({
     search: "",
@@ -27,18 +24,6 @@ const PinsManagement = ({ url }: { url: string }) => {
   });
 
   const { userID, role } = useAuth();
-
-  async function handleDeletePin(pinData: PinData) {
-    try {
-      await delMakeRequest(`pins/${pinData.id}/${userID}`, "DELETE");
-
-      setSelectedPin(null);
-      setShowModal(false);
-      await makeRequest(`${url}/${userID}`);
-    } catch (error) {
-      showToastMessage("Failed to delete pin", "error");
-    }
-  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,10 +40,7 @@ const PinsManagement = ({ url }: { url: string }) => {
   }, [userID]);
 
   function filterData(pinData: PinData) {
-    if (
-      searchOptions.status !== "all" &&
-      pinData.status !== searchOptions.status
-    ) {
+    if (searchOptions.status !== "all" && pinData.status !== searchOptions.status) {
       return false;
     }
 
@@ -68,38 +50,36 @@ const PinsManagement = ({ url }: { url: string }) => {
       return pinData[searchOptions.searchBy]
         .toString()
         .toLowerCase()
-        .match(
-          searchOptions.search
-            .toLowerCase()
-            .replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
-        );
+        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
     }
   }
 
+  async function onDelete(isSuccess: boolean) {
+    if (isSuccess) {
+      setSelectedPin(null);
+      setShowModal(false);
+      await makeRequest(`${url}/${userID}`);
+    } else {
+      showToastMessage("Failed to delete pin", "error");
+    }
+  }
+
+  async function onEdit(isSuccess: boolean) {}
+
   return (
     <>
-      {delIsLoading && <Loader />}
       <Toast />
-      <IonAlert
-        isOpen={showAlert}
-        onDidDismiss={() => setShowAlert(false)}
-        header="Are you sure?"
-        message="Deleting is a permanent action!"
-        buttons={[
-          "Cancel",
-          { text: "Confirm", handler: () => handleDeletePin(selectedPin!) },
-        ]}
-      />
       {selectedPin && (
         <EditPinModal
-          selectedPin={selectedPin}
+          pinData={selectedPin}
           showModal={showModal}
           setShowModal={setShowModal}
-          setShowAlert={setShowAlert}
+          onDelete={onDelete}
+          onEdit={onEdit}
         />
       )}
-      <article className="searchOptions">
-        <section>
+      <IonRow className="searchOptions">
+        <IonCol>
           <label htmlFor="searchParams">Search </label>
           <input
             name="searchParams"
@@ -109,8 +89,8 @@ const PinsManagement = ({ url }: { url: string }) => {
               setSearchOptions({ ...searchOptions, search: e.target.value });
             }}
           />
-        </section>
-        <section>
+        </IonCol>
+        <IonCol>
           <label htmlFor="searchByParams">Search by </label>
           <select
             name="searchByParams"
@@ -124,8 +104,8 @@ const PinsManagement = ({ url }: { url: string }) => {
             {role === "admin" && <option value="id">Id</option>}
             <option value="description">Description</option>
           </select>
-        </section>
-        <section>
+        </IonCol>
+        <IonCol>
           <label htmlFor="statusParams">Status </label>
           <select
             name="statusParams"
@@ -139,8 +119,8 @@ const PinsManagement = ({ url }: { url: string }) => {
             <option value="public">Public</option>
             <option value="private">Private</option>
           </select>
-        </section>
-      </article>
+        </IonCol>
+      </IonRow>
       <IonRow id="pinsRow">
         {data ? (
           data.filter(filterData).length === 0 ? (

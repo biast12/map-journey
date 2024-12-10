@@ -6,7 +6,6 @@ import {
 } from "@capacitor/camera";
 import { Capacitor } from "@capacitor/core";
 import { Preferences } from "@capacitor/preferences";
-import { isPlatform } from "@ionic/react";
 import { useEffect, useState } from "react";
 import Compressor from "compressorjs";
 import useSupabaseClient from "../hooks/useSupabaseClient";
@@ -24,6 +23,7 @@ const photoGallery = () => {
 
   const [photo, setPhoto] = useState<UserPhoto>();
   const [blob, setBlob] = useState<Blob>();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (photo !== undefined) {
@@ -35,6 +35,7 @@ const photoGallery = () => {
   }, [photo]);
 
   const takePhoto = async () => {
+    setLoading(true);
     const photo = await Camera.getPhoto({
       resultType: CameraResultType.Uri,
       source: CameraSource.Camera,
@@ -111,7 +112,7 @@ const photoGallery = () => {
 
     return new Promise((resolve, reject) => {
       new Compressor(blob, {
-        quality: 0.1,
+        quality: 0.5,
         convertTypes: ["image/jpeg", "image/png"],
         convertSize: 10000,
         success: async (compressedResult: Blob) => {
@@ -129,10 +130,12 @@ const photoGallery = () => {
             fileName,
             compressedResult
           );
+          setLoading(false);
           resolve(savedFileImage);
         },
         error(err) {
           console.error("Compression error:", err);
+          setLoading(false);
           reject(err);
         },
       });
@@ -212,6 +215,7 @@ const photoGallery = () => {
   return {
     blob,
     photo,
+    loading,
     takePhoto,
     deletePhoto,
     uploadImageToStorage,
