@@ -36,6 +36,16 @@ ion-card {
     --padding-end: 1rem;
   }
 
+  .input-label-placement-fixed.sc-ion-input-md-h .label-text.sc-ion-input-md {
+    width: 60px;
+    min-width: 60px;
+  }
+
+  .sc-ion-input-md-s > [slot="end"]:first-of-type {
+    -webkit-margin-start: 0;
+    margin-inline-start: 0;
+  }
+
   #passwordInput {
     display: flex;
     align-items: center;
@@ -69,15 +79,18 @@ ion-card {
     --color: #2c2c2e;
     --background: #0a84ff;
     --ripple-color: #0a84ff;
+    font-weight: bold;
 
-    &.create-user-button {
+    &#create-user-button {
       margin-top: 0.5rem;
-      --background: #bf5af2;
+      --background: #dbdbdb;
     }
 
     &[disabled] {
+      opacity: 1;
+    }
+    &[disabled="true"] {
       opacity: 0.6;
-      cursor: not-allowed;
     }
   }
 }

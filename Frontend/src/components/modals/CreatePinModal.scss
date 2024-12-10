@@ -52,7 +52,16 @@ ion-item {
     --handle-border-radius: 1.5rem;
     --handle-height: 1.2rem;
     --handle-width: 1.3rem;
-    margin-left: 16px;
+  }
+}
+
+ion-card.create-pin {
+  ion-button#locationButton {
+    margin: 0 0 0 0.5rem;
+  }
+  .sc-ion-input-md {
+    --padding-start: 0;
+    --padding-end: 0;
   }
 }
 
