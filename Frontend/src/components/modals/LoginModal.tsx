@@ -15,7 +15,6 @@ import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
 
 /* Components */
-import Toast, { showToastMessage } from "../Toast";
 import Loader from "../Loader";
 
 /* Modal */
@@ -42,11 +41,6 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
     const formData = new FormData(formEvent.target as HTMLFormElement);
     const email = formData.get("email");
     const password = formData.get("password");
-
-    if (!email || !password) {
-      showToastMessage(t("required_fields"));
-      return;
-    }
 
     try {
       await makeRequest(
@@ -75,13 +69,13 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
   return (
     <>
       {isLoading && <Loader />}
-      <Toast />
       <IonCard>
         <IonCardHeader>
           <IonCardTitle>{t("modals.login.card_title")}</IonCardTitle>
         </IonCardHeader>
         <form action="" onSubmit={handleLogin}>
           <IonInput
+            required
             id="emailInput"
             name="email"
             type="email"
@@ -90,6 +84,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
             placeholder={t("modals.login.email_placeholder")}
           ></IonInput>
           <IonInput
+            required
             id="passwordInput"
             name="password"
             type="password"

@@ -49,7 +49,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
   /* Hooks */
   const { makeRequest, isLoading } = useRequestData();
   const { makeRequest: deleteMakeRequest } = useRequestData();
-  const { takePhoto, photoUrl, handleUpload } = useImageHandler();
+  const { photoUrl, loading, takePhoto, handleUpload } = useImageHandler();
   const { role, clearAuthToken, clearRoleToken } = useAuth();
 
   useEffect(() => {
@@ -115,7 +115,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
 
   return (
     <>
-      {isLoading && <Loader />}
+      {isLoading || loading && <Loader />}
       <Toast />
       <IonHeader>
         <IonToolbar>

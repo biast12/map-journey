@@ -19,25 +19,23 @@ const Toast = () => {
   };
 
   return (
-    <>
-      <IonToast
-        isOpen={showToast}
-        onDidDismiss={() => setShowToast(false)}
-        message={toastMessage}
-        icon={toastType === "success" ? checkmarkCircleOutline : alertCircle}
-        position="middle"
-        swipeGesture="vertical"
-        text-wrap={true}
-        className={`custom-toast ${toastType}-toast`}
-        duration={5000}
-        buttons={[
-          {
-            text: "Dismiss",
-            role: "cancel",
-          },
-        ]}
-      />
-    </>
+    <IonToast
+      isOpen={showToast}
+      onDidDismiss={() => setShowToast(false)}
+      message={toastMessage}
+      icon={toastType === "success" ? checkmarkCircleOutline : alertCircle}
+      position="middle"
+      swipeGesture="vertical"
+      text-wrap={true}
+      className={`custom-toast ${toastType}-toast`}
+      duration={5000}
+      buttons={[
+        {
+          text: "Dismiss",
+          role: "cancel",
+        },
+      ]}
+    />
   );
 };
 

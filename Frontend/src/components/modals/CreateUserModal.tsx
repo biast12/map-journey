@@ -35,7 +35,6 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   closeCreateUserModal,
   closeLoginModal,
 }) => {
-  const [createSuccess, setCreateSuccess] = useState<boolean | null>(null);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   const { t } = useTranslation();
@@ -61,11 +60,6 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
     const email = formData.get("email");
     const password = formData.get("password");
 
-    if (!name || !email || !password) {
-      showToastMessage(t("required_fields"));
-      return;
-    }
-
     if (profanityFilter(name as string)) {
       showToastMessage(t("profanityFilter"), "warning");
       return;
@@ -87,13 +81,11 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
 
   useEffect(() => {
     if (data) {
-      setCreateSuccess(true);
       storeAuthToken(data.id);
       storeRoleToken(data.role);
       closeCreateUserModal();
       closeLoginModal();
     } else if (error) {
-      setCreateSuccess(false);
       showToastMessage("User creation failed", "error");
       clearAuthToken();
       clearRoleToken();
@@ -155,11 +147,6 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
               </a>
             </IonLabel>
           </IonItem>
-          {createSuccess === false && (
-            <IonText color="danger">
-              <p id="createFailed">{t("modals.create_user.failed")}</p>
-            </IonText>
-          )}
           <IonButton
             type="submit"
             id="createButton"
