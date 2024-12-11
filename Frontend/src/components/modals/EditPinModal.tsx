@@ -1,5 +1,21 @@
-import React, { FormEvent, MouseEvent, useEffect, useRef, useState } from "react";
-import { IonAlert, IonButton, IonCol, IonGrid, IonIcon, IonImg, IonInput, IonRow, IonTextarea } from "@ionic/react";
+import React, {
+  FormEvent,
+  MouseEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  IonAlert,
+  IonButton,
+  IonCol,
+  IonGrid,
+  IonIcon,
+  IonImg,
+  IonInput,
+  IonRow,
+  IonTextarea,
+} from "@ionic/react";
 
 import Modal from "../Modal";
 
@@ -24,9 +40,17 @@ type FormValues = {
   status: string;
 };
 
-const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShowModal, onDelete, onEdit }) => {
-  const { makeRequest: delMakeRequest, isLoading: delIsLoading } = useRequestData();
-  const { makeRequest: editMakeRequest, isLoading: editIsLoading } = useRequestData();
+const EditPinModal: React.FC<EditPinModalProps> = ({
+  pinData,
+  showModal,
+  setShowModal,
+  onDelete,
+  onEdit,
+}) => {
+  const { makeRequest: delMakeRequest, isLoading: delIsLoading } =
+    useRequestData();
+  const { makeRequest: editMakeRequest, isLoading: editIsLoading } =
+    useRequestData();
   const { photoUrl, takePhoto, handleUpload } = useImageHandler();
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [showEditAlert, setShowEditAlert] = useState<boolean>(false);
@@ -76,7 +100,12 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
     setDebounce(true);
     setShowEditAlert(false);
 
-    const body: { imgurls: string | undefined; title: string; description: string; status: boolean } = {
+    const body: {
+      imgurls: string | undefined;
+      title: string;
+      description: string;
+      status: boolean;
+    } = {
       imgurls: undefined,
       title: formValues.title,
       description: formValues.description,
@@ -84,12 +113,17 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
     };
 
     if (photoUrl) {
-      const { fileName: imageName, publicUrl } = await handleUpload();
+      const { publicUrl } = await handleUpload();
       body.imgurls = publicUrl;
     }
 
     try {
-      await editMakeRequest(`pins/${userID}/${pinData.id}`, "PUT", undefined, body);
+      await editMakeRequest(
+        `pins/${userID}/${pinData.id}`,
+        "PUT",
+        undefined,
+        body
+      );
 
       onEdit(true);
     } catch {
@@ -101,7 +135,11 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
 
   useEffect(checkForChanges, [photoUrl, formValues]);
   useEffect(() => {
-    setFormValues({ title: pinData.title, description: pinData.description, status: pinData.status });
+    setFormValues({
+      title: pinData.title,
+      description: pinData.description,
+      status: pinData.status,
+    });
   }, [showModal]);
 
   return (
@@ -136,7 +174,12 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
                   name="pinTitle"
                   placeholder={pinData.title}
                   value={formValues.title}
-                  onIonInput={(e) => setFormValues({ ...formValues, title: String(e.target.value!) })}
+                  onIonInput={(e) =>
+                    setFormValues({
+                      ...formValues,
+                      title: String(e.target.value!),
+                    })
+                  }
                 />
                 <figure>
                   <IonImg src={photoUrl || pinData.imgurls} alt="User Photo" />
@@ -159,10 +202,17 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
                   placeholder={pinData.description}
                   value={formValues.description}
                   className="descriptionText"
-                  onIonInput={(e) => setFormValues({ ...formValues, description: e.target.value! })}
+                  onIonInput={(e) =>
+                    setFormValues({
+                      ...formValues,
+                      description: e.target.value!,
+                    })
+                  }
                 />
                 <select
-                  onChange={(e) => setFormValues({ ...formValues, status: e.target.value! })}
+                  onChange={(e) =>
+                    setFormValues({ ...formValues, status: e.target.value! })
+                  }
                   defaultValue={pinData.status}
                   name="status"
                   title="Status"
@@ -187,12 +237,20 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
           </IonRow>
           <IonRow id="pinButtonsRow">
             <IonCol size="4" className="pinButtons">
-              <IonButton disabled={debounce || !changesMade} color={"warning"} onClick={() => setShowEditAlert(true)}>
+              <IonButton
+                disabled={debounce || !changesMade}
+                color={"warning"}
+                onClick={() => setShowEditAlert(true)}
+              >
                 Edit
               </IonButton>
             </IonCol>
             <IonCol size="4" className="pinButtons">
-              <IonButton disabled={debounce} color={"danger"} onClick={() => setShowAlert(true)}>
+              <IonButton
+                disabled={debounce}
+                color={"danger"}
+                onClick={() => setShowAlert(true)}
+              >
                 Delete
               </IonButton>
             </IonCol>

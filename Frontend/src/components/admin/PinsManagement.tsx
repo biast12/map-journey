@@ -40,7 +40,10 @@ const PinsManagement = ({ url }: { url: string }) => {
   }, [userID]);
 
   function filterData(pinData: PinData) {
-    if (searchOptions.status !== "all" && pinData.status !== searchOptions.status) {
+    if (
+      searchOptions.status !== "all" &&
+      pinData.status !== searchOptions.status
+    ) {
       return false;
     }
 
@@ -50,7 +53,11 @@ const PinsManagement = ({ url }: { url: string }) => {
       return pinData[searchOptions.searchBy]
         .toString()
         .toLowerCase()
-        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
+        .match(
+          searchOptions.search
+            .toLowerCase()
+            .replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+        );
     }
   }
 
