@@ -231,6 +231,10 @@ function Map({ APIurl, pinID }: MapProps) {
       view.setCenter(coordinates);
       view.setZoom(12);
     } catch (error) {
+      const location = [10.8760263, 56.4068002];
+      const coordinates = fromLonLat(location);
+      view.setCenter(coordinates);
+      view.setZoom(7);
       console.error("Error getting current position:", error);
     }
   };

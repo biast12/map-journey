@@ -131,6 +131,12 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
       setCoordinates(coordinates);
       setLocation({ address, lat: latitude, lon: longitude });
     } catch (error) {
+      const position = await Geolocation.getCurrentPosition();
+      const { latitude, longitude } = position.coords;
+      const coordinates = fromLonLat([longitude, latitude]);
+      const address = latitude.toString() + " " + longitude.toString();
+      setCoordinates(coordinates);
+      setLocation({ address, lat: latitude, lon: longitude });
       console.error("Error getting location:", error);
     }
   };
@@ -172,12 +178,9 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
         </IonButton>
       </div>
       <IonItem>
-        <IonInput
-          disabled
-          required
-          value={location?.address}
-          label={`${t("modals.create_pin.location")}:`}
-        />
+        <p>
+          {t("modals.create_pin.location")}: {location?.address}
+        </p>
         <IonButton
           ref={locationButton}
           aria-label="Location"
@@ -204,7 +207,8 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
         >
           {status
             ? t("modals.create_pin.public")
-            : t("modals.create_pin.private")}:
+            : t("modals.create_pin.private")}
+          :
         </IonToggle>
       </IonItem>
       <div id="confirmButton">
