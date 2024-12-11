@@ -40,7 +40,10 @@ const PinsManagement = ({ url }: { url: string }) => {
   }, [userID]);
 
   function filterData(pinData: PinData) {
-    if (searchOptions.status !== "all" && pinData.status !== searchOptions.status) {
+    if (
+      searchOptions.status !== "all" &&
+      pinData.status !== searchOptions.status
+    ) {
       return false;
     }
 
@@ -50,7 +53,11 @@ const PinsManagement = ({ url }: { url: string }) => {
       return pinData[searchOptions.searchBy]
         .toString()
         .toLowerCase()
-        .match(searchOptions.search.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"));
+        .match(
+          searchOptions.search
+            .toLowerCase()
+            .replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+        );
     }
   }
 
@@ -58,13 +65,23 @@ const PinsManagement = ({ url }: { url: string }) => {
     if (isSuccess) {
       setSelectedPin(null);
       setShowModal(false);
+      showToastMessage("Successfully updated pin", "success");
       await makeRequest(`${url}/${userID}`);
     } else {
       showToastMessage("Failed to delete pin", "error");
     }
   }
 
-  async function onEdit(isSuccess: boolean) {}
+  async function onEdit(isSuccess: boolean) {
+    if (isSuccess) {
+      setSelectedPin(null);
+      setShowModal(false);
+      showToastMessage("Successfully updated pin", "success");
+      await makeRequest(`${url}/${userID}`);
+    } else {
+      showToastMessage("Failed to edit pin", "error");
+    }
+  }
 
   return (
     <>
@@ -122,7 +139,7 @@ const PinsManagement = ({ url }: { url: string }) => {
         </IonCol>
       </IonRow>
       <IonRow id="pinsRow">
-        {data ? (
+        {data && !isLoading ? (
           data.filter(filterData).length === 0 ? (
             <p>No pins found</p>
           ) : (
