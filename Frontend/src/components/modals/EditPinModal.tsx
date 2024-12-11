@@ -102,7 +102,7 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
   useEffect(checkForChanges, [photoUrl, formValues]);
   useEffect(() => {
     setFormValues({ title: pinData.title, description: pinData.description, status: pinData.status });
-  }, [pinData]);
+  }, [showModal]);
 
   return (
     <>
