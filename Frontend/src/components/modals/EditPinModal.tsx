@@ -1,4 +1,4 @@
-import React, { FormEvent, MouseEvent, useRef, useState } from "react";
+import React, { FormEvent, MouseEvent, useEffect, useRef, useState } from "react";
 import { IonAlert, IonButton, IonCol, IonGrid, IonIcon, IonImg, IonInput, IonRow, IonTextarea } from "@ionic/react";
 
 import Modal from "../Modal";
@@ -8,14 +8,21 @@ import useImageHandler from "../../hooks/useImageHandler";
 import { camera } from "ionicons/icons";
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
+import Loader from "../Loader";
 
-interface EditPinModalProps {
+type EditPinModalProps = {
   pinData: PinData;
   showModal: boolean;
   setShowModal: (value: boolean) => void;
   onDelete: (isSuccess: boolean) => void;
   onEdit: (isSuccess: boolean) => void;
-}
+};
+
+type FormValues = {
+  title: string;
+  description: string;
+  status: string;
+};
 
 const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShowModal, onDelete, onEdit }) => {
   const { makeRequest: delMakeRequest, isLoading: delIsLoading } = useRequestData();
@@ -23,13 +30,37 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
   const { photoUrl, takePhoto, handleUpload } = useImageHandler();
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [showEditAlert, setShowEditAlert] = useState<boolean>(false);
+  const [changesMade, setChangesMade] = useState<boolean>(false);
+  const [debounce, setDebounce] = useState<boolean>(false);
+
+  const [formValues, setFormValues] = useState<FormValues>({
+    title: pinData.title,
+    description: pinData.description,
+    status: pinData.status,
+  });
 
   const cameraButton = useRef<HTMLIonButtonElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
 
   const { userID } = useAuth();
 
+  function checkForChanges() {
+    if (
+      photoUrl === "" &&
+      formValues.title === pinData.title &&
+      formValues.description === pinData.description &&
+      formValues.status === pinData.status
+    ) {
+      setChangesMade(false);
+      return;
+    }
+    setChangesMade(true);
+  }
+
   async function handleDeletePin() {
+    if (debounce) return;
+    setDebounce(true);
+    setShowAlert(false);
+
     try {
       await delMakeRequest(`pins/${pinData.id}/${userID}`, "DELETE");
 
@@ -37,21 +68,20 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
     } catch (error) {
       onDelete(false);
     }
+    setDebounce(false);
   }
 
   async function handleEditPin() {
-    console.log("RUNS");
-    const form = formRef.current as HTMLFormElement;
+    if (debounce) return;
+    setDebounce(true);
+    setShowEditAlert(false);
 
     const body: { imgurls: string | undefined; title: string; description: string; status: boolean } = {
       imgurls: undefined,
-      title: form.pinTitle.value,
-      description: form.pinDescription.value,
-      status: form.status.value == "public" ? true : false,
+      title: formValues.title,
+      description: formValues.description,
+      status: formValues.status == "public" ? true : false,
     };
-
-    console.log(body)
-    console.log(form.status.value)
 
     if (photoUrl) {
       const { fileName: imageName, publicUrl } = await handleUpload();
@@ -65,7 +95,14 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
     } catch {
       onEdit(false);
     }
+
+    setDebounce(false);
   }
+
+  useEffect(checkForChanges, [photoUrl, formValues]);
+  useEffect(() => {
+    setFormValues({ title: pinData.title, description: pinData.description, status: pinData.status });
+  }, [pinData]);
 
   return (
     <>
@@ -84,6 +121,7 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
         buttons={["Cancel", { text: "Confirm", handler: handleEditPin }]}
       />
       <Modal isOpen={showModal} onCloseModal={() => setShowModal(false)}>
+        {(editIsLoading || delIsLoading) && <Loader />}
         <IonGrid id="pinModalGrid">
           <IonRow>
             <IonCol id="pinModalTop" size="12">
@@ -93,8 +131,13 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
           </IonRow>
           <IonRow id="pinModalContent">
             <section>
-              <form ref={formRef}>
-                <IonInput name="pinTitle" placeholder={pinData.title} defaultValue={pinData.title} />
+              <form>
+                <IonInput
+                  name="pinTitle"
+                  placeholder={pinData.title}
+                  value={formValues.title}
+                  onIonInput={(e) => setFormValues({ ...formValues, title: String(e.target.value!) })}
+                />
                 <figure>
                   <IonImg src={photoUrl || pinData.imgurls} alt="User Photo" />
                   <p>{pinData.location}</p>
@@ -112,11 +155,18 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
                 </div>
                 <IonTextarea
                   name="pinDescription"
+                  fill="solid"
                   placeholder={pinData.description}
+                  value={formValues.description}
                   className="descriptionText"
-                  
-                ></IonTextarea>
-                <select defaultValue={pinData.status} name="status" title="Status">
+                  onIonInput={(e) => setFormValues({ ...formValues, description: e.target.value! })}
+                />
+                <select
+                  onChange={(e) => setFormValues({ ...formValues, status: e.target.value! })}
+                  defaultValue={pinData.status}
+                  name="status"
+                  title="Status"
+                >
                   <option value="public">Public</option>
                   <option value="private">Private</option>
                 </select>
@@ -137,12 +187,12 @@ const EditPinModal: React.FC<EditPinModalProps> = ({ pinData, showModal, setShow
           </IonRow>
           <IonRow id="pinButtonsRow">
             <IonCol size="4" className="pinButtons">
-              <IonButton color={"warning"} onClick={() => setShowEditAlert(true)}>
+              <IonButton disabled={debounce || !changesMade} color={"warning"} onClick={() => setShowEditAlert(true)}>
                 Edit
               </IonButton>
             </IonCol>
             <IonCol size="4" className="pinButtons">
-              <IonButton color={"danger"} onClick={() => setShowAlert(true)}>
+              <IonButton disabled={debounce} color={"danger"} onClick={() => setShowAlert(true)}>
                 Delete
               </IonButton>
             </IonCol>

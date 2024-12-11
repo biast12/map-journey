@@ -58,13 +58,23 @@ const PinsManagement = ({ url }: { url: string }) => {
     if (isSuccess) {
       setSelectedPin(null);
       setShowModal(false);
+      showToastMessage("Successfully updated pin", "success");
       await makeRequest(`${url}/${userID}`);
     } else {
       showToastMessage("Failed to delete pin", "error");
     }
   }
 
-  async function onEdit(isSuccess: boolean) {}
+  async function onEdit(isSuccess: boolean) {
+    if (isSuccess) {
+      setSelectedPin(null);
+      setShowModal(false);
+      showToastMessage("Successfully updated pin", "success");
+      await makeRequest(`${url}/${userID}`);
+    } else {
+      showToastMessage("Failed to edit pin", "error");
+    }
+  }
 
   return (
     <>
@@ -122,7 +132,7 @@ const PinsManagement = ({ url }: { url: string }) => {
         </IonCol>
       </IonRow>
       <IonRow id="pinsRow">
-        {data ? (
+        {data && !isLoading ? (
           data.filter(filterData).length === 0 ? (
             <p>No pins found</p>
           ) : (

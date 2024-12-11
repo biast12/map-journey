@@ -3,6 +3,7 @@
   height: 100%;
   flex-direction: column;
   display: flex;
+  margin-top: 0;
 
   #pinModalTop {
     display: flex;
@@ -97,6 +98,7 @@
   #pinButtonsRow {
     margin-top: auto;
     justify-content: center;
+    padding-bottom: 0.75rem;
     .pinButtons {
       ion-button {
         width: 100%;
