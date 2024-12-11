@@ -12,6 +12,7 @@ import {
   IonText,
 } from "@ionic/react";
 import { useTranslation } from "react-i18next";
+import Turnstile from 'react-turnstile';
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
@@ -36,6 +37,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   closeLoginModal,
 }) => {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const { t } = useTranslation();
   const { makeRequest, isLoading, data, error } = useRequestData();
@@ -52,6 +54,11 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
 
     if (!agreeToTerms) {
       showToastMessage(t("modals.create_user.agree_to_terms_required"), "warning");
+      return;
+    }
+
+    if (!captchaToken) {
+      showToastMessage(t("captcha_required"), "warning");
       return;
     }
 
@@ -130,6 +137,13 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
           >
             <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
           </IonInput>
+          <Turnstile
+            id="captcha"
+            theme="dark"
+            retry="never"
+            sitekey={import.meta.env.VITE_CLOUDFLARE_CAPTCHA_KEY}
+            onVerify={(token) => setCaptchaToken(token)}
+          />
           <IonItem lines="none">
             <IonCheckbox
               slot="start"

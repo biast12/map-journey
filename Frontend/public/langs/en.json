@@ -1,6 +1,7 @@
 {
   "lang": "English",
   "required_fields": "All fields are required.",
+  "captcha_required": "Captcha is required.",
   "profanityFilter": "Your input contains inappropriate language.",
   "header": {
     "error_message": "Failed fetching user! Please try again later"

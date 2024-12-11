@@ -1,3 +1,4 @@
+import React, { FormEvent, useEffect, useState } from "react";
 import {
   IonCard,
   IonCardHeader,
@@ -7,8 +8,8 @@ import {
   IonButton,
   IonModal,
 } from "@ionic/react";
-import { FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import Turnstile from 'react-turnstile';
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
@@ -29,6 +30,7 @@ interface LoginProps {
 const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
   const [loginSuccess, setLoginSuccess] = useState<boolean | null>(null);
   const [createUserModal, setCreateUserModal] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const { t } = useTranslation();
   const { makeRequest, data, isLoading } = useRequestData();
@@ -37,6 +39,11 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
 
   async function handleLogin(formEvent: FormEvent) {
     formEvent.preventDefault();
+
+    if (!captchaToken) {
+      setLoginSuccess(false);
+      return;
+    }
 
     const formData = new FormData(formEvent.target as HTMLFormElement);
     const email = formData.get("email");
@@ -55,6 +62,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
       clearRoleToken();
     }
   }
+
   useEffect(() => {
     if (data) {
       storeAuthToken(data.user.id);
@@ -94,6 +102,13 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
           >
             <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
           </IonInput>
+          <Turnstile
+            id="captcha"
+            theme="dark"
+            retry="never"
+            sitekey={import.meta.env.VITE_CLOUDFLARE_CAPTCHA_KEY}
+            onVerify={(token) => setCaptchaToken(token)}
+          />
           {loginSuccess == false && (
             <p id="loginFailed">{t("modals.login.failed")}</p>
           )}

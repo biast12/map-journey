@@ -1,6 +1,7 @@
 {
   "lang": "Dansk",
   "required_fields": "Alle felter er påkrævet.",
+  "captcha_required": "Captcha er påkrævet.",
   "profanityFilter": "Din indtastning indeholder upassende sprog.",
   "header": {
     "error_message": "Kunne ikke hente bruger!"
