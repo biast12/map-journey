@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IonCol, IonRow } from "@ionic/react";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
-import useAuth from "../../hooks/ProviderContext";
 
 /* Components */
 import EditPinModal from "../modals/EditPinModal";
@@ -12,7 +11,19 @@ import PinsColumn from "./PinsColumn";
 
 import "./PinsManagement.scss";
 
-const PinsManagement = ({ url }: { url: string }) => {
+type PinsManagementProps = {
+  userData: UserData;
+  url: string;
+};
+
+type PinSearchOptions = {
+  search: string;
+  searchBy: "id" | "title" | "description";
+  sortBy: "id" | "title" | "description";
+  status: "all" | "public" | "private";
+};
+
+const PinsManagement: React.FC<PinsManagementProps> = ({ userData, url }) => {
   const { makeRequest, data, isLoading } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedPin, setSelectedPin] = useState<null | PinData>(null);
@@ -23,21 +34,17 @@ const PinsManagement = ({ url }: { url: string }) => {
     status: "all",
   });
 
-  const { userID, userData } = useAuth();
-
   useEffect(() => {
     const fetchData = async () => {
-      if (userID) {
-        try {
-          await makeRequest(`${url}/${userID}`);
-        } catch (error) {
-          showToastMessage("Failed to fetch user data", "error");
-        }
+      try {
+        await makeRequest(`${url}/${userData.id}`);
+      } catch (error) {
+        showToastMessage("Failed to fetch user data", "error");
       }
     };
 
     fetchData();
-  }, [userID]);
+  }, []);
 
   function filterData(pinData: PinData) {
     if (
@@ -66,7 +73,7 @@ const PinsManagement = ({ url }: { url: string }) => {
       setSelectedPin(null);
       setShowModal(false);
       showToastMessage("Successfully updated pin", "success");
-      await makeRequest(`${url}/${userID}`);
+      await makeRequest(`${url}/${userData.id}`);
     } else {
       showToastMessage("Failed to delete pin", "error");
     }
@@ -77,7 +84,7 @@ const PinsManagement = ({ url }: { url: string }) => {
       setSelectedPin(null);
       setShowModal(false);
       showToastMessage("Successfully updated pin", "success");
-      await makeRequest(`${url}/${userID}`);
+      await makeRequest(`${url}/${userData.id}`);
     } else {
       showToastMessage("Failed to edit pin", "error");
     }
@@ -88,6 +95,7 @@ const PinsManagement = ({ url }: { url: string }) => {
       <Toast />
       {selectedPin && (
         <EditPinModal
+          userData={userData}
           pinData={selectedPin}
           showModal={showModal}
           setShowModal={setShowModal}
@@ -118,7 +126,7 @@ const PinsManagement = ({ url }: { url: string }) => {
             }}
           >
             <option value="title">Title</option>
-            {userData?.role === "admin" && <option value="id">Id</option>}
+            {userData.role === "admin" && <option value="id">Id</option>}
             <option value="description">Description</option>
           </select>
         </IonCol>
@@ -145,6 +153,7 @@ const PinsManagement = ({ url }: { url: string }) => {
           ) : (
             data.filter(filterData).map((pinData: PinData) => (
               <PinsColumn
+                userData={userData}
                 key={pinData.id}
                 pinData={pinData}
                 onManageClick={() => {

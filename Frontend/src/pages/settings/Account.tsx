@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   IonHeader,
   IonToolbar,
@@ -28,7 +28,7 @@ import Loader from "../../components/Loader";
 
 import "./Account.scss";
 
-const Account = () => {
+const Account = ({ userData }: { userData: UserData }) => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -36,14 +36,14 @@ const Account = () => {
   const { makeRequest, isLoading } = useRequestData();
   const { makeRequest: deleteMakeRequest } = useRequestData();
   const { photoUrl, loading, takePhoto, handleUpload } = useImageHandler();
-  const { userData, clearAuthToken, clearUserDataToken } = useAuth();
+  const { storeUserDataToken, clearUserDataToken } = useAuth();
 
   /* States */
-  const [username, setUsername] = useState<string>(userData?.name!);
-  const [email, setEmail] = useState<string>(userData?.email!);
+  const [username, setUsername] = useState<string>(userData.name);
+  const [email, setEmail] = useState<string>(userData.email);
   const [password, setPassword] = useState<string>("");
-  const [avatar, setAvatar] = useState<string>(userData?.avatar!);
-  const [status, setStatus] = useState<string>(userData?.status!);
+  const [avatar, setAvatar] = useState<string>(userData.avatar);
+  const [status, setStatus] = useState<string>(userData.status);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
   useEffect(() => {
@@ -65,14 +65,14 @@ const Account = () => {
 
     if (photoUrl) {
       try {
-        const { publicUrl } = await handleUpload(userData?.id);
+        const { publicUrl } = await handleUpload(userData.id);
         updatedAvatar = publicUrl;
       } catch (error) {
         console.error("Error uploading avatar:", error);
       }
     }
 
-    let updatedData: {
+    const updatedData: {
       avatar: string;
       name: string;
       email: string;
@@ -90,16 +90,32 @@ const Account = () => {
     }
 
     if (password) {
-      updatedData = { ...updatedData, password };
+      updatedData.password = password;
     }
-    if (status !== userData?.status) {
+    if (status !== userData.status) {
       updatedData.status = status;
     }
 
-    userData?.role === "admin" && console.log("Updated data:", updatedData);
+    userData.role === "admin" && console.log("Updated data:", updatedData);
 
     try {
-      await makeRequest(`users/${userData?.id}`, "PUT", { "Content-Type": "application/json" }, updatedData);
+      await makeRequest(`users/${userData.id}`, "PUT", { "Content-Type": "application/json" }, updatedData);
+
+      const newUserData = { ...userData };
+      if (updatedAvatar !== userData.avatar) {
+        newUserData.avatar = updatedAvatar;
+      }
+      if (username !== userData.name) {
+        newUserData.name = username;
+      }
+      if (email !== userData.email) {
+        newUserData.email = email;
+      }
+      if (status !== userData.status) {
+        newUserData.status = status as Status;
+      }
+
+      storeUserDataToken(newUserData);
       showToastMessage(t("pages.settings.account.successful"), "success");
     } catch (error) {
       showToastMessage(t("pages.settings.account.failed"), "error");
@@ -133,14 +149,14 @@ const Account = () => {
           <div className="inlineTags">
             <IonInput
               value={username}
-              placeholder={t("pages.settings.account.username")}
+              placeholder={t("pages.settings.account.username_placeholder")}
               onIonChange={(e) => setUsername(e.detail.value!)}
             />
           </div>
           <div className="inlineTags">
             <IonInput
               value={email}
-              placeholder={t("pages.settings.account.email")}
+              placeholder={t("pages.settings.account.email_placeholder")}
               onIonChange={(e) => setEmail(e.detail.value!)}
             />
           </div>
@@ -148,14 +164,14 @@ const Account = () => {
             <IonInput
               value={password}
               type="password"
-              placeholder={t("pages.settings.account.password")}
+              placeholder={t("pages.settings.account.password_placeholder")}
               onIonChange={(e) => setPassword(e.detail.value!)}
             />
           </div>
           <div className="inlineTags">
             <IonLabel>Public: </IonLabel>
             <IonCheckbox
-              disabled={userData?.status === "banned" || userData?.status === "reported" || userData?.status === "warning"}
+              disabled={!(userData.status === "public" || userData.status === "private")}
               checked={status === "public"}
               onIonChange={(e) => setStatus(e.target.checked! ? "public" : "private")}
             />
@@ -187,9 +203,8 @@ const Account = () => {
                 text: t("pages.settings.account.delete.header"),
                 handler: () => {
                   handleDeleteAccount({
-                    data: { id: userData?.id!, avatar: userData?.avatar! },
+                    userID: userData.id,
                     makeRequest: deleteMakeRequest,
-                    clearAuthToken,
                     clearUserDataToken,
                     history,
                   });

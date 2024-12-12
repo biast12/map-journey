@@ -34,7 +34,6 @@
       "agree_to_terms_required": "Du skal acceptere vilkårene for brug",
       "submit": "Opret bruger",
       "close": "Luk",
-      "failed": "Brugeroprettelse mislykkedes!",
       "error_message": "Kunne ikke oprette bruger"
     },
     "login": {
@@ -94,9 +93,9 @@
       "account": {
         "card_title": "Konto",
         "img_alt": "Bruger avatar",
-        "username": "Brugernavn",
-        "email": "Email",
-        "password": "Adgangskode",
+        "username_placeholder": "Brugernavn",
+        "email_placeholder": "Email",
+        "password_placeholder": "Adgangskode",
         "required_fields": "Brugernavn og e-mail felter er påkrævet",
         "submit": "Gem",
         "successful": "Konto opdateret succesfuldt",

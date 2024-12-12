@@ -53,7 +53,7 @@ const AppContent: React.FC = () => {
   const [createPinModal, setCreatePinModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
 
-  const { userID, loading } = useAuth();
+  const { userData, loading } = useAuth();
 
   const openLoginModal = () => setShowLoginModal(true);
   const closeLoginModal = () => setShowLoginModal(false);
@@ -68,23 +68,24 @@ const AppContent: React.FC = () => {
   const publicPaths = ["/privacy-policy", "/terms-of-service", "/error", "/error/:status"];
 
   useEffect(() => {
-    if (!userID && !loading && !publicPaths.includes(location.pathname)) {
+    if (!userData?.id && !loading && !publicPaths.includes(location.pathname)) {
       openLoginModal();
     }
-  }, [userID, loading, location.pathname]);
+  }, [userData, loading, location.pathname]);
 
-  return (
+  return userData && (
     <>
-      <Header openNotificationModal={openNotificationModal} />
+      <Header userData={userData} openNotificationModal={openNotificationModal} />
       <IonContent>
         <IonTabs>
           <IonRouterOutlet>
             <Routes />
           </IonRouterOutlet>
-          <Footer openCreatePinModal={openCreatePinModal} />
+          <Footer userData={userData} openCreatePinModal={openCreatePinModal} />
         </IonTabs>
       </IonContent>
       <Modals
+        userData={userData}
         showLoginModal={showLoginModal}
         closeLoginModal={closeLoginModal}
         createPinModal={createPinModal}

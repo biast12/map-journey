@@ -35,7 +35,6 @@
       "agree_to_terms_required": "You must agree to the terms of service",
       "submit": "Create user",
       "close": "Close",
-      "failed": "User creation failed!",
       "error_message": "Failed to create user"
     },
     "login": {
@@ -95,8 +94,9 @@
       "account": {
         "card_title": "Account",
         "img_alt": "User avatar",
-        "email": "Email",
-        "password": "Password",
+        "username_placeholder": "Username",
+        "email_placeholder": "Email",
+        "password_placeholder": "Password",
         "required_fields": "Username and Email fields are required",
         "submit": "Save",
         "successful": "Account updated successfully",

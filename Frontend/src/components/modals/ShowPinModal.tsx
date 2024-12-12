@@ -12,7 +12,6 @@ import { Clipboard } from "@ionic-native/clipboard";
 import { shareSocialOutline, logoGoogle } from "ionicons/icons";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import useAuth from "../../hooks/ProviderContext";
 
 import "./ShowPinModal.scss";
 
@@ -20,14 +19,14 @@ import "./ShowPinModal.scss";
 import Toast, { showToastMessage } from "../Toast";
 import ReportModal from "./ReportModal";
 
-interface ShowPinModalProps {
+type ShowPinModalProps = {
+  userData: UserData;
   pinData: any;
 }
 
-const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
+const ShowPinModal: React.FC<ShowPinModalProps> = ({ userData, pinData }) => {
   if (!pinData) return null;
   const { t } = useTranslation();
-  const { userID, userData } = useAuth();
   const [reportPinModal, setReportPinModal] = useState(false);
   const openReportPinModal = () => setReportPinModal(true);
   const closeReportPinModal = () => setReportPinModal(false);
@@ -93,14 +92,14 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
             <IonIcon icon={shareSocialOutline} />
           </IonButton>
         </div>
-        {userData?.role === "admin" && (
+        {userData.role === "admin" && (
           <>
             <p>Pin ID: {pinData.id}</p>
             <p>User ID: {pinData.profile.id}</p>
           </>
         )}
       </IonCardContent>
-      {!(userID == pinData.profile.id) && (
+      {!(userData.id == pinData.profile.id) && (
         <div id="showPinCardButtons">
           <IonButton disabled={pinData.reported} onClick={openReportUserModal}>
             {t("modals.pin.report_user")}
@@ -113,6 +112,7 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
       <IonModal isOpen={reportUserModal} onDidDismiss={closeReportUserModal}>
         <div className="modal-content">
           <ReportModal
+            userData={userData}
             closeReportModal={closeReportUserModal}
             reported_id={pinData.profile.id}
             reportedType="user"
@@ -122,6 +122,7 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
       <IonModal isOpen={reportPinModal} onDidDismiss={closeReportPinModal}>
         <div className="modal-content">
           <ReportModal
+            userData={userData}
             closeReportModal={closeReportPinModal}
             reported_id={pinData.id}
             reportedType="pin"

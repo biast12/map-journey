@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { IonContent, IonGrid } from "@ionic/react";
 
+import useAuth from "../../hooks/ProviderContext";
+
 import UserManagement from "../../components/admin/UserManagement";
 import PinsManagement from "../../components/admin/PinsManagement";
 import ReportManagement from "../../components/admin/ReportManagement";
@@ -9,6 +11,8 @@ import NotificationManagement from "../../components/admin/NotificationManagemen
 import "./Admin.scss";
 
 const Page = () => {
+  const { userData } = useAuth();
+
   useEffect(() => {
     document.title = "Admin Page";
 
@@ -19,21 +23,24 @@ const Page = () => {
 
   return (
     <IonContent>
-      <IonGrid fixed>
-        <h1>Dashboard</h1>
+      {userData && (
+        <IonGrid fixed>
+          <h1>Dashboard</h1>
 
-        <h3>Users</h3>
-        <UserManagement />
+          <h3>Users</h3>
+          <UserManagement userData={userData} />
 
-        <h3>Pins</h3>
-        <PinsManagement url={"pins/all"} />
+          <h3>Pins</h3>
+          <PinsManagement userData={userData} url={"pins/all"} />
 
-        <h3>Reports</h3>
-        <ReportManagement />
+          <h3>Reports</h3>
+          <ReportManagement userData={userData} />
 
-        <h3>News</h3>
-        <NotificationManagement />
-      </IonGrid>
+          <h3>News</h3>
+          <NotificationManagement userData={userData} />
+
+        </IonGrid>
+      )}
     </IonContent>
   );
 };

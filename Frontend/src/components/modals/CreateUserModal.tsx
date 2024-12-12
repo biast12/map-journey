@@ -41,13 +41,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
 
   const { t } = useTranslation();
   const { makeRequest, isLoading, data, error } = useRequestData();
-  const {
-    userData,
-    storeAuthToken,
-    storeUserDataToken,
-    clearAuthToken,
-    clearUserDataToken,
-  } = useAuth();
+  const { userData, storeUserDataToken, clearUserDataToken } = useAuth();
 
   async function handleCreateUser(formEvent: FormEvent) {
     formEvent.preventDefault();
@@ -88,13 +82,11 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
 
   useEffect(() => {
     if (data) {
-      storeAuthToken(data.id);
       storeUserDataToken(data);
       closeCreateUserModal();
       closeLoginModal();
     } else if (error) {
       showToastMessage("User creation failed", "error");
-      clearAuthToken();
       clearUserDataToken();
     }
   }, [error, data]);

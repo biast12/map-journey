@@ -9,27 +9,22 @@ import {
   IonModal,
 } from "@ionic/react";
 import { notifications, settings, shieldHalf } from "ionicons/icons";
-import { useTranslation } from "react-i18next";
 
 /* Hooks */
-import useRequestData from "../../hooks/useRequestData";
 import { useAuth } from "../../hooks/ProviderContext";
 
 /* Components */
 import WarningModal from "../modals/WarningModal";
-import Toast, { showToastMessage } from "../Toast";
-import Loader from "../Loader";
 
 interface HeaderProps {
+  userData: UserData
   openNotificationModal: () => void;
 }
 
 let getNewNotifications: () => string[] | null;
 
-const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
-  const { t } = useTranslation();
-  const { makeRequest, data, isLoading } = useRequestData();
-  const { userID, userData, loading } = useAuth();
+const Header: React.FC<HeaderProps> = ({ userData, openNotificationModal }) => {
+  const { loading } = useAuth();
   const [hasWarningModalOpened, setHasWarningModalOpened] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
 
@@ -37,78 +32,60 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   const closeWarningModal = () => setShowWarningModal(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (userID) {
-        try {
-          await makeRequest(`users/${userID}`);
-        } catch (error) {
-          showToastMessage(t("header.error_message"), "error");
-        }
-      }
-    };
-
-    fetchData();
-  }, [userID]);
-
-  useEffect(() => {
     if (
-      data &&
-      (data.status === "warning" ||
-        data.status === "reported" ||
-        data.status === "banned") &&
+      userData &&
+      (userData.status === "warning" ||
+        userData.status === "reported" ||
+        userData.status === "banned") &&
       !loading &&
       !hasWarningModalOpened
     ) {
       openWarningModal();
       setHasWarningModalOpened(true);
     }
-  }, [data, isLoading]);
-
-  useEffect(() => {
-    console.log(userData);
-  }, []);
+  }, [userData]);
 
   const handleOpenNotificationModal = () => {
-    data.news_count = 0;
-    openNotificationModal();
+    if (userData) {
+      userData.news_count = 0;
+      openNotificationModal();
+    }
   };
 
   getNewNotifications = () => {
-    return data && data.new_notifications ? data.new_notifications : null;
+    return userData && userData.new_notifications ? userData.new_notifications : null;
   };
 
   return (
     <>
-      {isLoading && <Loader />}
-      <Toast />
-      {userID && (
-        <IonHeader>
-          <IonToolbar>
-            <IonButton routerLink="/" fill="clear">
-              <IonImg src="/icons/logo.webp" alt="Logo" />
-            </IonButton>
-            <div className="IonButtonContainer">
+      <IonHeader>
+        <IonToolbar>
+          <IonButton routerLink="/globalmap" fill="clear">
+            <IonImg src="/icons/logo.webp" alt="Logo" />
+          </IonButton>
+          <div className="IonButtonContainer">
+            {userData.settings.notification && (
               <IonButton fill="clear" onClick={handleOpenNotificationModal}>
                 <IonIcon aria-hidden="true" icon={notifications} />
-                {data && data.news_count >= 1 && (
-                  <IonBadge color="danger">{data.news_count}</IonBadge>
+                {userData.news_count >= 1 && (
+                  <IonBadge color="danger">{userData.news_count}</IonBadge>
                 )}
               </IonButton>
-              {userData?.role === "admin" && (
-                <IonButton routerLink="/admin" fill="clear">
-                  <IonIcon aria-hidden="true" icon={shieldHalf} />
-                </IonButton>
-              )}
-              <IonButton routerLink="/settings" fill="clear">
-                <IonIcon aria-hidden="true" icon={settings} />
+            )}
+            {userData.role === "admin" && (
+              <IonButton routerLink="/admin" fill="clear">
+                <IonIcon aria-hidden="true" icon={shieldHalf} />
               </IonButton>
-            </div>
-          </IonToolbar>
-        </IonHeader>
-      )}
+            )}
+            <IonButton routerLink="/settings" fill="clear">
+              <IonIcon aria-hidden="true" icon={settings} />
+            </IonButton>
+          </div>
+        </IonToolbar>
+      </IonHeader>
       <IonModal isOpen={showWarningModal} backdropDismiss={false}>
         <div className="modal-content">
-          <WarningModal data={data} closeWarningModal={closeWarningModal} />
+          <WarningModal userData={userData} closeWarningModal={closeWarningModal} />
         </div>
       </IonModal>
     </>

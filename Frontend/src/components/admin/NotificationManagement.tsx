@@ -3,7 +3,6 @@ import { IonAlert, IonButton, IonCol, IonRow } from "@ionic/react";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
-import useAuth from "../../hooks/ProviderContext";
 
 /* Components */
 import NotificationColumn from "./NotificationColumn";
@@ -17,7 +16,7 @@ type NotificationSearchOptions = {
   searchBy: "title" | "text" | "id";
 };
 
-const NotificationManagement = () => {
+const NotificationManagement = ({ userData }: { userData: UserData }) => {
   const [searchOptions, setSearchOptions] = useState<NotificationSearchOptions>({
     search: "",
     searchBy: "title",
@@ -33,8 +32,6 @@ const NotificationManagement = () => {
   } = useRequestData();
   const { makeRequest: delMakeRequest, isLoading: delIsLoading } = useRequestData();
 
-  const { userID } = useAuth();
-
   async function handleCreateNews(e: FormEvent) {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
@@ -44,11 +41,11 @@ const NotificationManagement = () => {
     };
 
     try {
-      await createMakeRequest(`notification/${userID}`, "POST", undefined, body);
+      await createMakeRequest(`notification/${userData.id}`, "POST", undefined, body);
 
       setShowDeleteAlert(false);
       setSelectedNotif(null);
-      await makeRequest("notification/all/" + userID);
+      await makeRequest(`notification/all/${userData.id}`);
     } catch (error) {
       showToastMessage("Failed to create news", "error");
     }
@@ -56,8 +53,8 @@ const NotificationManagement = () => {
 
   async function handleDeleteNews(notifData: NotificationData) {
     try {
-      await delMakeRequest(`notification/${userID}/${notifData.id}`, "DELETE");
-      await makeRequest("notification/all/" + userID);
+      await delMakeRequest(`notification/${userData.id}/${notifData.id}`, "DELETE");
+      await makeRequest(`notification/all/${userData.id}`);
     } catch (error) {
       showToastMessage("Failed to delete news", "error");
     }
@@ -66,7 +63,7 @@ const NotificationManagement = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await makeRequest("notification/all/" + userID);
+        await makeRequest(`notification/all/${userData.id}`);
       } catch (error) {
         showToastMessage("Failed to fetch news", "error");
       }

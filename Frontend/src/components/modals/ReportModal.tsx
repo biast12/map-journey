@@ -13,7 +13,6 @@ import { useTranslation } from "react-i18next";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
-import useAuth from "../../hooks/ProviderContext";
 
 /* Components */
 import Toast, { showToastMessage } from "../Toast";
@@ -22,12 +21,14 @@ import Loader from "../Loader";
 import "./ReportModal.scss";
 
 interface ReportedProps {
+  userData: UserData;
   closeReportModal: () => void;
   reported_id: string;
   reportedType: "user" | "pin";
 }
 
 const ReportModal = ({
+  userData,
   closeReportModal,
   reported_id,
   reportedType,
@@ -45,7 +46,6 @@ const ReportModal = ({
 
   /* Hooks */
   const { makeRequest, isLoading } = useRequestData();
-  const { userID, userData } = useAuth();
 
   useEffect(() => {
     const refs = [confirmButton, cancelButton, textInput];
@@ -66,17 +66,17 @@ const ReportModal = ({
       [reportedType === "user" ? "reported_user_id" : "reported_pin_id"]:
         reported_id,
     };
-    userData?.role === "admin" && console.log("Payload:", payload);
+    userData.role === "admin" && console.log("Payload:", payload);
     try {
       await makeRequest(
-        `reports/${userID}`,
+        `reports/${userData.id}`,
         "POST",
         { "Content-Type": "application/json" },
         payload
       );
-      
+
       closeReportModal();
-      userData?.role === "admin" && console.log("Reported successfully");
+      userData.role === "admin" && console.log("Reported successfully");
     } catch (error) {
       showToastMessage(t("modals.report.failed", { type: reportedType }), "error");
     }

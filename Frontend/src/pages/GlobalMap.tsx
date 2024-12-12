@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import Map from "../components/Maps";
 
 interface OwnMapProps {
-  userID: string;
+  userData: UserData;
   pinId?: string | null;
 }
 
-function GlobalMap({ userID, pinId }: OwnMapProps) {
+function GlobalMap({ userData, pinId }: OwnMapProps) {
   useEffect(() => {
     document.title = "Map Journey - Global Map";
 
@@ -17,7 +17,7 @@ function GlobalMap({ userID, pinId }: OwnMapProps) {
 
   return (
     <>
-      <Map APIurl={`all/${userID}`} pinID={pinId} />
+      <Map userData={userData} APIurl={`all/${userData.id}`} pinID={pinId} />
     </>
   );
 }

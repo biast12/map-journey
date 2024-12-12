@@ -23,10 +23,10 @@ import "./EditPinModal.scss";
 import useImageHandler from "../../hooks/useImageHandler";
 import { camera } from "ionicons/icons";
 import useRequestData from "../../hooks/useRequestData";
-import useAuth from "../../hooks/ProviderContext";
 import Loader from "../Loader";
 
 type EditPinModalProps = {
+  userData: UserData;
   pinData: PinData;
   showModal: boolean;
   setShowModal: (value: boolean) => void;
@@ -41,6 +41,7 @@ type FormValues = {
 };
 
 const EditPinModal: React.FC<EditPinModalProps> = ({
+  userData,
   pinData,
   showModal,
   setShowModal,
@@ -65,8 +66,6 @@ const EditPinModal: React.FC<EditPinModalProps> = ({
 
   const cameraButton = useRef<HTMLIonButtonElement>(null);
 
-  const { userID } = useAuth();
-
   function checkForChanges() {
     if (
       photoUrl === "" &&
@@ -86,7 +85,7 @@ const EditPinModal: React.FC<EditPinModalProps> = ({
     setShowAlert(false);
 
     try {
-      await delMakeRequest(`pins/${pinData.id}/${userID}`, "DELETE");
+      await delMakeRequest(`pins/${pinData.id}/${userData.id}`, "DELETE");
 
       onDelete(true);
     } catch (error) {
@@ -119,7 +118,7 @@ const EditPinModal: React.FC<EditPinModalProps> = ({
 
     try {
       await editMakeRequest(
-        `pins/${userID}/${pinData.id}`,
+        `pins/${userData.id}/${pinData.id}`,
         "PUT",
         undefined,
         body

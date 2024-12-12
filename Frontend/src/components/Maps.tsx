@@ -27,7 +27,6 @@ import { Geolocation } from "@capacitor/geolocation";
 
 /* Hooks */
 import useRequestData from "../hooks/useRequestData";
-import useAuth from "../hooks/ProviderContext";
 
 /* Components */
 import ShowPinModal from "../components/modals/ShowPinModal";
@@ -36,7 +35,8 @@ import Loader from "./Loader";
 
 import "./Maps.scss";
 
-interface MapProps {
+type MapProps = {
+  userData: UserData;
   APIurl: string;
   pinID?: string | null;
 }
@@ -105,7 +105,7 @@ function createClusterStyle(feature: FeatureLike): Style {
   return style;
 }
 
-function Map({ APIurl, pinID }: MapProps) {
+function Map({ userData, APIurl, pinID }: MapProps) {
   const { t } = useTranslation();
   const points: Feature[] = [];
 
@@ -115,7 +115,6 @@ function Map({ APIurl, pinID }: MapProps) {
 
   /* Hooks */
   const { makeRequest, data, isLoading } = useRequestData();
-  const { userData } = useAuth();
 
   /* Functions */
   const openShowPinModal = () => setShowPinModal(true);
@@ -162,7 +161,7 @@ function Map({ APIurl, pinID }: MapProps) {
     const map = new OlMap({
       target: "map",
       controls:
-        userData?.role === "admin"
+        userData.role === "admin"
           ? defaultControls().extend([mousePositionControl])
           : defaultControls(),
       layers: [
@@ -264,7 +263,7 @@ function Map({ APIurl, pinID }: MapProps) {
           >
             <IonIcon slot="icon-only" icon={close} />
           </IonButton>
-          <ShowPinModal pinData={selectedPin} />
+          <ShowPinModal userData={userData} pinData={selectedPin} />
         </div>
       </IonModal>
     </>

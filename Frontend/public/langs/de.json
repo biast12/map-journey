@@ -34,7 +34,6 @@
       "agree_to_terms_required": "Sie müssen den Nutzungsbedingungen zustimmen",
       "submit": "Benutzer erstellen",
       "close": "Schließen",
-      "failed": "Benutzererstellung fehlgeschlagen!",
       "error_message": "Benutzer konnte nicht erstellt werden"
     },
     "login": {
@@ -94,9 +93,9 @@
       "account": {
         "card_title": "Konto",
         "img_alt": "Benutzeravatar",
-        "username": "Benutzername",
-        "email": "E-Mail",
-        "password": "Passwort",
+        "username_placeholder": "Benutzername",
+        "email_placeholder": "E-Mail",
+        "password_placeholder": "Passwort",
         "required_fields": "Benutzername und E-Mail-Felder sind erforderlich",
         "submit": "Speichern",
         "successful": "Konto erfolgreich aktualisiert",

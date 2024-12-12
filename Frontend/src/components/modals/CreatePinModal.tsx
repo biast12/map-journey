@@ -17,17 +17,17 @@ import { Coordinate } from "ol/coordinate";
 import { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import useRequestData from "../../hooks/useRequestData";
-import useAuth from "../../hooks/ProviderContext";
 import useImageHandler from "../../hooks/useImageHandler";
 import profanityFilter from "../../utils/profanityFilter";
 import Toast, { showToastMessage } from "../Toast";
 import Loader from "../Loader";
 
 interface CreatePinModalProps {
+  userData: UserData;
   onClose: () => void;
 }
 
-const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
+const CreatePinModal: React.FC<CreatePinModalProps> = ({ userData, onClose }) => {
   const { t } = useTranslation();
 
   /* States */
@@ -35,7 +35,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
   const [location, setLocation] = useState<any>(null);
   const [coordinates, setCoordinates] = useState<Coordinate | null>(null);
   const [description, setDescription] = useState<string>("");
-  const [status, setStatus] = useState<boolean>(false);
+  const [status, setStatus] = useState<boolean>(userData.status === "public");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   /* Refs */
@@ -48,7 +48,6 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
 
   /* Hooks */
   const { makeRequest } = useRequestData();
-  const { userID, userData } = useAuth();
   const { photoUrl, loading, takePhoto, handleUpload } = useImageHandler();
 
   useEffect(() => {
@@ -92,9 +91,9 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
       formData.append("longitude", location.lon);
       formData.append("imgurls", publicUrl);
       formData.append("status", status.toString());
-      userData?.role === "admin" && console.log("formData:", formData);
+      userData.role === "admin" && console.log("formData:", formData);
 
-      await makeRequest(`pins/${userID}`, "POST", undefined, formData);
+      await makeRequest(`pins/${userData.id}`, "POST", undefined, formData);
       onClose();
       showToastMessage(t("modals.create_pin.successful"), "success");
       setIsSubmitting(false);

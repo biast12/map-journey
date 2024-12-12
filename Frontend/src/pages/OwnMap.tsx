@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import Map from "../components/Maps";
 
 interface OwnMapProps {
-  userID: string;
+  userData: UserData;
 }
 
-function OwnMap({ userID }: OwnMapProps) {
+function OwnMap({ userData }: OwnMapProps) {
   useEffect(() => {
     document.title = "Map Journey - Own Map";
 
@@ -16,7 +16,7 @@ function OwnMap({ userID }: OwnMapProps) {
 
   return (
     <>
-      <Map APIurl={userID} />
+      <Map userData={userData} APIurl={userData.id} />
     </>
   );
 }

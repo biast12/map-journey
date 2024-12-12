@@ -12,7 +12,6 @@ import { useTranslation } from "react-i18next";
 
 // hooks
 import useRequestData from "../../hooks/useRequestData";
-import useAuth from "../../hooks/ProviderContext";
 
 // components
 import Toast, { showToastMessage } from "../Toast";
@@ -20,14 +19,13 @@ import { getNewNotifications } from "../layout/Header";
 import Loader from "../Loader";
 import "./NotificationModal.scss";
 
-const NotificationModal: React.FC = () => {
+const NotificationModal = ({ userData }: { userData: UserData }) => {
   const { t } = useTranslation();
   const { makeRequest, data, isLoading } = useRequestData();
   const {
     makeRequest: makeRequestReset,
     isLoading: isLoadingReset,
   } = useRequestData();
-  const { userID, userData, loading } = useAuth();
   const [unreadNotifications, setUnreadNotifications] = useState<Set<number>>(
     new Set()
   );
@@ -35,7 +33,7 @@ const NotificationModal: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await makeRequest(`notification/all/${userID}`);
+        await makeRequest(`notification/all/${userData.id}`);
       } catch (error) {
         showToastMessage(t("modals.notification.error_message"), "error");
       }
@@ -46,18 +44,16 @@ const NotificationModal: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (userID && !loading) {
         try {
-          await makeRequestReset(`notification/readall/${userID}`, "POST");
-          userData?.role === "admin" && console.log("All notifications are now read");
+          await makeRequestReset(`notification/readall/${userData.id}`, "POST");
+          userData.role === "admin" && console.log("All notifications are now read");
         } catch (error) {
           showToastMessage(t("modals.notification.error_read_message"), "error");
         }
-      }
     };
 
     fetchData();
-  }, [userID, loading]);
+  }, []);
 
   useEffect(() => {
     const unreadArray = getNewNotifications();
