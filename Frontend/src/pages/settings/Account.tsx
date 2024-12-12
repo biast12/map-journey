@@ -9,6 +9,8 @@ import {
   IonInput,
   IonModal,
   IonAlert,
+  IonCheckbox,
+  IonLabel,
 } from "@ionic/react";
 import { pencilSharp, trashOutline, close } from "ionicons/icons";
 import { useHistory } from "react-router-dom";
@@ -26,25 +28,17 @@ import Loader from "../../components/Loader";
 
 import "./Account.scss";
 
-interface UserDataProps {
-  userData: {
-    id: string;
-    avatar: string;
-    name: string;
-    email: string;
-  };
-}
-
-const Account: React.FC<UserDataProps> = ({ userData }) => {
+const Account: React.FC<{ userData: UserData }> = ({ userData }) => {
   const { t } = useTranslation();
   const history = useHistory();
 
   /* States */
-  const [username, setUsername] = useState(userData.name);
-  const [email, setEmail] = useState(userData.email);
-  const [password, setPassword] = useState("");
-  const [avatar, setAvatar] = useState(userData.avatar);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [username, setUsername] = useState<string>(userData.name);
+  const [email, setEmail] = useState<string>(userData.email);
+  const [password, setPassword] = useState<string>("");
+  const [avatar, setAvatar] = useState<string>(userData.avatar);
+  const [status, setStatus] = useState<string>(userData.status);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
   /* Hooks */
   const { makeRequest, isLoading } = useRequestData();
@@ -83,6 +77,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
       name: string;
       email: string;
       password?: string;
+      status?: string;
     } = {
       avatar: updatedAvatar,
       name: username,
@@ -97,16 +92,14 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
     if (password) {
       updatedData = { ...updatedData, password };
     }
+    if (status !== userData.status) {
+      updatedData.status = status;
+    }
 
     role === "admin" && console.log("Updated data:", updatedData);
 
     try {
-      await makeRequest(
-        `users/${userData.id}`,
-        "PUT",
-        { "Content-Type": "application/json" },
-        updatedData
-      );
+      await makeRequest(`users/${userData.id}`, "PUT", { "Content-Type": "application/json" }, updatedData);
       showToastMessage(t("pages.settings.account.successful"), "success");
     } catch (error) {
       showToastMessage(t("pages.settings.account.failed"), "error");
@@ -115,7 +108,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
 
   return (
     <>
-      {isLoading || loading && <Loader />}
+      {isLoading || (loading && <Loader />)}
       <Toast />
       <IonHeader>
         <IonToolbar>
@@ -159,6 +152,14 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
               onIonChange={(e) => setPassword(e.detail.value!)}
             />
           </div>
+          <div className="inlineTags">
+            <IonLabel>Public: </IonLabel>
+            <IonCheckbox
+              disabled={userData.status === "banned" || userData.status === "reported" || userData.status === "warning"}
+              checked={status === "public"}
+              onIonChange={(e) => setStatus(e.target.checked! ? "public" : "private")}
+            />
+          </div>
           <IonButton onClick={handleSave} disabled={isLoading}>
             <IonIcon icon={pencilSharp}></IonIcon>
             {t("pages.settings.account.submit")}
@@ -168,10 +169,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
             {t("pages.settings.account.delete.header")}
           </IonButton>
         </div>
-        <IonModal
-          isOpen={showDeleteModal}
-          onDidDismiss={() => setShowDeleteModal(false)}
-        >
+        <IonModal isOpen={showDeleteModal} onDidDismiss={() => setShowDeleteModal(false)}>
           <IonAlert
             isOpen={showDeleteModal}
             onDidDismiss={() => setShowDeleteModal(false)}
@@ -180,9 +178,7 @@ const Account: React.FC<UserDataProps> = ({ userData }) => {
             buttons={[
               {
                 text: t("pages.settings.account.delete.cancel"),
-                role: t(
-                  "pages.settings.account.delete.cancel"
-                ).toLocaleLowerCase(),
+                role: t("pages.settings.account.delete.cancel").toLocaleLowerCase(),
                 handler: () => {
                   setShowDeleteModal(false);
                 },

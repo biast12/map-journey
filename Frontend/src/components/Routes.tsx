@@ -43,6 +43,8 @@ export const Routes = () => {
     fetchData();
   }, [userID, loading]);
 
+  
+
   useEffect(() => {
     if (data && !isLoading) {
       changeLanguage(data.settings.language);
