@@ -347,9 +347,7 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
             if (profileError) throw profileError;
 
             if (
-              profileData.status !== "warning" &&
-              profileData.status !== "banned" &&
-              profileData.status !== "private"
+              profileData.status === "reported"
             ) {
               const { error: updateProfileError } = await supabase
                 .from("profile")
@@ -380,9 +378,7 @@ router.post("/:id/:rpid", checkUserRole("admin"), async (req, res) => {
             if (pinDataError) throw pinDataError;
 
             if (
-              pinData.status !== "warning" &&
-              pinData.status !== "banned" &&
-              pinData.status !== "private"
+              profileData.status === "reported"
             ) {
               const { error: updatePinError } = await supabase
                 .from("pins")
