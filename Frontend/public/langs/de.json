@@ -188,13 +188,9 @@
       "title": "Verbotenes Verhalten",
       "content": "Sie stimmen zu, Folgendes zu unterlassen: (1) das Posten von illegalen oder schädlichen Inhalten, (2) das Belästigen, Bedrohen oder Vortäuschen anderer Identitäten, (3) das Hacken oder Reverse-Engineering der App, (4) das Teilen falscher Informationen oder (5) das Verletzen der Rechte anderer."
     },
-    "privacy_policy": {
-      "title": "Datenschutzrichtlinie",
-      "content": "Die Nutzung der App unterliegt auch unserer Datenschutzrichtlinie, die erklärt, wie wir Ihre persönlichen Daten sammeln, verwenden und schützen. Durch die Nutzung der App stimmen Sie den Bedingungen unserer Datenschutzrichtlinie zu."
-    },
     "intellectual_property": {
       "title": "Geistiges Eigentum",
-      "content": "Alle Inhalte in der App, mit Ausnahme der von Benutzern erstellten Inhalte, sind Eigentum von Map Journey oder seinen Lizenzgebern. Ohne vorherige schriftliche Zustimmung dürfen Sie keine Teile der App kopieren, modifizieren oder verbreiten."
+      "content": "Diese App ist Open Source, und der Code ist auf GitHub frei verfügbar. Sie können den Inhalt der App in Übereinstimmung mit den Bedingungen der geltenden Open-Source-Lizenz kopieren, ändern und weiterverbreiten."
     },
     "service_availability": {
       "title": "Verfügbarkeit und Änderungen des Dienstes",

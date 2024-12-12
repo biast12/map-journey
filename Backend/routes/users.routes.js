@@ -29,7 +29,7 @@ router.get("/", (req, res) => {
 router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   try {
     const { data: users, error } = await supabase.from("profile").select(`
-        id, name, email, settings_id, avatar, banner, new_notifications, status, role, news_count
+        id, name, email, settings_id, avatar, new_notifications, status, role, news_count
       `);
 
     if (error) throw error;
@@ -49,7 +49,7 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
       .from("profile")
       .select(
         `
-        id, name, email, settings_id, avatar, banner, new_notifications, status, role, news_count
+        id, name, email, settings_id, avatar, new_notifications, status, role, news_count
       `
       )
       .eq("id", userID)
@@ -343,7 +343,7 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
   try {
     const { data: profile, error: fetchProfileError } = await supabase
       .from("profile")
-      .select("settings_id, avatar, banner")
+      .select("settings_id, avatar")
       .eq("id", userID)
       .single();
 
@@ -356,7 +356,7 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const { settings_id, avatar, banner } = profile;
+    const { settings_id, avatar } = profile;
 
     const { data: pins, error: fetchPinsError } = await supabase
       .from("pins")
@@ -415,7 +415,7 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
       }
     }
 
-    await deleteImageFromBucket([avatar, banner]);
+    await deleteImageFromBucket([avatar]);
 
     const { error: deleteProfileError } = await supabase
       .from("profile")

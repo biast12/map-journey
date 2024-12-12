@@ -188,13 +188,9 @@
       "title": "Forbudt adfærd",
       "content": "Du accepterer ikke at: (1) poste ulovligt eller skadeligt indhold, (2) chikanere, true eller udgive dig for at være andre, (3) hacke eller forsøge at reverse-engineere appen, (4) dele falske oplysninger eller (5) krænke andres rettigheder."
     },
-    "privacy_policy": {
-      "title": "Privatlivspolitik",
-      "content": "Din brug af appen er også underlagt vores privatlivspolitik, som forklarer, hvordan vi indsamler, bruger og beskytter dine personlige data. Ved at bruge appen accepterer du betingelserne i vores privatlivspolitik."
-    },
     "intellectual_property": {
-      "title": "Intellektuel ejendomsret",
-      "content": "Alt indhold i appen, undtagen brugergenereret indhold, er Map Journeys eller dets licensgiveres ejendom. Du må ikke kopiere, ændre eller distribuere nogen del af appen uden forudgående skriftligt samtykke."
+      "title": "Intellektuel Ejendomsret",
+      "content": "Denne app er open source, og koden er frit tilgængelig på GitHub til offentlig brug. Du er fri til at kopiere, modificere og distribuere appens indhold i overensstemmelse med betingelserne for den gældende open source-licens."
     },
     "service_availability": {
       "title": "Tjenestens tilgængelighed og ændringer",
