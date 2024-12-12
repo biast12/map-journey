@@ -115,7 +115,7 @@ function Map({ APIurl, pinID }: MapProps) {
 
   /* Hooks */
   const { makeRequest, data, isLoading } = useRequestData();
-  const { role } = useAuth();
+  const { userData } = useAuth();
 
   /* Functions */
   const openShowPinModal = () => setShowPinModal(true);
@@ -162,7 +162,7 @@ function Map({ APIurl, pinID }: MapProps) {
     const map = new OlMap({
       target: "map",
       controls:
-        role === "admin"
+        userData?.role === "admin"
           ? defaultControls().extend([mousePositionControl])
           : defaultControls(),
       layers: [

@@ -28,23 +28,23 @@ import Loader from "../../components/Loader";
 
 import "./Account.scss";
 
-const Account: React.FC<{ userData: UserData }> = ({ userData }) => {
+const Account = () => {
   const { t } = useTranslation();
   const history = useHistory();
-
-  /* States */
-  const [username, setUsername] = useState<string>(userData.name);
-  const [email, setEmail] = useState<string>(userData.email);
-  const [password, setPassword] = useState<string>("");
-  const [avatar, setAvatar] = useState<string>(userData.avatar);
-  const [status, setStatus] = useState<string>(userData.status);
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
   /* Hooks */
   const { makeRequest, isLoading } = useRequestData();
   const { makeRequest: deleteMakeRequest } = useRequestData();
   const { photoUrl, loading, takePhoto, handleUpload } = useImageHandler();
-  const { role, clearAuthToken, clearRoleToken } = useAuth();
+  const { userData, clearAuthToken, clearUserDataToken } = useAuth();
+
+  /* States */
+  const [username, setUsername] = useState<string>(userData?.name!);
+  const [email, setEmail] = useState<string>(userData?.email!);
+  const [password, setPassword] = useState<string>("");
+  const [avatar, setAvatar] = useState<string>(userData?.avatar!);
+  const [status, setStatus] = useState<string>(userData?.status!);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
   useEffect(() => {
     document.title = "Map Journey - Account Settings";
@@ -65,7 +65,7 @@ const Account: React.FC<{ userData: UserData }> = ({ userData }) => {
 
     if (photoUrl) {
       try {
-        const { publicUrl } = await handleUpload(userData.id);
+        const { publicUrl } = await handleUpload(userData?.id);
         updatedAvatar = publicUrl;
       } catch (error) {
         console.error("Error uploading avatar:", error);
@@ -92,14 +92,14 @@ const Account: React.FC<{ userData: UserData }> = ({ userData }) => {
     if (password) {
       updatedData = { ...updatedData, password };
     }
-    if (status !== userData.status) {
+    if (status !== userData?.status) {
       updatedData.status = status;
     }
 
-    role === "admin" && console.log("Updated data:", updatedData);
+    userData?.role === "admin" && console.log("Updated data:", updatedData);
 
     try {
-      await makeRequest(`users/${userData.id}`, "PUT", { "Content-Type": "application/json" }, updatedData);
+      await makeRequest(`users/${userData?.id}`, "PUT", { "Content-Type": "application/json" }, updatedData);
       showToastMessage(t("pages.settings.account.successful"), "success");
     } catch (error) {
       showToastMessage(t("pages.settings.account.failed"), "error");
@@ -155,7 +155,7 @@ const Account: React.FC<{ userData: UserData }> = ({ userData }) => {
           <div className="inlineTags">
             <IonLabel>Public: </IonLabel>
             <IonCheckbox
-              disabled={userData.status === "banned" || userData.status === "reported" || userData.status === "warning"}
+              disabled={userData?.status === "banned" || userData?.status === "reported" || userData?.status === "warning"}
               checked={status === "public"}
               onIonChange={(e) => setStatus(e.target.checked! ? "public" : "private")}
             />
@@ -187,10 +187,10 @@ const Account: React.FC<{ userData: UserData }> = ({ userData }) => {
                 text: t("pages.settings.account.delete.header"),
                 handler: () => {
                   handleDeleteAccount({
-                    data: { id: userData.id, avatar: userData.avatar },
+                    data: { id: userData?.id!, avatar: userData?.avatar! },
                     makeRequest: deleteMakeRequest,
                     clearAuthToken,
-                    clearRoleToken,
+                    clearUserDataToken,
                     history,
                   });
                 },

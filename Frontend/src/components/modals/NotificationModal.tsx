@@ -27,7 +27,7 @@ const NotificationModal: React.FC = () => {
     makeRequest: makeRequestReset,
     isLoading: isLoadingReset,
   } = useRequestData();
-  const { userID, role, loading } = useAuth();
+  const { userID, userData, loading } = useAuth();
   const [unreadNotifications, setUnreadNotifications] = useState<Set<number>>(
     new Set()
   );
@@ -49,7 +49,7 @@ const NotificationModal: React.FC = () => {
       if (userID && !loading) {
         try {
           await makeRequestReset(`notification/readall/${userID}`, "POST");
-          role === "admin" && console.log("All notifications are now read");
+          userData?.role === "admin" && console.log("All notifications are now read");
         } catch (error) {
           showToastMessage(t("modals.notification.error_read_message"), "error");
         }

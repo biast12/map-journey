@@ -8,7 +8,7 @@ import {
   IonImg,
   IonInput,
   IonItem,
-  IonToggle,
+  IonCheckbox,
 } from "@ionic/react";
 import { camera, locationSharp } from "ionicons/icons";
 import { Geolocation } from "@capacitor/geolocation";
@@ -48,7 +48,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
 
   /* Hooks */
   const { makeRequest } = useRequestData();
-  const { userID, role } = useAuth();
+  const { userID, userData } = useAuth();
   const { photoUrl, loading, takePhoto, handleUpload } = useImageHandler();
 
   useEffect(() => {
@@ -92,7 +92,7 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
       formData.append("longitude", location.lon);
       formData.append("imgurls", publicUrl);
       formData.append("status", status.toString());
-      role === "admin" && console.log("formData:", formData);
+      userData?.role === "admin" && console.log("formData:", formData);
 
       await makeRequest(`pins/${userID}`, "POST", undefined, formData);
       onClose();
@@ -200,16 +200,12 @@ const CreatePinModal: React.FC<CreatePinModalProps> = ({ onClose }) => {
         />
       </IonItem>
       <IonItem>
-        <IonToggle
+        <IonCheckbox
           checked={status}
-          enableOnOffLabels={true}
-          onIonChange={(e) => setStatus(e.detail.checked)}
+          onIonChange={() => setStatus(!status)}
         >
-          {status
-            ? t("modals.create_pin.public")
-            : t("modals.create_pin.private")}
-          :
-        </IonToggle>
+          {t("modals.create_pin.public")}:
+        </IonCheckbox>
       </IonItem>
       <div id="confirmButton">
         <IonButton onClick={handleConfirm} ref={confirmButton}>

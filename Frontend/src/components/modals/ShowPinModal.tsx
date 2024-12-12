@@ -27,7 +27,7 @@ interface ShowPinModalProps {
 const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
   if (!pinData) return null;
   const { t } = useTranslation();
-  const { userID, role } = useAuth();
+  const { userID, userData } = useAuth();
   const [reportPinModal, setReportPinModal] = useState(false);
   const openReportPinModal = () => setReportPinModal(true);
   const closeReportPinModal = () => setReportPinModal(false);
@@ -93,7 +93,7 @@ const ShowPinModal: React.FC<ShowPinModalProps> = ({ pinData }) => {
             <IonIcon icon={shareSocialOutline} />
           </IonButton>
         </div>
-        {role === "admin" && (
+        {userData?.role === "admin" && (
           <>
             <p>Pin ID: {pinData.id}</p>
             <p>User ID: {pinData.profile.id}</p>

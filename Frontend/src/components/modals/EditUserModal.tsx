@@ -19,22 +19,22 @@ const EditUserModal = ({ userData, showModal, setShowModal, onSubmit }: EditUser
         <h3>Edit user</h3>
         <div>
           <figure>
-            <img src={userData.banner} alt="User banner" />
+            <img src={userData?.banner} alt="User banner" />
           </figure>
           <figure>
-            <img src={userData.avatar} alt="User avatar" />
+            <img src={userData?.avatar} alt="User avatar" />
           </figure>
         </div>
         <form onSubmit={(e) => onSubmit(e, userData)}>
           <label htmlFor="username">Name:</label>
-          <input name="username" type="text" placeholder="Name" required defaultValue={userData.name} />
+          <input name="username" type="text" placeholder="Name" required defaultValue={userData?.name} />
           <label htmlFor="userrole">Role:</label>
-          <select defaultValue={userData.role} name="userrole" title="Role">
+          <select defaultValue={userData?.role} name="userrole" title="Role">
             <option value="user">User</option>
             <option value="admin">Admin</option>
           </select>
           <label htmlFor="status">Status:</label>
-          <select defaultValue={userData.status} name="status" title="Status">
+          <select defaultValue={userData?.status} name="status" title="Status">
             <option value="public">Public</option>
             <option value="private">Private</option>
             <option value="warning">Warned</option>

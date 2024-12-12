@@ -15,12 +15,12 @@ const UserColumn: React.FC<UserColumnProps> = ({ userData, onEditUserClick, onDe
     <IonCol className="userColumn" size="12">
       <section>
         <div className="userIdCon">
-          <p className="userIdText">Id: {userData.id}</p>
+          <p className="userIdText">Id: {userData?.id}</p>
         </div>
         <div className="userInfoCon">
-          <p>Name: {userData.name}</p>
-          <p>Role: {userData.role}</p>
-          <p>Status: {userData.status}</p>
+          <p>Name: {userData?.name}</p>
+          <p>Role: {userData?.role}</p>
+          <p>Status: {userData?.status}</p>
         </div>
       </section>
       <IonButton color="warning" onClick={(e) => onEditUserClick(e, userData)}><IonIcon aria-hidden="true" icon={createOutline} /></IonButton>

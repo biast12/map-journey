@@ -23,7 +23,7 @@ const PinsManagement = ({ url }: { url: string }) => {
     status: "all",
   });
 
-  const { userID, role } = useAuth();
+  const { userID, userData } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -118,7 +118,7 @@ const PinsManagement = ({ url }: { url: string }) => {
             }}
           >
             <option value="title">Title</option>
-            {role === "admin" && <option value="id">Id</option>}
+            {userData?.role === "admin" && <option value="id">Id</option>}
             <option value="description">Description</option>
           </select>
         </IonCol>

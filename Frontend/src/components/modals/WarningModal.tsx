@@ -32,7 +32,7 @@ const WarningModal: React.FC<WarningModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const history = useHistory();
-  const { userID, clearAuthToken, clearRoleToken } = useAuth();
+  const { userID, clearAuthToken, clearUserDataToken } = useAuth();
   const { makeRequest } = useRequestData();
   const { makeRequest: deleteMakeRequest } = useRequestData();
 
@@ -107,7 +107,7 @@ const WarningModal: React.FC<WarningModalProps> = ({
                   data: { id: data.id, avatar: data.avatar },
                   makeRequest: deleteMakeRequest,
                   clearAuthToken,
-                  clearRoleToken,
+                  clearUserDataToken,
                   history,
                 });
               },

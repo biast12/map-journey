@@ -29,7 +29,7 @@ let getNewNotifications: () => string[] | null;
 const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
   const { t } = useTranslation();
   const { makeRequest, data, isLoading } = useRequestData();
-  const { userID, role, loading } = useAuth();
+  const { userID, userData, loading } = useAuth();
   const [hasWarningModalOpened, setHasWarningModalOpened] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
 
@@ -64,6 +64,10 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
     }
   }, [data, isLoading]);
 
+  useEffect(() => {
+    console.log(userData);
+  }, []);
+
   const handleOpenNotificationModal = () => {
     data.news_count = 0;
     openNotificationModal();
@@ -90,7 +94,7 @@ const Header: React.FC<HeaderProps> = ({ openNotificationModal }) => {
                   <IonBadge color="danger">{data.news_count}</IonBadge>
                 )}
               </IonButton>
-              {role === "admin" && (
+              {userData?.role === "admin" && (
                 <IonButton routerLink="/admin" fill="clear">
                   <IonIcon aria-hidden="true" icon={shieldHalf} />
                 </IonButton>

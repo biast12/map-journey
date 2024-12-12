@@ -3,12 +3,12 @@ import { Preferences } from "@capacitor/preferences";
 
 interface ProviderContextProps {
   userID: string | null;
-  role: string | null;
+  userData: UserData | null;
   loading: boolean;
   storeAuthToken: (token: string) => Promise<void>;
   clearAuthToken: () => Promise<void>;
-  storeRoleToken: (token: string) => Promise<void>;
-  clearRoleToken: () => Promise<void>;
+  storeUserDataToken: (token: UserData) => Promise<void>;
+  clearUserDataToken: () => Promise<void>;
 }
 
 const ProviderContext = createContext<ProviderContextProps | undefined>(
@@ -19,7 +19,7 @@ export const ProviderContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [userID, setUserID] = useState<string | null>(null);
-  const [role, setRole] = useState<string | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
 
   /* Auth */
@@ -51,31 +51,35 @@ export const ProviderContextProvider: React.FC<{
     }
   };
 
-  /* Role */
-  const storeRoleToken = async (token: string) => {
+  /* userData */
+  const storeUserDataToken = async (token: UserData) => {
     try {
-      await Preferences.set({ key: "roleToken", value: token });
-      setRole(token);
+      const tokenString = JSON.stringify(token);
+      await Preferences.set({ key: "userDataToken", value: tokenString });
+      setUserData(token);
     } catch (error) {
-      console.error("Failed to store role token", error);
+      console.error("Failed to store userData token", error);
     }
   };
 
-  const clearRoleToken = async () => {
+  const clearUserDataToken = async () => {
     try {
-      await Preferences.remove({ key: "roleToken" });
-      setRole(null);
+      await Preferences.remove({ key: "userDataToken" });
+      setUserData(null);
     } catch (error) {
-      console.error("Failed to clear role token", error);
+      console.error("Failed to clear userData token", error);
     }
   };
 
-  const getRoleToken = async () => {
+  const getUserDataToken = async () => {
     try {
-      const { value } = await Preferences.get({ key: "roleToken" });
-      return value;
+      const { value } = await Preferences.get({ key: "userDataToken" });
+      if (value) {
+        return JSON.parse(value) as UserData;
+      }
+      return null;
     } catch (error) {
-      console.error("Failed to get role token", error);
+      console.error("Failed to get userData token", error);
       return null;
     }
   };
@@ -85,8 +89,8 @@ export const ProviderContextProvider: React.FC<{
       try {
         const authToken = await getAuthToken();
         if (authToken) setUserID(authToken);
-        const roleToken = await getRoleToken();
-        if (roleToken) setRole(roleToken);
+        const userDataToken = await getUserDataToken();
+        if (userDataToken) setUserData(userDataToken);
       } catch (error) {
         console.error("Failed to initialize tokens", error);
       } finally {
@@ -99,12 +103,12 @@ export const ProviderContextProvider: React.FC<{
 
   const contextValue = {
     userID,
-    role,
+    userData,
     loading,
     storeAuthToken,
     clearAuthToken,
-    storeRoleToken,
-    clearRoleToken,
+    storeUserDataToken,
+    clearUserDataToken,
   };
 
   return (

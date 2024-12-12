@@ -22,16 +22,12 @@
       "successful": "Pin erfolgreich erstellt",
       "error_message": "Pin konnte nicht erstellt werden",
       "public": "Öffentlich",
-      "private": "Privat",
       "submit": "Bestätigen"
     },
     "create_user": {
       "card_title": "Benutzer erstellen",
-      "username": "Benutzername",
       "username_placeholder": "Ihr Benutzername",
-      "email": "E-Mail",
       "email_placeholder": "Ihre E-Mail",
-      "password": "Passwort",
       "password_placeholder": "Ihr Passwort",
       "agree_to_terms": "Ich stimme den",
       "terms_of_service": "Nutzungsbedingungen zu",
@@ -43,9 +39,7 @@
     },
     "login": {
       "card_title": "Anmelden",
-      "email": "E-Mail",
       "email_placeholder": "Ihre E-Mail",
-      "password": "Passwort",
       "password_placeholder": "Ihr Passwort",
       "submit": "Anmelden",
       "create_user": "Benutzer erstellen",
@@ -61,7 +55,6 @@
       "text": "Berichtstext",
       "submit": "Bericht einreichen",
       "close": "Schließen",
-      "successful": "Erfolgreich gemeldet",
       "failed": "Berichterstattung von {{type}} fehlgeschlagen!"
     },
     "pin": {
@@ -174,7 +167,7 @@
     },
     "description": {
       "title": "Beschreibung des Dienstes",
-      "content": "Map Journey ermöglicht es Benutzern, ihre Reisen durch das Setzen von Pins mit Standortdaten, Texten und Bildern zu kartieren. Pins können als öffentlich oder privat festgelegt werden, und Benutzer können personalisierte Profile mit Bildern und Bannern erstellen."
+      "content": "Map Journey ermöglicht es Benutzern, ihre Reisen durch das Setzen von Pins mit Standortdaten, Texten und Bildern zu kartieren. Pins können als öffentlich oder privat festgelegt werden, und Benutzer können personalisierte Profile mit Bildern erstellen."
     },
     "user_accounts": {
       "title": "Benutzerkonten",

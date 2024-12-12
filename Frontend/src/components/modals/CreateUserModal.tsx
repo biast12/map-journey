@@ -42,11 +42,11 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   const { t } = useTranslation();
   const { makeRequest, isLoading, data, error } = useRequestData();
   const {
-    role,
+    userData,
     storeAuthToken,
-    storeRoleToken,
+    storeUserDataToken,
     clearAuthToken,
-    clearRoleToken,
+    clearUserDataToken,
   } = useAuth();
 
   async function handleCreateUser(formEvent: FormEvent) {
@@ -72,7 +72,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
       return;
     }
 
-    role === "admin" && console.log("formData: ", formData);
+    userData?.role === "admin" && console.log("formData: ", formData);
 
     try {
       await makeRequest(
@@ -89,13 +89,13 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
   useEffect(() => {
     if (data) {
       storeAuthToken(data.id);
-      storeRoleToken(data.role);
+      storeUserDataToken(data);
       closeCreateUserModal();
       closeLoginModal();
     } else if (error) {
       showToastMessage("User creation failed", "error");
       clearAuthToken();
-      clearRoleToken();
+      clearUserDataToken();
     }
   }, [error, data]);
 
@@ -114,7 +114,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
             name="name"
             type="text"
             labelPlacement="fixed"
-            label={t("modals.create_user.username")}
+            label="Username"
             placeholder={t("modals.create_user.username_placeholder")}
           ></IonInput>
           <IonInput
@@ -123,7 +123,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
             name="email"
             type="email"
             labelPlacement="fixed"
-            label={t("modals.create_user.email")}
+            label="Email"
             placeholder={t("modals.create_user.email_placeholder")}
           ></IonInput>
           <IonInput
@@ -132,7 +132,7 @@ const CreateUserModal: React.FC<CreateUserProps> = ({
             name="password"
             type="password"
             labelPlacement="fixed"
-            label={t("modals.create_user.password")}
+            label="Password"
             placeholder={t("modals.create_user.password_placeholder")}
           >
             <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>

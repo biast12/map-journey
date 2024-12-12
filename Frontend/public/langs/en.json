@@ -22,16 +22,13 @@
       "successful": "Pin created successfully",
       "error_message": "Failed to create pin",
       "public": "Public",
-      "private": "Private",
       "submit": "Confirm"
     },
     "create_user": {
       "card_title": "Create User",
       "username": "Username",
       "username_placeholder": "Your username",
-      "email": "Email",
       "email_placeholder": "Your email",
-      "password": "Password",
       "password_placeholder": "Your password",
       "agree_to_terms": "I agree to the",
       "terms_of_service": "terms of service",
@@ -43,9 +40,7 @@
     },
     "login": {
       "card_title": "Login",
-      "email": "Email",
       "email_placeholder": "Your email",
-      "password": "Password",
       "password_placeholder": "Your password",
       "submit": "Login",
       "create_user": "Create user",
@@ -61,7 +56,6 @@
       "text": "Report Text",
       "submit": "Submit Report",
       "close": "Close",
-      "successful": "Reported successfully",
       "failed": "Reporting {{type}} failed!"
     },
     "pin": {
@@ -101,7 +95,6 @@
       "account": {
         "card_title": "Account",
         "img_alt": "User avatar",
-        "username": "Username",
         "email": "Email",
         "password": "Password",
         "required_fields": "Username and Email fields are required",
@@ -174,7 +167,7 @@
     },
     "description": {
       "title": "Description of the Service",
-      "content": "Map Journey allows users to create and manage trip maps by placing pins with location data, text, and images. Pins can be set as public or private, and users can create customizable profiles with images and banners."
+      "content": "Map Journey allows users to create and manage trip maps by placing pins with location data, text, and images. Pins can be set as public or private, and users can create customizable profiles with images."
     },
     "user_accounts": {
       "title": "User Accounts",

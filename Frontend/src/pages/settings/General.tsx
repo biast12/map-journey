@@ -43,10 +43,10 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
   const { t } = useTranslation();
 
   /* States */
-  const [mapTheme, setMapTheme] = useState(userData.settings.maptheme);
-  const [language, setLanguage] = useState(userData.settings.language);
+  const [mapTheme, setMapTheme] = useState(userData?.settings.maptheme);
+  const [language, setLanguage] = useState(userData?.settings.language);
   const [notification, setNotification] = useState(
-    userData.settings.notification
+    userData?.settings.notification
   );
   const [languages, setLanguages] = useState<{ [key: string]: string }>({});
 
@@ -109,7 +109,7 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
 
     try {
       await makeRequest(
-        `settings/${userData.id}`,
+        `settings/${userData?.id}`,
         "PUT",
         { "Content-Type": "application/json" },
         updatedData

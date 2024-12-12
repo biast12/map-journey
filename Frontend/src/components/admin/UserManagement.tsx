@@ -53,7 +53,7 @@ const UserManagement = () => {
     };
 
     try {
-      await editMakeRequest(`users/${userID}/${userData.id}`, "PUT", undefined, body);
+      await editMakeRequest(`users/${userID}/${userData?.id}`, "PUT", undefined, body);
       await makeRequest(`users/all/${userID}`);
 
       setShowEditModal(false);
@@ -67,7 +67,7 @@ const UserManagement = () => {
     setHandlingRequest(true);
 
     try {
-      await delMakeRequest(`users/${userData.id}`, "DELETE");
+      await delMakeRequest(`users/${userData?.id}`, "DELETE");
       await makeRequest(`users/all/${userID}`);
 
       setShowDeleteModal(false);
@@ -92,10 +92,10 @@ const UserManagement = () => {
 
   function filterData(userData: UserData) {
     if (
-      (searchOptions.role !== "all" && userData.role !== searchOptions.role) ||
+      (searchOptions.role !== "all" && userData?.role !== searchOptions.role) ||
       (searchOptions.status !== "all" &&
-        userData.status !== searchOptions.status) ||
-      userData.id === userID
+        userData?.status !== searchOptions.status) ||
+      userData?.id === userID
     ) {
       return false;
     }
@@ -211,7 +211,7 @@ const UserManagement = () => {
           ) : (
             data.filter(filterData).map((userData: UserData) => (
               <UserColumn
-                key={userData.id}
+                key={userData?.id}
                 userData={userData}
                 onEditUserClick={() => {
                   if (handlingRequest) return;

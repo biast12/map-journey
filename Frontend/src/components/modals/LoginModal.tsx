@@ -34,7 +34,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
 
   const { t } = useTranslation();
   const { makeRequest, data, isLoading } = useRequestData();
-  const { storeAuthToken, storeRoleToken, clearAuthToken, clearRoleToken } =
+  const { storeAuthToken, storeUserDataToken, clearAuthToken, clearUserDataToken } =
     useAuth();
 
   async function handleLogin(formEvent: FormEvent) {
@@ -59,14 +59,14 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
     } catch (error) {
       setLoginSuccess(false);
       clearAuthToken();
-      clearRoleToken();
+      clearUserDataToken();
     }
   }
 
   useEffect(() => {
     if (data) {
       storeAuthToken(data.user.id);
-      storeRoleToken(data.user.role);
+      storeUserDataToken(data);
       closeLoginModal();
     }
   }, [data]);
@@ -88,7 +88,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
             name="email"
             type="email"
             labelPlacement="fixed"
-            label={t("modals.login.email")}
+            label="Email"
             placeholder={t("modals.login.email_placeholder")}
           ></IonInput>
           <IonInput
@@ -97,7 +97,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
             name="password"
             type="password"
             labelPlacement="fixed"
-            label={t("modals.login.password")}
+            label="Password"
             placeholder={t("modals.login.password_placeholder")}
           >
             <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>

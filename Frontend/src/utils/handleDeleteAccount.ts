@@ -5,20 +5,20 @@ interface DeleteAccountProps {
   };
   makeRequest: (url: string, method: string) => Promise<void>;
   clearAuthToken: () => Promise<void>;
-  clearRoleToken: () => Promise<void>;
+  clearUserDataToken: () => Promise<void>;
   history: any;
 }
 const handleDeleteAccount = async ({
   data,
   makeRequest,
   clearAuthToken,
-  clearRoleToken,
+  clearUserDataToken,
   history,
 }: DeleteAccountProps) => {
   try {
     await makeRequest(`users/${data.id}`, "DELETE");
     await clearAuthToken();
-    await clearRoleToken();
+    await clearUserDataToken();
     history.push("/");
   } catch (error) {
     console.error("Error deleting account:", error);

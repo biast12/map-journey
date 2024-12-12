@@ -23,7 +23,7 @@ import { useTranslation } from "react-i18next";
 
 const Settings: React.FC = () => {
   const history = useHistory();
-  const { clearAuthToken, clearRoleToken } = useAuth();
+  const { clearAuthToken, clearUserDataToken } = useAuth();
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
@@ -37,7 +37,7 @@ const Settings: React.FC = () => {
 
   const handleLogout = async () => {
     await clearAuthToken();
-    await clearRoleToken();
+    await clearUserDataToken();
     history.push("/");
   };
   const { t } = useTranslation();

@@ -45,7 +45,7 @@ const ReportModal = ({
 
   /* Hooks */
   const { makeRequest, isLoading } = useRequestData();
-  const { userID, role } = useAuth();
+  const { userID, userData } = useAuth();
 
   useEffect(() => {
     const refs = [confirmButton, cancelButton, textInput];
@@ -66,7 +66,7 @@ const ReportModal = ({
       [reportedType === "user" ? "reported_user_id" : "reported_pin_id"]:
         reported_id,
     };
-    role === "admin" && console.log("Payload:", payload);
+    userData?.role === "admin" && console.log("Payload:", payload);
     try {
       await makeRequest(
         `reports/${userID}`,
@@ -74,12 +74,13 @@ const ReportModal = ({
         { "Content-Type": "application/json" },
         payload
       );
-      showToastMessage(t("modals.report.successful"), "success");
+      
       closeReportModal();
-      role === "admin" && console.log("Reported successfully");
+      userData?.role === "admin" && console.log("Reported successfully");
     } catch (error) {
       showToastMessage(t("modals.report.failed", { type: reportedType }), "error");
     }
+    setIsSubmitting(false);
   }
 
   return (
