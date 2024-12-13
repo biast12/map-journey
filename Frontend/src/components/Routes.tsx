@@ -90,7 +90,7 @@ export const Routes = () => {
         <Route
           exact
           path="/settings/pins"
-          render={() => <Pins />}
+          render={() => userData && <Pins userData={userData} />}
         />
         <Route exact path="/privacy-policy" component={PrivacyPolicy} />
         <Route exact path="/terms-of-service" component={TermsOfService} />
