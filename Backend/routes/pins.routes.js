@@ -40,49 +40,40 @@ router.get("/all/:id", checkUserRole("user"), async (req, res) => {
 
     const isUserBanned = userProfile.status === "banned";
 
-    const { data: pins, error } = await supabase
-      .from("pins")
-      .select(
-        `*,
-        profile:profile_id (
-          id,
-          name,
-          avatar,
-          status
-        )`
-      )
-      .eq("status", "public")
-      .filter("profile.status", "eq", "public");
+    const { data: pins, error: pinsError } = await supabase
+    .from("pins")
+    .select(
+      `*,
+      profile:profile_id (
+        id,
+        name,
+        avatar,
+        status
+      ),
+      reports (
+        profile_id
+      )`
+    )
+    .eq("status", "public")
+    .filter("profile.status", "eq", "public");
 
-    if (error) {
-      console.error("Error fetching public pins:", error);
+    if (pinsError) {
+      console.error("Error fetching public pins:", pinsError);
       return res.status(500).json({ error: "Error fetching public pins" });
     }
 
-    const filteredPins = [];
-
-    for (let pin of pins) {
-      if (!pin.profile) continue;
+    const filteredPins = pins.map((pin) => {
+      if (!pin.profile) return null;
 
       if (isUserBanned) {
         pin.reported = true;
-        filteredPins.push(pin);
       } else {
-        const { data: reportData, error: reportError } = await supabase
-          .from("reports")
-          .select("*")
-          .eq("reported_pin_id", pin.id)
-          .eq("profile_id", userID);
-
-        if (reportError) {
-          console.error("Error checking reports:", reportError);
-          return res.status(500).json({ error: "Error checking reports" });
-        }
-
-        pin.reported = reportData.length > 0 ? true : false;
-        filteredPins.push(pin);
+        const isReported = pin.reports.some((report) => report.profile_id === userID);
+        pin.reported = isReported;
       }
-    }
+
+      return pin;
+    }).filter(Boolean);
 
     res.status(200).json(filteredPins);
   } catch (error) {
@@ -107,8 +98,6 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
       return res.status(500).json({ error: "Error fetching user profile" });
     }
 
-    const isUserBanned = userProfile.status === "banned";
-
     const { data: pins, error } = await supabase
       .from("pins")
       .select(
@@ -122,30 +111,9 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
       `
       )
       .eq("profile_id", userID);
-
     if (error) {
       console.error("Error fetching user pins:", error);
       return res.status(500).json({ error: "Error fetching user pins" });
-    }
-
-    for (let pin of pins) {
-      if (isUserBanned) {
-        pin.reported = true;
-      } else {
-        const { data: reportData, error: reportError } = await supabase
-          .from("reports")
-          .select("*")
-          .eq("reported_pin_id", pin.id)
-          .eq("profile_id", userID)
-          .eq("active", true);
-
-        if (reportError) {
-          console.error("Error checking reports:", reportError);
-          return res.status(500).json({ error: "Error checking reports" });
-        }
-
-        pin.reported = reportData.length > 0 ? true : false;
-      }
     }
 
     res.status(200).json(pins);
