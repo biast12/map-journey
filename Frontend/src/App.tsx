@@ -65,7 +65,12 @@ const AppContent: React.FC = () => {
   const closeNotificationModal = () => setShowNotificationModal(false);
 
   // Define the paths for Public Routes
-  const publicPaths = ["/privacy-policy", "/terms-of-service", "/error", "/error/:status"];
+  const publicPaths = [
+    "/privacy-policy",
+    "/terms-of-service",
+    "/error",
+    "/error/:status",
+  ];
 
   useEffect(() => {
     if (!userData?.id && !loading && !publicPaths.includes(location.pathname)) {
@@ -73,27 +78,36 @@ const AppContent: React.FC = () => {
     }
   }, [userData, loading, location.pathname]);
 
-  return userData && (
-    <>
-      <Header userData={userData} openNotificationModal={openNotificationModal} />
-      <IonContent>
-        <IonTabs>
-          <IonRouterOutlet>
-            <Routes />
-          </IonRouterOutlet>
-          <Footer userData={userData} openCreatePinModal={openCreatePinModal} />
-        </IonTabs>
-      </IonContent>
-      <Modals
-        userData={userData}
-        showLoginModal={showLoginModal}
-        closeLoginModal={closeLoginModal}
-        createPinModal={createPinModal}
-        closeCreatePinModal={closeCreatePinModal}
-        showNotificationModal={showNotificationModal}
-        closeNotificationModal={closeNotificationModal}
-      />
-    </>
+  return (
+  <>
+    {userData && (
+      <>
+        <Header
+          userData={userData}
+          openNotificationModal={openNotificationModal}
+        />
+        <IonContent>
+          <IonTabs>
+            <IonRouterOutlet>
+              <Routes />
+            </IonRouterOutlet>
+            <Footer
+              userData={userData}
+              openCreatePinModal={openCreatePinModal}
+            />
+          </IonTabs>
+        </IonContent>
+      </>
+    )}
+    <Modals
+      showLoginModal={showLoginModal}
+      closeLoginModal={closeLoginModal}
+      createPinModal={createPinModal}
+      closeCreatePinModal={closeCreatePinModal}
+      showNotificationModal={showNotificationModal}
+      closeNotificationModal={closeNotificationModal}
+    />
+  </>
   );
 };
 
