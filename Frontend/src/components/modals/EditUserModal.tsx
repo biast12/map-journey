@@ -6,35 +6,35 @@ import Modal from "../Modal";
 import "./EditUserModal.scss";
 
 type EditUserProps = {
-  userData: UserData,
+  selectedUser: UserData,
   showModal: boolean,
   setShowModal: Dispatch<SetStateAction<boolean>>,
-  onSubmit: (e: FormEvent, userData: UserData) => void,
+  onSubmit: (e: FormEvent, selectedUser: UserData) => void,
 }
 
-const EditUserModal = ({ userData, showModal, setShowModal, onSubmit }: EditUserProps) => {
+const EditUserModal = ({ selectedUser, showModal, setShowModal, onSubmit }: EditUserProps) => {
   return (
     <Modal isOpen={showModal} onCloseModal={() => setShowModal(false)}>
       <section id="editUserModal">
         <h3>Edit user</h3>
         <div>
           <figure>
-            <img src={userData.banner} alt="User banner" />
+            <img src={selectedUser.banner} alt="User banner" />
           </figure>
           <figure>
-            <img src={userData.avatar} alt="User avatar" />
+            <img src={selectedUser.avatar} alt="User avatar" />
           </figure>
         </div>
-        <form onSubmit={(e) => onSubmit(e, userData)}>
+        <form onSubmit={(e) => onSubmit(e, selectedUser)}>
           <label htmlFor="username">Name:</label>
-          <input name="username" type="text" placeholder="Name" required defaultValue={userData.name} />
+          <input name="username" type="text" placeholder="Name" required defaultValue={selectedUser.name} />
           <label htmlFor="userrole">Role:</label>
-          <select defaultValue={userData.role} name="userrole" title="Role">
+          <select defaultValue={selectedUser.role} name="userrole" title="Role">
             <option value="user">User</option>
             <option value="admin">Admin</option>
           </select>
           <label htmlFor="status">Status:</label>
-          <select defaultValue={userData.status} name="status" title="Status">
+          <select defaultValue={selectedUser.status} name="status" title="Status">
             <option value="public">Public</option>
             <option value="private">Private</option>
             <option value="warning">Warned</option>

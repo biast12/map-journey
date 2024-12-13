@@ -11,8 +11,8 @@ interface ErrorPageProps
 
 const ErrorPage: React.FunctionComponent<ErrorPageProps> = ({ match }) => {
   const { t } = useTranslation();
-  const { role } = useAuth();
-  role === "admin" && console.log(match);
+  const { userData } = useAuth();
+  userData?.role === "admin" && console.log(match);
 
   useEffect(() => {
     document.title = "Map Journey - Error!";

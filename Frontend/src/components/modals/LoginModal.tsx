@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import Turnstile from 'react-turnstile';
 
 /* Hooks */
+import { changeLanguage, setDebugMode } from "../../utils/i18n";
 import useRequestData from "../../hooks/useRequestData";
 import useAuth from "../../hooks/ProviderContext";
 
@@ -23,18 +24,14 @@ import CreateUserModal from "./CreateUserModal";
 
 import "./LoginModal.scss";
 
-interface LoginProps {
-  closeLoginModal: () => void;
-}
-
-const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
+const LoginModal = ({ closeLoginModal }: { closeLoginModal: () => void }) => {
   const [loginSuccess, setLoginSuccess] = useState<boolean | null>(null);
   const [createUserModal, setCreateUserModal] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const { t } = useTranslation();
   const { makeRequest, data, isLoading } = useRequestData();
-  const { storeAuthToken, storeRoleToken, clearAuthToken, clearRoleToken } =
+  const { storeUserDataToken, clearUserDataToken } =
     useAuth();
 
   async function handleLogin(formEvent: FormEvent) {
@@ -58,18 +55,22 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
       );
     } catch (error) {
       setLoginSuccess(false);
-      clearAuthToken();
-      clearRoleToken();
+      clearUserDataToken();
     }
   }
 
   useEffect(() => {
-    if (data) {
-      storeAuthToken(data.user.id);
-      storeRoleToken(data.user.role);
+    if (data && !isLoading) {
+      storeUserDataToken(data);
+      changeLanguage(data.settings.language);
+      if (data.role === "admin") {
+        console.log("Admin/Debug mode enabled");
+        console.log("Your saved user data: ", data);
+        setDebugMode(true);
+      }
       closeLoginModal();
     }
-  }, [data]);
+  }, [isLoading]);
 
   const openCreateUserModal = () => setCreateUserModal(true);
   const closeCreateUserModal = () => setCreateUserModal(false);
@@ -88,7 +89,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
             name="email"
             type="email"
             labelPlacement="fixed"
-            label={t("modals.login.email")}
+            label="Email"
             placeholder={t("modals.login.email_placeholder")}
           ></IonInput>
           <IonInput
@@ -97,7 +98,7 @@ const LoginModal: React.FC<LoginProps> = ({ closeLoginModal }) => {
             name="password"
             type="password"
             labelPlacement="fixed"
-            label={t("modals.login.password")}
+            label="Password"
             placeholder={t("modals.login.password_placeholder")}
           >
             <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>

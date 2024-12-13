@@ -22,30 +22,23 @@
       "successful": "Pin oprettet succesfuldt",
       "error_message": "Kunne ikke oprette pin",
       "public": "Offentlig",
-      "private": "Privat",
       "submit": "Bekræft"
     },
     "create_user": {
       "card_title": "Opret Bruger",
-      "username": "Brugernavn",
       "username_placeholder": "Dit brugernavn",
-      "email": "Email",
       "email_placeholder": "Din email",
-      "password": "Adgangskode",
       "password_placeholder": "Din adgangskode",
       "agree_to_terms": "Jeg accepterer",
       "terms_of_service": "vilkårene for brug",
       "agree_to_terms_required": "Du skal acceptere vilkårene for brug",
       "submit": "Opret bruger",
       "close": "Luk",
-      "failed": "Brugeroprettelse mislykkedes!",
       "error_message": "Kunne ikke oprette bruger"
     },
     "login": {
       "card_title": "Login",
-      "email": "Email",
       "email_placeholder": "Din email",
-      "password": "Adgangskode",
       "password_placeholder": "Din adgangskode",
       "submit": "Login",
       "create_user": "Opret bruger",
@@ -61,7 +54,6 @@
       "text": "Rapport Tekst",
       "submit": "Indsend Rapport",
       "close": "Luk",
-      "successful": "Rapporteret succesfuldt",
       "failed": "Rapportering af {{type}} mislykkedes!"
     },
     "pin": {
@@ -101,9 +93,9 @@
       "account": {
         "card_title": "Konto",
         "img_alt": "Bruger avatar",
-        "username": "Brugernavn",
-        "email": "Email",
-        "password": "Adgangskode",
+        "username_placeholder": "Brugernavn",
+        "email_placeholder": "Email",
+        "password_placeholder": "Adgangskode",
         "required_fields": "Brugernavn og e-mail felter er påkrævet",
         "submit": "Gem",
         "successful": "Konto opdateret succesfuldt",
@@ -174,7 +166,7 @@
     },
     "description": {
       "title": "Beskrivelse af tjenesten",
-      "content": "Map Journey giver brugere mulighed for at kortlægge deres rejser ved at placere pins med lokalitetsdata, tekst og billeder. Pins kan indstilles som offentlige eller private, og brugere kan oprette tilpassede profiler med billeder og bannere."
+      "content": "Map Journey giver brugere mulighed for at kortlægge deres rejser ved at placere pins med lokalitetsdata, tekst og billeder. Pins kan indstilles som offentlige eller private, og brugere kan oprette tilpassede profiler med billeder."
     },
     "user_accounts": {
       "title": "Brugerkonti",

@@ -19,7 +19,7 @@ interface UserPhoto {
 
 const PHOTO_PREF_REF = "photos";
 const photoGallery = () => {
-  const { role } = useAuth();
+  const { userData } = useAuth();
 
   const [photo, setPhoto] = useState<UserPhoto>();
   const [blob, setBlob] = useState<Blob>();
@@ -42,7 +42,7 @@ const photoGallery = () => {
       quality: 100,
     });
 
-    role === "admin" && console.log("takePhoto", photo);
+    userData?.role === "admin" && console.log("takePhoto", photo);
 
     const imageUrl = photo.path || photo.webPath;
     const newPath = Capacitor.convertFileSrc(imageUrl!);
@@ -105,7 +105,7 @@ const photoGallery = () => {
     const response = await fetch(path);
     const blob = await response.blob();
 
-    role === "admin" && console.log("uncompressed blob", blob);
+    userData?.role === "admin" && console.log("uncompressed blob", blob);
 
     const time = new Date().getTime();
     const fileName = `userImage-${time}.jpg`;
@@ -116,7 +116,7 @@ const photoGallery = () => {
         convertTypes: ["image/jpeg", "image/png"],
         convertSize: 10000,
         success: async (compressedResult: Blob) => {
-          role === "admin" && console.log("compressed blob", compressedResult);
+          userData?.role === "admin" && console.log("compressed blob", compressedResult);
 
           // Check for NSFW content
           const isNSFW = await checkForNSFW(compressedResult);
@@ -169,16 +169,16 @@ const photoGallery = () => {
   }
 
   async function checkCompressedImage(fileName: string, image: Blob) {
-    role === "admin" && console.log("Blob", image);
+    userData?.role === "admin" && console.log("Blob", image);
     setBlob(image);
     const base64 = await base64FromBlob(image);
-    role === "admin" && console.log("Base64", base64);
+    userData?.role === "admin" && console.log("Base64", base64);
     const savedFileImage = await savePhoto(
       { webPath: base64 } as Photo,
       fileName
     );
     savedFileImage.webViewPath = base64;
-    role === "admin" && console.log("savedFileImage", savedFileImage);
+    userData?.role === "admin" && console.log("savedFileImage", savedFileImage);
     setPhoto(savedFileImage);
     return savedFileImage;
   }
@@ -189,7 +189,7 @@ const photoGallery = () => {
     image: Blob,
     fileType: string
   ) {
-    role === "admin" && console.log("upload image", image);
+    userData?.role === "admin" && console.log("upload image", image);
 
     const { data, error } = await useSupabaseClient.storage
       .from(toStorage)
@@ -204,7 +204,7 @@ const photoGallery = () => {
       return null;
     }
 
-    role === "admin" && console.log("Uploaded image:", data);
+    userData?.role === "admin" && console.log("Uploaded image:", data);
     return data;
   }
 

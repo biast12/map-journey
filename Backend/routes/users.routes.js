@@ -131,16 +131,29 @@ router.post("/", async (req, res) => {
     const settingsId = await generateUniqueId();
     const userId = await generateUniqueId();
 
+    const user = {
+      id: userId,
+      name,
+      email,
+      settings_id: settingsId,
+      avatar:
+        "https://ezjagphpkkbghjkxczwk.supabase.co/storage/v1/object/sign/assets/ProfileG5.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvUHJvZmlsZUc1LnBuZyIsImlhdCI6MTczMDc5NjI5NCwiZXhwIjoxNzYyMzMyMjk0fQ.GBRbr_PMqO19m21c43HGX_L5NKxBdcpo6a6UQdwkXLA&t=2024-11-05T08%3A44%3A54.995Z",
+      new_notifications: [],
+      status: "public",
+      role: "user",
+      news_count: 0,
+    };
+
+    const settings = {
+      id: settingsId,
+      maptheme: "default",
+      language: "en",
+      notification: true,
+    };
+
     const { data: settingsData, error: settingsError } = await supabase
       .from("settings")
-      .insert([
-        {
-          id: settingsId,
-          maptheme: "default",
-          language: "en",
-          notification: true,
-        },
-      ])
+      .insert([settings])
       .select("id")
       .single();
 
@@ -166,7 +179,7 @@ router.post("/", async (req, res) => {
       return res.status(500).json({ error: "Error creating profile" });
     }
 
-    res.status(201).json({ message: "Profile created successfully", id: userId, role: "user" });
+    res.status(201).json({ ...user, settings });
   } catch (error) {
     console.error("Error during profile creation:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -199,15 +212,18 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    res.status(200).json({
-      message: "Login successful",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
+    const { data: settings, error: settingsError } = await supabase
+      .from("settings")
+      .select("*")
+      .eq("id", user.settings_id)
+      .single();
+
+    if (settingsError) {
+      console.error("Error fetching settings:", settingsError);
+      return res.status(500).json({ error: "Error fetching settings" });
+    }
+
+    res.status(200).json({ ...user, settings });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ error: "Server error, please try again later." });
@@ -228,7 +244,7 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
 
     if (fetchError) {
       console.error("Error fetching user status:", fetchError);
-      await deleteImageFromBucket(avatar);
+      await deleteImageFromBucket([avatar]);
       return res.status(500).json({ error: "Error fetching user status" });
     }
 
@@ -237,7 +253,9 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
     }
 
     if (currentUser.status === "banned") {
-      return res.status(403).json({ error: "Cannot update user with reported status" });
+      return res
+        .status(403)
+        .json({ error: "Cannot update user with reported status" });
     }
 
     const updatedFields = {};
@@ -249,7 +267,10 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
     if (status) {
       const allowedStatuses = ["public", "private"];
       if (!allowedStatuses.includes(status)) {
-        return res.status(400).json({ error: "Invalid status value. Allowed values are 'public' or 'private'." });
+        return res.status(400).json({
+          error:
+            "Invalid status value. Allowed values are 'public' or 'private'.",
+        });
       }
       updatedFields.status = status;
     }
@@ -262,14 +283,14 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
 
     if (error) {
       console.error("Error updating user:", error);
-      await deleteImageFromBucket(avatar);
+      await deleteImageFromBucket([avatar]);
       return res.status(500).json({ error: "Error updating user" });
     }
 
     res.status(200).json({ message: "User updated successfully", user: data });
   } catch (error) {
     console.error("Error during user update:", error);
-    await deleteImageFromBucket(avatar);
+    await deleteImageFromBucket([avatar]);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -312,7 +333,9 @@ router.put("/:id/:userid", checkUserRole("admin"), async (req, res) => {
     if (role) {
       const allowedRoles = ["user", "admin"];
       if (!allowedRoles.includes(role)) {
-        return res.status(400).json({ error: "Invalid role value. Allowed values are 'user' or 'admin'." });
+        return res.status(400).json({
+          error: "Invalid role value. Allowed values are 'user' or 'admin'.",
+        });
       }
       updatedFields.role = role;
     }
@@ -378,8 +401,13 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
         .in("reported_pin_id", pinIds);
 
       if (deletePinReportsError) {
-        console.error("Error deleting reports for user's pins:", deletePinReportsError);
-        return res.status(500).json({ error: "Error deleting reports for user's pins" });
+        console.error(
+          "Error deleting reports for user's pins:",
+          deletePinReportsError
+        );
+        return res
+          .status(500)
+          .json({ error: "Error deleting reports for user's pins" });
       }
     }
 
@@ -427,7 +455,9 @@ router.delete("/:id", checkUserRole("user"), async (req, res) => {
       return res.status(500).json({ error: "Error deleting user profile" });
     }
 
-    res.status(200).json({ message: "User and related data deleted successfully" });
+    res
+      .status(200)
+      .json({ message: "User and related data deleted successfully" });
   } catch (error) {
     console.error("Error during user deletion:", error);
     res.status(500).json({ error: "Internal Server Error" });

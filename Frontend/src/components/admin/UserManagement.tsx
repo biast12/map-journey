@@ -4,7 +4,6 @@ import { IonAlert, IonCol, IonRow } from "@ionic/react";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
-import useAuth from "../../hooks/ProviderContext";
 
 /* Components */
 import EditUserModal from "../modals/EditUserModal";
@@ -22,7 +21,7 @@ type UserSearchOptions = {
   status: "all" | "public" | "private" | "reported" | "warning" | "banned";
 };
 
-const UserManagement = () => {
+const UserManagement = ({ userData }: { userData: UserData }) => {
   const { makeRequest, data, isLoading } = useRequestData();
   const { makeRequest: delMakeRequest, isLoading: delIsLoading } = useRequestData();
   const { makeRequest: editMakeRequest, isLoading: editIsLoading } = useRequestData();
@@ -39,9 +38,7 @@ const UserManagement = () => {
     status: "all",
   });
 
-  const { userID } = useAuth();
-
-  async function handleUserEdit(e: FormEvent, userData: UserData) {
+  async function handleUserEdit(e: FormEvent, selectedUser: UserData) {
     setHandlingRequest(true);
     e.preventDefault();
     const form = e.target as HTMLFormElement;
@@ -53,8 +50,8 @@ const UserManagement = () => {
     };
 
     try {
-      await editMakeRequest(`users/${userID}/${userData.id}`, "PUT", undefined, body);
-      await makeRequest(`users/all/${userID}`);
+      await editMakeRequest(`users/${userData.id}/${selectedUser.id}`, "PUT", undefined, body);
+      await makeRequest(`users/all/${userData.id}`);
 
       setShowEditModal(false);
       setSelectedUser(null);
@@ -63,12 +60,12 @@ const UserManagement = () => {
       showToastMessage("Failed to edit user", "error");
     }
   }
-  async function handleUserDelete(userData: UserData) {
+  async function handleUserDelete(selectedUser: UserData) {
     setHandlingRequest(true);
 
     try {
-      await delMakeRequest(`users/${userData.id}`, "DELETE");
-      await makeRequest(`users/all/${userID}`);
+      await delMakeRequest(`users/${selectedUser.id}`, "DELETE");
+      await makeRequest(`users/all/${selectedUser.id}`);
 
       setShowDeleteModal(false);
       setSelectedUser(null);
@@ -81,7 +78,7 @@ const UserManagement = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await makeRequest(`users/all/${userID}`);
+        await makeRequest(`users/all/${userData.id}`);
       } catch (error) {
         showToastMessage("Failed to fetch user data", "error");
       }
@@ -90,12 +87,12 @@ const UserManagement = () => {
     fetchData();
   }, []);
 
-  function filterData(userData: UserData) {
+  function filterData(otherUserData: UserData) {
     if (
-      (searchOptions.role !== "all" && userData.role !== searchOptions.role) ||
+      (searchOptions.role !== "all" && otherUserData.role !== searchOptions.role) ||
       (searchOptions.status !== "all" &&
-        userData.status !== searchOptions.status) ||
-      userData.id === userID
+        otherUserData.status !== searchOptions.status) ||
+        otherUserData.id === userData.id
     ) {
       return false;
     }
@@ -103,7 +100,7 @@ const UserManagement = () => {
     if (searchOptions.search === "") {
       return true;
     } else {
-      return userData[searchOptions.searchBy]
+      return otherUserData[searchOptions.searchBy]
         .toString()
         .toLowerCase()
         .match(
@@ -120,7 +117,7 @@ const UserManagement = () => {
       <Toast />
       {selectedUser && (
         <EditUserModal
-          userData={selectedUser}
+          selectedUser={selectedUser}
           showModal={showEditModal}
           setShowModal={setShowEditModal}
           onSubmit={handleUserEdit}
@@ -209,18 +206,18 @@ const UserManagement = () => {
           data.filter(filterData).length === 0 ? (
             <p>No users found</p>
           ) : (
-            data.filter(filterData).map((userData: UserData) => (
+            data.filter(filterData).map((otherUserData: UserData) => (
               <UserColumn
-                key={userData.id}
-                userData={userData}
+                key={otherUserData.id}
+                userData={otherUserData}
                 onEditUserClick={() => {
                   if (handlingRequest) return;
-                  setSelectedUser(userData);
+                  setSelectedUser(otherUserData);
                   setShowEditModal(true);
                 }}
                 onDeleteUserClick={() => {
                   if (handlingRequest) return;
-                  setSelectedUser(userData);
+                  setSelectedUser(otherUserData);
                   setShowDeleteModal(true);
                 }}
               />

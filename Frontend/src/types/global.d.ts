@@ -45,9 +45,19 @@ type UserData = {
   news_count: number;
   role: UserRole;
   settings_id: number;
+  settings: SettingsData;
   status: Status;
 };
 /* User END */
+
+/* Settings START */
+type SettingsData = {
+  id?: number;
+  language: string;
+  maptheme: string;
+  notification: boolean;
+};
+/* Settings END */
 
 /* Notification START */
 type NotificationData = {
@@ -74,12 +84,3 @@ type PinData = {
   title: string,
 }
 /* Pins END */
-
-/* Pin Search Options START */
-type PinSearchOptions = {
-  search: string;
-  searchBy: "id" | "title" | "description";
-  sortBy: "id" | "title" | "description";
-  status: "all" | "public" | "private";
-};
-/* Pin Search Options END */

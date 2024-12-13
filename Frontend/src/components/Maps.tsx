@@ -27,7 +27,6 @@ import { Geolocation } from "@capacitor/geolocation";
 
 /* Hooks */
 import useRequestData from "../hooks/useRequestData";
-import useAuth from "../hooks/ProviderContext";
 
 /* Components */
 import ShowPinModal from "../components/modals/ShowPinModal";
@@ -36,10 +35,11 @@ import Loader from "./Loader";
 
 import "./Maps.scss";
 
-interface MapProps {
+type MapProps = {
+  userData: UserData;
   APIurl: string;
   pinID?: string | null;
-}
+};
 
 interface PinData {
   id: string;
@@ -50,8 +50,9 @@ interface PinData {
 
 // Predefined styles for clustering
 const distanceBetweenPinsBeforeClustering = 20; // Distance between pins before clustering
+const clusterMaxSize = 3; // Maximum number of pins in a cluster
 const clusterRadius = 5; // base radius of the cluster circle it is multiplied by the number of pins in the cluster
-const clusterMultiplier = 0.8; // Multiplier for the cluster circle radius after the calculation
+const clusterMultiplier = 1; // Multiplier for the cluster circle radius after the calculation
 const clusterFillColor = "#236477"; // Color of the cluster circle
 const clusterStrokeColor = "#fff"; // Color of the cluster circle stroke
 const clusterTextColor = "#fff"; // Color of the text/number inside the cluster circle
@@ -77,10 +78,11 @@ function createStyle(size: number = 0.3) {
 function createClusterStyle(feature: FeatureLike): Style {
   const size = feature.get("features").length;
   let style;
+  const adjustedSize = Math.min(size, clusterMaxSize);
   if (size > 1) {
     style = new Style({
       image: new CircleStyle({
-        radius: clusterRadius * size * clusterMultiplier,
+        radius: clusterRadius * adjustedSize * clusterMultiplier,
         stroke: new Stroke({
           color: clusterStrokeColor,
         }),
@@ -105,7 +107,7 @@ function createClusterStyle(feature: FeatureLike): Style {
   return style;
 }
 
-function Map({ APIurl, pinID }: MapProps) {
+function Map({ userData, APIurl, pinID }: MapProps) {
   const { t } = useTranslation();
   const points: Feature[] = [];
 
@@ -115,7 +117,6 @@ function Map({ APIurl, pinID }: MapProps) {
 
   /* Hooks */
   const { makeRequest, data, isLoading } = useRequestData();
-  const { role } = useAuth();
 
   /* Functions */
   const openShowPinModal = () => setShowPinModal(true);
@@ -162,7 +163,7 @@ function Map({ APIurl, pinID }: MapProps) {
     const map = new OlMap({
       target: "map",
       controls:
-        role === "admin"
+        userData.role === "admin"
           ? defaultControls().extend([mousePositionControl])
           : defaultControls(),
       layers: [
@@ -264,7 +265,7 @@ function Map({ APIurl, pinID }: MapProps) {
           >
             <IonIcon slot="icon-only" icon={close} />
           </IonButton>
-          <ShowPinModal pinData={selectedPin} />
+          <ShowPinModal userData={userData} pinData={selectedPin} />
         </div>
       </IonModal>
     </>

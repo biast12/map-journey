@@ -26,13 +26,13 @@ const Modals: React.FC<ModalsProps> = ({
   showNotificationModal,
   closeNotificationModal,
 }) => {
-  const { userID } = useAuth();
+  const { userData } = useAuth();
   return (
     <>
       <IonModal
         isOpen={showLoginModal}
         onDidDismiss={closeLoginModal}
-        backdropDismiss={!!userID}
+        backdropDismiss={!!userData?.id}
       >
         <div className="modal-content">
           <LoginModal closeLoginModal={closeLoginModal} />
@@ -48,7 +48,9 @@ const Modals: React.FC<ModalsProps> = ({
           >
             <IonIcon slot="icon-only" icon={close} />
           </IonButton>
-          <CreatePinModal onClose={closeCreatePinModal} />
+          {userData && (
+            <CreatePinModal userData={userData} onClose={closeCreatePinModal} />
+          )}
         </div>
       </IonModal>
       <IonModal
@@ -64,7 +66,7 @@ const Modals: React.FC<ModalsProps> = ({
           >
             <IonIcon slot="icon-only" icon={close} />
           </IonButton>
-          <NotificationModal />
+          {userData && <NotificationModal userData={userData} />}
         </div>
       </IonModal>
     </>

@@ -26,14 +26,14 @@ import ErrorPage from "../pages/ErrorPage";
 export const Routes = () => {
   const { t } = useTranslation();
   const { makeRequest, data, isLoading } = useRequestData();
-  const { userID, role, loading, storeAuthToken, storeRoleToken } = useAuth();
+  const { userData, loading, storeUserDataToken } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
-      if (userID && !loading) {
+      if (userData?.id) {
         try {
-          await makeRequest(`users/${userID}`);
+          await makeRequest(`users/${userData.id}`);
         } catch (error) {
           showToastMessage(t("header.error_message"), "error");
         }
@@ -41,62 +41,66 @@ export const Routes = () => {
     };
 
     fetchData();
-  }, [userID, loading]);
-
-  
+  }, [loading]);
 
   useEffect(() => {
     if (data && !isLoading) {
+      storeUserDataToken(data);
       changeLanguage(data.settings.language);
-      role === "admin" && setDebugMode(true);
-      storeAuthToken(data.id);
-      storeRoleToken(data.role);
+      if (data.role === "admin") {
+        console.log("Admin/Debug mode enabled");
+        console.log("Your saved user data: ", data);
+        setDebugMode(true);
+      }
     }
   }, [data, isLoading]);
 
   return (
-    <Switch>
-      <Route
-        exact
-        path="/globalmap"
-        render={() => {
-          const params = new URLSearchParams(location.search);
-          const pinId = params.get("pin");
-          return (
-            userID && !loading && <GlobalMap userID={userID} pinId={pinId} />
-          );
-        }}
-      />
-      <Route
-        exact
-        path="/ownmap"
-        render={() => userID && !loading && <OwnMap userID={userID} />}
-      />
-      <Route exact path="/admin" render={() => role === "admin" && <Admin />} />
-      <Route exact path="/settings" render={() => userID && <Settings />} />
-      <Route
-        exact
-        path="/settings/general"
-        render={() => data && <General userData={data} />}
-      />
-      <Route
-        exact
-        path="/settings/account"
-        render={() => data && <Account userData={data} />}
-      />
-      <Route
-        exact
-        path="/settings/pins"
-        render={() => <Pins />}
-      />
-      <Route exact path="/privacy-policy" component={PrivacyPolicy} />
-      <Route exact path="/terms-of-service" component={TermsOfService} />
-      <Route exact path="/error" component={ErrorPage} />
-      <Route exact path="/error/:status" component={ErrorPage} />
-      <Route path="*">
-        <Redirect to="/globalmap" />
-      </Route>
-    </Switch>
+    <>
+      <Toast />
+      <Switch>
+        <Route
+          exact
+          path="/globalmap"
+          render={() => {
+            const params = new URLSearchParams(location.search);
+            const pinId = params.get("pin");
+            return (
+              userData && <GlobalMap userData={userData} pinId={pinId} />
+            );
+          }}
+        />
+        <Route
+          exact
+          path="/ownmap"
+          render={() => userData && <OwnMap userData={userData} />}
+        />
+        <Route exact path="/admin" render={() => userData && userData.role === "admin" && <Admin />} />
+        <Route exact path="/settings" render={() => <Settings />} />
+        <Route
+          exact
+          path="/settings/general"
+          render={() => userData && <General userData={userData} />}
+        />
+        <Route
+          exact
+          path="/settings/account"
+          render={() => userData && <Account userData={userData} />}
+        />
+        <Route
+          exact
+          path="/settings/pins"
+          render={() => userData && <Pins userData={userData} />}
+        />
+        <Route exact path="/privacy-policy" component={PrivacyPolicy} />
+        <Route exact path="/terms-of-service" component={TermsOfService} />
+        <Route exact path="/error" component={ErrorPage} />
+        <Route exact path="/error/:status" component={ErrorPage} />
+        <Route path="*">
+          <Redirect to="/globalmap" />
+        </Route>
+      </Switch>
+    </>
   );
 };
 

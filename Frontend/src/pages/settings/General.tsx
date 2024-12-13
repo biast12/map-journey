@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   IonHeader,
   IonToolbar,
@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
+import useAuth from "../../hooks/ProviderContext";
 import { changeLanguage } from "../../utils/i18n";
 
 /* Components */
@@ -23,31 +24,18 @@ import Loader from "../../components/Loader";
 
 import "./General.scss";
 
-interface UserDataProps {
-  userData: {
-    id: string;
-    settings: {
-      id: string;
-      maptheme: string;
-      language: string;
-      notification: boolean;
-    };
-  };
-}
-
 interface Themes {
   [key: string]: string;
 }
 
-const General: React.FC<UserDataProps> = ({ userData }) => {
+const General = ({ userData }: { userData: UserData }) => {
   const { t } = useTranslation();
+  const { storeUserDataToken } = useAuth();
 
   /* States */
   const [mapTheme, setMapTheme] = useState(userData.settings.maptheme);
   const [language, setLanguage] = useState(userData.settings.language);
-  const [notification, setNotification] = useState(
-    userData.settings.notification
-  );
+  const [notification, setNotification] = useState(userData.settings.notification);
   const [languages, setLanguages] = useState<{ [key: string]: string }>({});
 
   /* Hooks */
@@ -101,9 +89,9 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
   }, []);
 
   const handleSave = async () => {
-    const updatedData = {
-      maptheme: mapTheme,
+    const updatedData: SettingsData = {
       language: language,
+      maptheme: mapTheme,
       notification: notification,
     };
 
@@ -114,6 +102,21 @@ const General: React.FC<UserDataProps> = ({ userData }) => {
         { "Content-Type": "application/json" },
         updatedData
       );
+      const newUserData = { ...userData, settings: { ...userData.settings } };
+
+      if (language !== userData.settings?.language) {
+        newUserData.settings.language = language;
+      }
+      if (mapTheme !== userData.settings?.maptheme) {
+        newUserData.settings.maptheme = mapTheme;
+      }
+      if (notification !== userData.settings?.notification) {
+        newUserData.settings.notification = notification;
+      }
+
+      console.log("Updated data:", newUserData);
+
+      storeUserDataToken(newUserData);
       changeLanguage(updatedData.language);
       showToastMessage(t("pages.settings.general.successful"), "success");
     } catch (error) {

@@ -18,29 +18,25 @@ import handleDeleteAccount from "../../utils/handleDeleteAccount";
 import "./WarningModal.scss";
 
 interface WarningModalProps {
-  data: {
-    status: string;
-    id: string;
-    avatar: string;
-  };
+  userData: UserData;
   closeWarningModal: () => void;
 }
 
 const WarningModal: React.FC<WarningModalProps> = ({
-  data,
+  userData,
   closeWarningModal,
 }) => {
   const { t } = useTranslation();
   const history = useHistory();
-  const { userID, clearAuthToken, clearRoleToken } = useAuth();
+  const { clearUserDataToken } = useAuth();
   const { makeRequest } = useRequestData();
   const { makeRequest: deleteMakeRequest } = useRequestData();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
-    if (data.status === "warning") {
-      makeRequest(`reports/seen/${userID}`, 'POST');
+    if (userData.status === "warning") {
+      makeRequest(`reports/seen/${userData.id}`, 'POST');
     }
   }, []);
 
@@ -48,24 +44,24 @@ const WarningModal: React.FC<WarningModalProps> = ({
     <IonCard>
       <IonCardHeader>
         <IonCardTitle className="warning-modal-title">
-          {data.status === "banned"
+          {userData.status === "banned"
             ? t("modals.warning.card_title_banned")
             : t("modals.warning.card_title")}
         </IonCardTitle>
       </IonCardHeader>
       <IonCardContent className="warning-modal-content">
         <p>
-          {data.status === "warning"
+          {userData.status === "warning"
             ? t("modals.warning.warning")
-            : data.status === "reported"
+            : userData.status === "reported"
             ? t("modals.warning.reported")
-            : data.status === "banned"
+            : userData.status === "banned"
             ? t("modals.warning.banned")
             : null}
         </p>
         <p>{t("modals.warning.support")}</p>
       </IonCardContent>
-      {data.status === "banned" ? (
+      {userData.status === "banned" ? (
         <IonButton
           className="ion-button"
           color="danger"
@@ -104,10 +100,9 @@ const WarningModal: React.FC<WarningModalProps> = ({
               text: t("modals.warning.delete.header"),
               handler: () => {
                 handleDeleteAccount({
-                  data: { id: data.id, avatar: data.avatar },
+                  userID: userData.id!,
                   makeRequest: deleteMakeRequest,
-                  clearAuthToken,
-                  clearRoleToken,
+                  clearUserDataToken,
                   history,
                 });
               },

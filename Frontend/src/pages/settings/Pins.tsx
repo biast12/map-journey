@@ -16,7 +16,7 @@ import PinsManagement from "../../components/admin/PinsManagement";
 
 import "./Pins.scss";
 
-const Pins = () => {
+const Pins = ({ userData }: { userData: UserData }) => {
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const Pins = () => {
       </IonHeader>
       <IonContent>
         <IonGrid fixed>
-          <PinsManagement url={"pins"} />
+          <PinsManagement userData={userData} url={"pins"} />
         </IonGrid>
       </IonContent>
     </>

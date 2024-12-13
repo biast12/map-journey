@@ -3,7 +3,6 @@ import { IonCol, IonRow } from "@ionic/react";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
-import useAuth from "../../hooks/ProviderContext";
 
 /* Components */
 import ReportActionModal from "../modals/ReportActionModal";
@@ -19,7 +18,7 @@ type ReportSearchOptions = {
   sortBy: "id" | "name" | "text";
 };
 
-const ReportManagement = () => {
+const ReportManagement = ({ userData }: { userData: UserData }) => {
   const { makeRequest, data, isLoading } = useRequestData();
   const { makeRequest: rpMakeRequest, isLoading: rpIsLoading } = useRequestData();
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -30,13 +29,11 @@ const ReportManagement = () => {
     sortBy: "name",
   });
 
-  const { userID } = useAuth();
-
   async function handleReportAction(reportData: ReportData, action: "dismiss" | "warn" | "ban") {
     try {
-      await rpMakeRequest(`reports/${userID}/${reportData.id}`, "POST", undefined, { action: action });
+      await rpMakeRequest(`reports/${userData.id}/${reportData.id}`, "POST", undefined, { action: action });
 
-      await makeRequest(`reports/all/${userID}`);
+      await makeRequest(`reports/all/${userData.id}`);
       setSelectedReport(null);
       setShowModal(false);
     } catch (error) {
@@ -47,7 +44,7 @@ const ReportManagement = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await makeRequest(`reports/all/${userID}`);
+        await makeRequest(`reports/all/${userData.id}`);
       } catch (error) {
         showToastMessage("Failed to fetch reports", "error");
       }
