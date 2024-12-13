@@ -31,7 +31,7 @@ const Page = () => {
           <UserManagement userData={userData} />
 
           <h3>Pins</h3>
-          <PinsManagement userData={userData} url={"pins/all"} />
+          <PinsManagement userData={userData} url={"pins/admin"} />
 
           <h3>Reports</h3>
           <ReportManagement userData={userData} />

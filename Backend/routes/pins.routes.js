@@ -82,6 +82,35 @@ router.get("/all/:id", checkUserRole("user"), async (req, res) => {
   }
 });
 
+// Get all public pins with admin
+router.get("/admin/:id", checkUserRole("admin"), async (req, res) => {
+  const userID = req.params.id;
+
+  try {
+    const { data: pins, error: pinsError } = await supabase
+      .from("pins")
+      .select(`
+        *,
+        profile:profile_id (
+          id,
+          name,
+          avatar,
+          status
+        )
+      `);
+
+    if (pinsError) {
+      console.error("Error fetching pins:", pinsError);
+      return res.status(500).json({ error: "Error fetching pins" });
+    }
+
+    res.status(200).json(pins);
+  } catch (error) {
+    console.error("Error during fetch:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // Get pins by user ID
 router.get("/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
