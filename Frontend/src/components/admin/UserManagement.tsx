@@ -88,12 +88,12 @@ const UserManagement = ({ userData }: { userData: UserData }) => {
     fetchData();
   }, []);
 
-  function filterData(userData: UserData) {
+  function filterData(otherUserData: UserData) {
     if (
-      (searchOptions.role !== "all" && userData.role !== searchOptions.role) ||
+      (searchOptions.role !== "all" && otherUserData.role !== searchOptions.role) ||
       (searchOptions.status !== "all" &&
-        userData.status !== searchOptions.status) ||
-      userData.id === userData.id
+        otherUserData.status !== searchOptions.status) ||
+        otherUserData.id === userData.id
     ) {
       return false;
     }
@@ -101,7 +101,7 @@ const UserManagement = ({ userData }: { userData: UserData }) => {
     if (searchOptions.search === "") {
       return true;
     } else {
-      return userData[searchOptions.searchBy]
+      return otherUserData[searchOptions.searchBy]
         .toString()
         .toLowerCase()
         .match(
@@ -207,18 +207,18 @@ const UserManagement = ({ userData }: { userData: UserData }) => {
           data.filter(filterData).length === 0 ? (
             <p>No users found</p>
           ) : (
-            data.filter(filterData).map((userData: UserData) => (
+            data.filter(filterData).map((otherUserData: UserData) => (
               <UserColumn
-                key={userData.id}
-                userData={userData}
+                key={otherUserData.id}
+                userData={otherUserData}
                 onEditUserClick={() => {
                   if (handlingRequest) return;
-                  setSelectedUser(userData);
+                  setSelectedUser(otherUserData);
                   setShowEditModal(true);
                 }}
                 onDeleteUserClick={() => {
                   if (handlingRequest) return;
-                  setSelectedUser(userData);
+                  setSelectedUser(otherUserData);
                   setShowDeleteModal(true);
                 }}
               />
