@@ -87,17 +87,6 @@ router.get("/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
 
   try {
-    const { data: userProfile, error: userProfileError } = await supabase
-      .from("profile")
-      .select("status")
-      .eq("id", userID)
-      .single();
-
-    if (userProfileError) {
-      console.error("Error fetching user profile:", userProfileError);
-      return res.status(500).json({ error: "Error fetching user profile" });
-    }
-
     const { data: pins, error } = await supabase
       .from("pins")
       .select(

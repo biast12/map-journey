@@ -116,7 +116,7 @@ router.get("/all/:id", checkUserRole("admin"), async (req, res) => {
   }
 });
 
-// set user status to privte
+// set user status to private
 router.post("/seen/:id", checkUserRole("user"), async (req, res) => {
   const id = req.params.id;
 
