@@ -4,7 +4,6 @@ import { IonAlert, IonCol, IonRow } from "@ionic/react";
 
 /* Hooks */
 import useRequestData from "../../hooks/useRequestData";
-import useAuth from "../../hooks/ProviderContext";
 
 /* Components */
 import EditUserModal from "../modals/EditUserModal";
