@@ -72,7 +72,7 @@ const PinsManagement: React.FC<PinsManagementProps> = ({ userData, url }) => {
     if (isSuccess) {
       setSelectedPin(null);
       setShowModal(false);
-      showToastMessage("Successfully updated pin", "success");
+      showToastMessage("Successfully delete pin", "success");
       await makeRequest(`${url}/${userData.id}`);
     } else {
       showToastMessage("Failed to delete pin", "error");

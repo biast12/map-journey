@@ -230,7 +230,7 @@ router.post("/:id", checkUserRole("user"), async (req, res) => {
 });
 
 // Update a pin by User ID and Pin ID
-router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
+router.put("/:pinid/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
   const pinID = req.params.pinid;
   const { title, description, location, longitude, latitude, imgurls, status } =
@@ -274,8 +274,7 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
       return res.status(404).json({ error: "Pin not found" });
     }
 
-    const isAdmin = userProfile.role === "admin";
-    if (pin.profile_id !== userID && !isAdmin) {
+    if (pin.profile_id !== userID && userProfile.role !== "admin") {
       return res.status(403).json({ error: "Unauthorized to update this pin" });
     }
 
@@ -303,14 +302,14 @@ router.put("/:id/:pinid", checkUserRole("user"), async (req, res) => {
 });
 
 // Delete a pin by User ID and Pin ID
-router.delete("/:id/:pinid", checkUserRole("user"), async (req, res) => {
+router.delete("/:pinid/:id", checkUserRole("user"), async (req, res) => {
   const userID = req.params.id;
   const pinID = req.params.pinid;
 
   try {
     const { data: userProfile, error: userProfileError } = await supabase
       .from("profile")
-      .select("status")
+      .select("status, role")
       .eq("id", userID)
       .single();
 
@@ -335,7 +334,7 @@ router.delete("/:id/:pinid", checkUserRole("user"), async (req, res) => {
       return res.status(404).json({ error: "Pin not found" });
     }
 
-    if (pin.profile_id !== userID) {
+    if (pin.profile_id !== userID && userProfile.role !== "admin") {
       return res.status(403).json({ error: "Unauthorized to delete this pin" });
     }
 

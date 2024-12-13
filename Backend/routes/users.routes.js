@@ -296,7 +296,7 @@ router.put("/:id", checkUserRole("user"), async (req, res) => {
 });
 
 // Admin - Update a user by User ID
-router.put("/:id/:userid", checkUserRole("admin"), async (req, res) => {
+router.put("/:userid/:id", checkUserRole("admin"), async (req, res) => {
   const userID = req.params.userid;
   const { name, email, password, avatar, status, role } = req.body;
 

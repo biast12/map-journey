@@ -118,7 +118,7 @@ const EditPinModal: React.FC<EditPinModalProps> = ({
 
     try {
       await editMakeRequest(
-        `pins/${userData.id}/${pinData.id}`,
+        `pins/${pinData.id}/${userData.id}`,
         "PUT",
         undefined,
         body

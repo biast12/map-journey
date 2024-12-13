@@ -50,7 +50,7 @@ const UserManagement = ({ userData }: { userData: UserData }) => {
     };
 
     try {
-      await editMakeRequest(`users/${userData.id}/${selectedUser.id}`, "PUT", undefined, body);
+      await editMakeRequest(`users/${selectedUser.id}/${userData.id}`, "PUT", undefined, body);
       await makeRequest(`users/all/${userData.id}`);
 
       setShowEditModal(false);
