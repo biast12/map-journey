@@ -31,9 +31,6 @@ yarn-error.log*
 # Optional eslint cache
 .eslintcache
 
-# Package-lock
-package-lock.json
-
 # Ionic capacitor
 /android
 /ios
