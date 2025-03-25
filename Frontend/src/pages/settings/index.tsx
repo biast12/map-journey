@@ -82,32 +82,27 @@ const Settings: React.FC = () => {
             <IonLabel>{t("pages.settings.index.logout.header")}</IonLabel>
           </IonItem>
         </IonList>
-        <IonModal
+        <IonAlert
           isOpen={showLogoutModal}
           onDidDismiss={() => setShowLogoutModal(false)}
-        >
-          <IonAlert
-            isOpen={showLogoutModal}
-            onDidDismiss={() => setShowLogoutModal(false)}
-            header={t("pages.settings.index.logout.header")}
-            message={t("pages.settings.index.logout.message")}
-            buttons={[
-              {
-                text: t("pages.settings.index.logout.cancel"),
-                role: t(
-                  "pages.settings.index.logout.cancel"
-                ).toLocaleLowerCase(),
-                handler: () => {
-                  setShowLogoutModal(false);
-                },
+          header={t("pages.settings.index.logout.header")}
+          message={t("pages.settings.index.logout.message")}
+          buttons={[
+            {
+              text: t("pages.settings.index.logout.cancel"),
+              role: t(
+                "pages.settings.index.logout.cancel"
+              ).toLocaleLowerCase(),
+              handler: () => {
+                setShowLogoutModal(false);
               },
-              {
-                text: t("pages.settings.index.logout.header"),
-                handler: handleLogout,
-              },
-            ]}
-          />
-        </IonModal>
+            },
+            {
+              text: t("pages.settings.index.logout.header"),
+              handler: handleLogout,
+            },
+          ]}
+        />
       </IonContent>
     </>
   );
