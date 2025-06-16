@@ -18,7 +18,8 @@ const PORT = process.env.PORT || 8101;
 const SESS_SECRET = process.env.SESS_SECRET || "SESS_SECRET";
 const SESSION_NAME = process.env.SESSION_NAME || "server";
 const NODE_ENV = process.env.NODE_ENV || "production";
-const KEEP_ALIVE_INTERVAL = (process.env.KEEP_ALIVE_INTERVAL || 432000) * 1000; // Default to 432000 seconds (5 days)
+const COOKIE_AGE = (process.env.COOKIE_AGE || 2) * 1000 * 60 * 60 * 24; // Default: 2 days
+const KEEP_SUPABASE_ACTIVE = (process.env.KEEP_SUPABASE_ACTIVE || 86400) * 1000; // Default to 86400 seconds (1 days)
 
 // Middleware
 app.use(helmet());
@@ -31,7 +32,6 @@ app.use(compression());
 app.use(morgan(":method :url :status - :response-time ms"));
 
 // Session configuration
-const TWO_DAYS = 1000 * 60 * 60 * 24 * 2;
 app.use(
   session({
     name: SESSION_NAME,
@@ -40,13 +40,19 @@ app.use(
     saveUninitialized: false,
     secret: SESS_SECRET,
     cookie: {
-      maxAge: TWO_DAYS,
+      maxAge: COOKIE_AGE,
       sameSite: "strict",
       secure: NODE_ENV,
       httpOnly: true,
     },
   })
 );
+
+// Middleware to keep Supabase active on every request (Render workaround)
+app.use((req, res, next) => {
+  keepSupabaseActive();
+  next();
+});
 
 // Routes
 app.get("/", (req, res) => {
@@ -58,8 +64,8 @@ setupRoutes(app);
 
 // Call keepSupabaseActive function on startup
 keepSupabaseActive(); 
-// Set interval to call keepSupabaseActive based on KEEP_ALIVE_INTERVAL
-setInterval(keepSupabaseActive, KEEP_ALIVE_INTERVAL);
+// Set interval to call keepSupabaseActive based on KEEP_SUPABASE_ACTIVE
+setInterval(keepSupabaseActive, KEEP_SUPABASE_ACTIVE);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
